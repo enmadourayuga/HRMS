@@ -1,56 +1,52 @@
 ﻿# NexusHR - Modern Human Resource Management System
 
-A full-stack, responsive Human Resource Management System (HRMS) featuring role-based interfaces for **HR Administrators** and **Employees**, built with Node.js/Express, Tailwind CSS, and persistent mock data storage.
+A full-stack Human Resource Management System (HRMS) featuring role-based interfaces for **HR Administrators** and **Employees**, built with Node.js/Express, Tailwind CSS, and persistent data storage.
 
 ---
 
-## 🌟 Key Features
+## 🚀 Live Production Configuration
 
-### 🏢 1. HR Administrator Portal
-- **Executive Dashboard Overview**: Live metrics for total headcount, active employees present today, employees on leave, pending leave approvals, and monthly payroll obligations.
-- **Actionable Leave Approvals**: Review pending leave applications with employee reasons, duration, and one-click **Approve** or **Reject** with custom reviewer notes.
-- **Employee Directory**: Full directory with live search, department filters (Engineering, Design, Product, etc.), status badges, and an **Add New Employee** modal that automatically creates login accounts.
-- **Attendance Monitoring**: Real-time log of daily clock-in/out timestamps, hours worked, and attendance statuses (Present, Late, On Leave).
-- **Payroll & Compensation**: Salary distribution across departments, estimated tax/PF deductions, take-home pay, and generated printable **Salary Statements / Payslips**.
-- **Company Bulletins**: Publish company-wide announcements categorized by priority (High, Important, Normal).
+This is the clean **Live Server** on branch `main`. All dummy leaves, attendance logs, and mock employees have been cleared. The system is initialized with a single **HR Administrator** root account ready for live onboarding.
 
-### 👤 2. Employee Self-Service Portal
-- **Personal Dashboard**: Personalized welcome card, leave entitlement counters, today's attendance status, and company announcements.
-- **Daily Attendance Punch Desk**: Interactive **Clock-In** and **Clock-Out** buttons with live system timestamps and working hours logging.
-- **Time Off & Leave Management**: Track remaining balances for Annual, Sick, and Casual leaves; submit new leave requests with date pickers and reasons; monitor approval statuses (Pending, Approved, Rejected).
-- **Salary Statements**: View and print detailed monthly payslip breakdowns including allowances (HRA, Special, Conveyance) and deductions (Tax, PF, Insurance).
-- **Team Directory**: Browse department peers, contact emails, and office locations.
+### 🔑 Live HR Administrator Account
+- **Portal URL**: [http://localhost:3000](http://localhost:3000)
+- **Email**: `admin@hrms.com`
+- **Password**: `password123`
+- **Role**: Head of People & Culture (HR Administrator)
+
+*(Note: The development branch containing full dummy datasets and one-click demo credentials is preserved on branch [`dev1`](https://github.com/enmadourayuga/HRMS/tree/dev1)).*
 
 ---
 
-## 🔑 Demo Login Credentials
+## 🌟 System Capabilities
 
-You can use the **⚡ Quick Demo Login** buttons on the sign-in screen or type the credentials manually:
+### 🏢 HR Administrator Portal
+- **Workforce Directory**: Add new team members, specify roles (Employee vs HR Administrator), departments, compensation, and contact details. Login credentials are created automatically for every new employee.
+- **Leave Request Management**: Review, approve, or reject employee leave requests with optional manager notes.
+- **Attendance Tracker**: Monitor daily check-ins, check-outs, and logged hours.
+- **Payroll & Statements**: Review compensation pools, view and print formatted monthly salary slips.
+- **Announcements**: Broadcast company updates with priority tags across the organization.
 
-| Role | Name | Email | Password |
-| :--- | :--- | :--- | :--- |
-| **HR Administrator** | Elena Rostova | `hr@hrms.com` | `password123` |
-| **Employee (Engineering)** | Alex Morgan | `alex.morgan@hrms.com` | `password123` |
-| **Employee (Design)** | Sarah Chen | `sarah.chen@hrms.com` | `password123` |
-| **Employee (DevOps)** | Marcus Vance | `marcus.vance@hrms.com` | `password123` |
-| **Employee (Marketing)** | Priya Patel | `priya.patel@hrms.com` | `password123` |
-
-*Note: You can easily switch between HR and Employee roles anytime via the **"Switch Demo Role"** dropdown in the top header.*
+### 👤 Employee Portal (Self-Service)
+- **Attendance Punch Desk**: Clock-In and Clock-Out with live timestamps.
+- **Leave Applications**: View remaining leave balances (Annual, Sick, Casual) and submit time-off requests.
+- **Salary Statements**: View and print itemized monthly compensation slips.
+- **Team Directory**: Access peer contact information and department directories.
 
 ---
 
-## 🚀 Running Locally
+## 🛠️ Running Locally
 
 ### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 2. Start the Server
+### 2. Start Live Server
 ```bash
 npm start
 ```
-The server will start on [http://localhost:3000](http://localhost:3000).
+Server runs at [http://localhost:3000](http://localhost:3000).
 
 ---
 
@@ -59,18 +55,18 @@ The server will start on [http://localhost:3000](http://localhost:3000).
 ```
 HRMS/
 ├── server.js              # Express REST API & static file server
-├── package.json           # Dependencies and startup scripts
+├── package.json           # Dependencies and scripts
 ├── data/
-│   ├── seedData.json      # Initial realistic seed dataset
+│   ├── seedData.json      # Base clean seed dataset (HR admin only)
 │   └── db.json            # Dynamic persistent data store
 ├── public/                # Frontend Single Page Application
-│   ├── index.html         # Main HTML layout with Tailwind CSS & modals
+│   ├── index.html         # Main HTML layout with corporate login
 │   ├── css/
-│   │   └── style.css      # Custom styling, animations, and print media
+│   │   └── style.css      # Styling, transitions, and print media
 │   └── js/
 │       ├── api.js         # REST API client
 │       ├── ui.js          # Toasts, modals, clock, utilities
-│       ├── auth.js        # Auth state, quick-login, credentials
+│       ├── auth.js        # Authentication & session management
 │       ├── hr.js          # HR Portal views & action handlers
 │       ├── employee.js    # Employee Portal views & action handlers
 │       └── app.js         # App bootstrap and role-based navigation

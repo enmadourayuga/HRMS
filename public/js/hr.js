@@ -23,11 +23,11 @@ const HR = {
         API.get('/departments')
       ]);
 
-      this.employees = empList;
-      this.leaves = leaveList;
-      this.attendance = attList;
-      this.announcements = annList;
-      this.departments = deptList;
+      this.employees = empList || [];
+      this.leaves = leaveList || [];
+      this.attendance = attList || [];
+      this.announcements = annList || [];
+      this.departments = deptList || [];
     } catch (err) {
       console.error('Failed to load HR data:', err);
       UI.toast('Could not refresh HR dataset', 'error');
@@ -93,9 +93,9 @@ const HR = {
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-indigo-100 mb-3 border border-white/15">
             <i class="fa-solid fa-sparkles text-amber-300"></i> Executive People Dashboard
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome, ${Auth.employee?.name || 'Administrator'}</h2>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome, ${Auth.employee?.name || 'HR Administrator'}</h2>
           <p class="text-indigo-100 text-sm mt-1 max-w-xl">
-            Here is your live workforce snapshot for today. You have <span class="font-bold underline text-amber-300">${stats.pendingLeaves} leave requests</span> waiting for review.
+            Live workforce management console. Manage employee directory, review leave requests, and monitor company operations.
           </p>
         </div>
         <div class="flex flex-wrap gap-2.5 shrink-0">
@@ -119,7 +119,7 @@ const HR = {
             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Headcount</div>
             <div class="text-2xl font-extrabold text-slate-900">${stats.totalEmployees}</div>
             <div class="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
-              <i class="fa-solid fa-arrow-trend-up"></i> 100% Active Directory
+              <i class="fa-solid fa-circle text-[8px]"></i> Active Directory
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ const HR = {
             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Present Today</div>
             <div class="text-2xl font-extrabold text-slate-900">${stats.presentToday}</div>
             <div class="text-[11px] text-slate-500 font-medium mt-0.5">
-              Clocked in & logged
+              Clocked in & active
             </div>
           </div>
         </div>
@@ -168,7 +168,7 @@ const HR = {
       <!-- Main Overview Two-Column Sections -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left Column: Pending Leaves & Recent Logs (8 cols) -->
+        <!-- Left Column: Pending Leaves & Department Allocations (8 cols) -->
         <div class="lg:col-span-8 space-y-6">
           
           <!-- Pending Leaves Widget -->
@@ -225,7 +225,7 @@ const HR = {
           <!-- Department Headcount & Budget Table -->
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-              <h3 class="font-bold text-slate-900 text-sm">Department Allocations</h3>
+              <h3 class="font-bold text-slate-900 text-sm">Department Overview</h3>
               <span class="text-xs text-slate-500">${this.departments.length} Units Active</span>
             </div>
             <div class="overflow-x-auto">
@@ -244,7 +244,7 @@ const HR = {
                       <td class="px-5 py-3.5 font-semibold text-slate-900">${dept.name}</td>
                       <td class="px-5 py-3.5 text-slate-600">${dept.head}</td>
                       <td class="px-5 py-3.5 text-center">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">${dept.count} members</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${dept.count > 0 ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-500'}">${dept.count} members</span>
                       </td>
                       <td class="px-5 py-3.5 text-right font-mono font-medium text-slate-900">${dept.budget}</td>
                     </tr>
@@ -271,7 +271,12 @@ const HR = {
               </button>
             </div>
             <div class="p-4 space-y-3.5">
-              ${this.announcements.map(ann => `
+              ${this.announcements.length === 0 ? `
+                <div class="p-6 text-center text-slate-400 text-xs">
+                  <i class="fa-regular fa-bell text-2xl mb-2 block"></i>
+                  No announcements published yet. Click <strong>+ New</strong> to post an announcement.
+                </div>
+              ` : this.announcements.map(ann => `
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-indigo-200 transition-colors">
                   <div class="flex items-center justify-between text-[11px] mb-1.5">
                     <span class="px-2 py-0.5 rounded font-semibold ${ann.priority === 'High' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200 text-slate-700'}">${ann.priority}</span>
@@ -287,11 +292,11 @@ const HR = {
           <!-- Quick Directory Summary -->
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
             <div class="flex items-center justify-between mb-3">
-              <h3 class="font-bold text-slate-900 text-sm">Quick Directory</h3>
+              <h3 class="font-bold text-slate-900 text-sm">Directory Summary</h3>
               <button onclick="HR.switchTab('employees')" class="text-xs text-indigo-600 font-semibold hover:underline">View All</button>
             </div>
             <div class="space-y-3">
-              ${this.employees.slice(0, 4).map(e => `
+              ${this.employees.map(e => `
                 <div class="flex items-center gap-3">
                   <img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover" alt="${e.name}">
                   <div class="min-w-0 flex-1">
@@ -341,12 +346,12 @@ const HR = {
         <div class="flex gap-2">
           <select id="employee-dept-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
             <option value="All">All Departments</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Design">Design</option>
-            <option value="Product">Product</option>
-            <option value="Infrastructure">Infrastructure</option>
             <option value="Human Resources">Human Resources</option>
-            <option value="Marketing">Marketing</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Design & UX">Design & UX</option>
+            <option value="Product Management">Product Management</option>
+            <option value="Marketing & Sales">Marketing & Sales</option>
+            <option value="Finance & Operations">Finance & Operations</option>
           </select>
           <select id="employee-status-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
             <option value="All">All Statuses</option>
@@ -527,7 +532,7 @@ const HR = {
             ${leave.status === 'Pending' ? `
               <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
                 <button onclick="HR.openReviewModal('${leave.id}')" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5">
-                  <i class="fa-solid fa-clipboard-check text-xs"></i> Review & Comment
+                  <i class="fa-solid fa-clipboard-check text-xs"></i> Review & Decide
                 </button>
                 <button onclick="HR.quickApproveLeave('${leave.id}')" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-semibold transition-all">
                   Approve
@@ -581,7 +586,9 @@ const HR = {
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700">
-              ${todayLogs.map(att => `
+              ${todayLogs.length === 0 ? `
+                <tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm"><i class="fa-regular fa-clock text-2xl mb-2 block"></i> No attendance records logged for today yet.</td></tr>
+              ` : todayLogs.map(att => `
                 <tr class="hover:bg-slate-50 transition-colors">
                   <td class="px-5 py-3.5 font-bold text-slate-900 flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center text-xs font-bold">
@@ -707,7 +714,12 @@ const HR = {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        ${this.announcements.map(ann => `
+        ${this.announcements.length === 0 ? `
+          <div class="col-span-2 bg-white rounded-2xl p-12 text-center text-slate-400 border border-slate-200">
+            <i class="fa-regular fa-bell text-4xl mb-3 block"></i>
+            <p>No announcements published yet. Click <strong>New Announcement</strong> to post the first update.</p>
+          </div>
+        ` : this.announcements.map(ann => `
           <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 hover:shadow-md transition-all flex flex-col justify-between">
             <div>
               <div class="flex items-center justify-between gap-2 mb-3">
@@ -831,7 +843,7 @@ const HR = {
         category,
         priority,
         content,
-        author: Auth.employee?.name || 'HR Team'
+        author: Auth.employee?.name || 'HR Administrator'
       });
       UI.toast('Announcement published to bulletin!', 'success');
       UI.closeModal('modal-new-announcement');
@@ -859,6 +871,8 @@ const HR = {
     const totalDeductions = tax + pf + insurance;
     const net = gross - totalDeductions;
 
+    const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
     const payslipContainer = document.getElementById('printable-payslip');
     payslipContainer.innerHTML = `
       <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
@@ -869,13 +883,13 @@ const HR = {
             </div>
             <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Inc.</span>
           </div>
-          <p class="text-xs text-slate-500">100 Market St, Suite 400, San Francisco, CA 94105</p>
+          <p class="text-xs text-slate-500">Corporate Headquarters</p>
           <p class="text-xs text-slate-500">EIN: 94-8273619 • payroll@nexushr.com</p>
         </div>
         <div class="text-right">
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">PAID</span>
-          <div class="text-xs text-slate-400 mt-2">Statement Month</div>
-          <div class="text-sm font-bold text-slate-900">October 2026</div>
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">ACTIVE</span>
+          <div class="text-xs text-slate-400 mt-2">Statement Period</div>
+          <div class="text-sm font-bold text-slate-900">${currentMonth}</div>
         </div>
       </div>
 
@@ -927,7 +941,7 @@ const HR = {
               <span class="font-mono font-medium">${UI.formatCurrency(tax)}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Provident / 401(k) Retirement</span>
+              <span class="text-slate-600">Retirement / 401(k)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(pf)}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">

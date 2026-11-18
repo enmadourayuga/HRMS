@@ -29,20 +29,6 @@ function saveDatabase() {
 }
 
 // ----------------- AUTH ROUTES -----------------
-app.get('/api/auth/demo-users', (req, res) => {
-  const demoList = db.users.map(u => {
-    const emp = db.employees.find(e => e.id === u.employeeId) || {};
-    return {
-      email: u.email,
-      role: u.role,
-      name: emp.name || u.email,
-      jobTitle: emp.jobTitle || (u.role === 'hr' ? 'HR Manager' : 'Employee'),
-      avatar: emp.avatar
-    };
-  });
-  res.json(demoList);
-});
-
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -70,19 +56,19 @@ app.post('/api/auth/login', (req, res) => {
 // ----------------- STATS ROUTES -----------------
 app.get('/api/stats/hr', (req, res) => {
   const totalEmployees = db.employees.length;
-  const pendingLeaves = db.leaves.filter(l => l.status === 'Pending').length;
-  const onLeaveToday = db.employees.filter(e => e.status === 'On Leave').length;
+  const pendingLeaves = (db.leaves || []).filter(l => l.status === 'Pending').length;
+  const onLeaveToday = (db.employees || []).filter(e => e.status === 'On Leave').length;
   const today = new Date().toISOString().split('T')[0];
-  const presentToday = db.attendance.filter(a => a.date === today && a.clockIn).length;
+  const presentToday = (db.attendance || []).filter(a => a.date === today && a.clockIn).length;
   
-  const totalPayroll = db.employees.reduce((acc, curr) => acc + (curr.salary || 0), 0) / 12;
+  const totalPayroll = (db.employees || []).reduce((acc, curr) => acc + (curr.salary || 0), 0) / 12;
 
   res.json({
     totalEmployees,
-    presentToday: presentToday || Math.max(1, totalEmployees - onLeaveToday - 1),
+    presentToday,
     onLeaveToday,
     pendingLeaves,
-    departmentCount: db.departments.length,
+    departmentCount: (db.departments || []).length,
     monthlyPayroll: Math.round(totalPayroll)
   });
 });
@@ -92,9 +78,9 @@ app.get('/api/stats/employee/:id', (req, res) => {
   const emp = db.employees.find(e => e.id === empId);
   if (!emp) return res.status(404).json({ error: 'Employee not found' });
 
-  const myLeaves = db.leaves.filter(l => l.employeeId === empId);
+  const myLeaves = (db.leaves || []).filter(l => l.employeeId === empId);
   const today = new Date().toISOString().split('T')[0];
-  const todayAttendance = db.attendance.find(a => a.employeeId === empId && a.date === today) || null;
+  const todayAttendance = (db.attendance || []).find(a => a.employeeId === empId && a.date === today) || null;
 
   res.json({
     leaveBalances: emp.leaveBalances,
@@ -107,23 +93,23 @@ app.get('/api/stats/employee/:id', (req, res) => {
 // ----------------- EMPLOYEES ROUTES -----------------
 app.get('/api/employees', (req, res) => {
   const { search, department, status } = req.query;
-  let results = [...db.employees];
+  let results = [...(db.employees || [])];
 
   if (search) {
     const q = search.toLowerCase();
     results = results.filter(e => 
-      e.name.toLowerCase().includes(q) ||
-      e.email.toLowerCase().includes(q) ||
-      e.jobTitle.toLowerCase().includes(q)
+      (e.name && e.name.toLowerCase().includes(q)) ||
+      (e.email && e.email.toLowerCase().includes(q)) ||
+      (e.jobTitle && e.jobTitle.toLowerCase().includes(q))
     );
   }
 
   if (department && department !== 'All') {
-    results = results.filter(e => e.department.toLowerCase() === department.toLowerCase());
+    results = results.filter(e => e.department && e.department.toLowerCase() === department.toLowerCase());
   }
 
   if (status && status !== 'All') {
-    results = results.filter(e => e.status.toLowerCase() === status.toLowerCase());
+    results = results.filter(e => e.status && e.status.toLowerCase() === status.toLowerCase());
   }
 
   res.json(results);
@@ -146,7 +132,7 @@ app.post('/api/employees', (req, res) => {
     return res.status(400).json({ error: 'An employee with this email already exists' });
   }
 
-  const newId = `EMP-${String(db.employees.length + 1).padStart(3, '0')}`;
+  const newId = `EMP-${String((db.employees || []).length + 1).padStart(3, '0')}`;
   const newEmp = {
     id: newId,
     name,
@@ -157,10 +143,10 @@ app.post('/api/employees', (req, res) => {
     joinDate: new Date().toISOString().split('T')[0],
     salary: Number(salary) || 90000,
     phone: phone || '+1 (555) 000-0000',
-    location: location || 'Remote',
-    avatar: `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
+    location: location || 'Headquarters',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces',
     status: 'Active',
-    manager: manager || 'Elena Rostova',
+    manager: manager || 'HR Administrator',
     leaveBalances: {
       annual: { total: 20, used: 0 },
       sick: { total: 10, used: 0 },
@@ -168,9 +154,9 @@ app.post('/api/employees', (req, res) => {
     }
   };
 
-  db.employees.unshift(newEmp);
+  db.employees.push(newEmp);
 
-  // Automatically create a user login for this employee
+  // Automatically create user login
   const newUser = {
     id: `USR-${newId}`,
     email: newEmp.email,
@@ -179,6 +165,12 @@ app.post('/api/employees', (req, res) => {
     employeeId: newId
   };
   db.users.push(newUser);
+
+  // Update department count
+  const dept = (db.departments || []).find(d => d.name.toLowerCase() === (newEmp.department || '').toLowerCase());
+  if (dept) {
+    dept.count = (dept.count || 0) + 1;
+  }
 
   saveDatabase();
   res.status(201).json(newEmp);
@@ -196,7 +188,7 @@ app.put('/api/employees/:id', (req, res) => {
 // ----------------- LEAVES ROUTES -----------------
 app.get('/api/leaves', (req, res) => {
   const { employeeId, status } = req.query;
-  let results = [...db.leaves];
+  let results = [...(db.leaves || [])];
 
   if (employeeId) {
     results = results.filter(l => l.employeeId === employeeId);
@@ -206,7 +198,6 @@ app.get('/api/leaves', (req, res) => {
     results = results.filter(l => l.status.toLowerCase() === status.toLowerCase());
   }
 
-  // Sort descending by appliedOn or id
   results.sort((a, b) => b.id.localeCompare(a.id));
   res.json(results);
 });
@@ -244,8 +235,8 @@ app.post('/api/leaves', (req, res) => {
 });
 
 app.patch('/api/leaves/:id', (req, res) => {
-  const { status, reviewedBy = 'HR Manager', reviewComment = '' } = req.body;
-  const leave = db.leaves.find(l => l.id === req.params.id);
+  const { status, reviewedBy = 'HR Administrator', reviewComment = '' } = req.body;
+  const leave = (db.leaves || []).find(l => l.id === req.params.id);
   if (!leave) return res.status(404).json({ error: 'Leave request not found' });
 
   if (!['Approved', 'Rejected', 'Pending'].includes(status)) {
@@ -256,7 +247,6 @@ app.patch('/api/leaves/:id', (req, res) => {
   leave.reviewedBy = reviewedBy;
   leave.reviewComment = reviewComment;
 
-  // If approved, update employee leave balance
   if (status === 'Approved') {
     const emp = db.employees.find(e => e.id === leave.employeeId);
     if (emp && emp.leaveBalances) {
@@ -274,7 +264,7 @@ app.patch('/api/leaves/:id', (req, res) => {
 // ----------------- ATTENDANCE ROUTES -----------------
 app.get('/api/attendance', (req, res) => {
   const { date, employeeId } = req.query;
-  let results = [...db.attendance];
+  let results = [...(db.attendance || [])];
 
   if (date) {
     results = results.filter(a => a.date === date);
@@ -294,7 +284,7 @@ app.post('/api/attendance/clock-in', (req, res) => {
   const today = new Date().toISOString().split('T')[0];
   const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  let record = db.attendance.find(a => a.employeeId === employeeId && a.date === today);
+  let record = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
 
   if (record) {
     if (record.clockIn) {
@@ -313,6 +303,7 @@ app.post('/api/attendance/clock-in', (req, res) => {
       status: 'Present',
       totalHours: 0
     };
+    if (!db.attendance) db.attendance = [];
     db.attendance.unshift(record);
   }
 
@@ -325,13 +316,13 @@ app.post('/api/attendance/clock-out', (req, res) => {
   const today = new Date().toISOString().split('T')[0];
   const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  const record = db.attendance.find(a => a.employeeId === employeeId && a.date === today);
+  const record = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
   if (!record || !record.clockIn) {
     return res.status(400).json({ error: 'Cannot clock out without clocking in first' });
   }
 
   record.clockOut = nowTime;
-  record.totalHours = 8.0; // standard workday calculated
+  record.totalHours = 8.0;
   saveDatabase();
   res.json({ message: 'Clocked out successfully', record });
 });
@@ -339,7 +330,7 @@ app.post('/api/attendance/clock-out', (req, res) => {
 // ----------------- PAYSLIPS & DEPARTMENTS & ANNOUNCEMENTS -----------------
 app.get('/api/payslips', (req, res) => {
   const { employeeId } = req.query;
-  let results = [...db.payslips];
+  let results = [...(db.payslips || [])];
   if (employeeId) {
     results = results.filter(p => p.employeeId === employeeId);
   }
@@ -347,15 +338,15 @@ app.get('/api/payslips', (req, res) => {
 });
 
 app.get('/api/departments', (req, res) => {
-  res.json(db.departments);
+  res.json(db.departments || []);
 });
 
 app.get('/api/announcements', (req, res) => {
-  res.json(db.announcements);
+  res.json(db.announcements || []);
 });
 
 app.post('/api/announcements', (req, res) => {
-  const { title, content, priority = 'Normal', category = 'General', author = 'HR Team' } = req.body;
+  const { title, content, priority = 'Normal', category = 'General', author = 'HR Administrator' } = req.body;
   if (!title || !content) {
     return res.status(400).json({ error: 'Title and content are required' });
   }
@@ -370,17 +361,10 @@ app.post('/api/announcements', (req, res) => {
     date: new Date().toISOString().split('T')[0]
   };
 
+  if (!db.announcements) db.announcements = [];
   db.announcements.unshift(newAnn);
   saveDatabase();
   res.status(201).json(newAnn);
-});
-
-// Reset to seed data
-app.post('/api/reset', (req, res) => {
-  const seed = fs.readFileSync(SEED_PATH, 'utf8');
-  fs.writeFileSync(DB_PATH, seed, 'utf8');
-  db = JSON.parse(seed);
-  res.json({ message: 'Database reset to initial demo seed state' });
 });
 
 // Serve frontend for all remaining GET routes
@@ -389,5 +373,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`HRMS Server is running at http://localhost:${PORT}`);
+  console.log(`HRMS Live Server is running at http://localhost:${PORT}`);
 });

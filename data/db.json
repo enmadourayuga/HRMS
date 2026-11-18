@@ -52,9 +52,18 @@
       "status": "Active",
       "manager": "Executive Team",
       "leaveBalances": {
-        "annual": { "total": 22, "used": 5 },
-        "sick": { "total": 12, "used": 2 },
-        "casual": { "total": 6, "used": 1 }
+        "annual": {
+          "total": 22,
+          "used": 5
+        },
+        "sick": {
+          "total": 12,
+          "used": 2
+        },
+        "casual": {
+          "total": 6,
+          "used": 1
+        }
       }
     },
     {
@@ -72,9 +81,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 6 },
-        "sick": { "total": 10, "used": 2 },
-        "casual": { "total": 5, "used": 2 }
+        "annual": {
+          "total": 20,
+          "used": 6
+        },
+        "sick": {
+          "total": 10,
+          "used": 2
+        },
+        "casual": {
+          "total": 5,
+          "used": 2
+        }
       }
     },
     {
@@ -92,9 +110,18 @@
       "status": "Active",
       "manager": "Elena Rostova",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 4 },
-        "sick": { "total": 10, "used": 1 },
-        "casual": { "total": 5, "used": 0 }
+        "annual": {
+          "total": 20,
+          "used": 4
+        },
+        "sick": {
+          "total": 10,
+          "used": 1
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
       }
     },
     {
@@ -112,9 +139,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 8 },
-        "sick": { "total": 10, "used": 3 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 20,
+          "used": 8
+        },
+        "sick": {
+          "total": 10,
+          "used": 3
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -132,9 +168,18 @@
       "status": "On Leave",
       "manager": "Rachel Adams",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 5 },
-        "sick": { "total": 10, "used": 4 },
-        "casual": { "total": 5, "used": 2 }
+        "annual": {
+          "total": 18,
+          "used": 5
+        },
+        "sick": {
+          "total": 10,
+          "used": 4
+        },
+        "casual": {
+          "total": 5,
+          "used": 2
+        }
       }
     },
     {
@@ -152,9 +197,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 2 },
-        "sick": { "total": 10, "used": 0 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 18,
+          "used": 2
+        },
+        "sick": {
+          "total": 10,
+          "used": 0
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -172,9 +226,18 @@
       "status": "Active",
       "manager": "Elena Rostova",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 7 },
-        "sick": { "total": 10, "used": 1 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 20,
+          "used": 7
+        },
+        "sick": {
+          "total": 10,
+          "used": 1
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -192,9 +255,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 3 },
-        "sick": { "total": 10, "used": 2 },
-        "casual": { "total": 5, "used": 0 }
+        "annual": {
+          "total": 18,
+          "used": 3
+        },
+        "sick": {
+          "total": 10,
+          "used": 2
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
       }
     }
   ],
@@ -307,9 +379,9 @@
       "employeeName": "Alex Morgan",
       "date": "2026-11-18",
       "clockIn": "09:05 AM",
-      "clockOut": null,
+      "clockOut": "11:53 AM",
       "status": "Present",
-      "totalHours": 2.3
+      "totalHours": 8
     },
     {
       "id": "ATT-003",
@@ -319,7 +391,7 @@
       "clockIn": "09:25 AM",
       "clockOut": null,
       "status": "Late",
-      "totalHours": 2.0
+      "totalHours": 2
     },
     {
       "id": "ATT-004",
@@ -470,11 +542,47 @@
     }
   ],
   "departments": [
-    { "id": "DEP-01", "name": "Engineering", "head": "David Miller", "count": 24, "budget": "$2.8M" },
-    { "id": "DEP-02", "name": "Design & UX", "head": "Sarah Chen", "count": 8, "budget": "$950K" },
-    { "id": "DEP-03", "name": "Product Management", "head": "Sophia Taylor", "count": 12, "budget": "$1.4M" },
-    { "id": "DEP-04", "name": "Infrastructure & Sec", "head": "Marcus Vance", "count": 10, "budget": "$1.6M" },
-    { "id": "DEP-05", "name": "People & Culture", "head": "Elena Rostova", "count": 6, "budget": "$720K" },
-    { "id": "DEP-06", "name": "Marketing & Growth", "head": "Rachel Adams", "count": 14, "budget": "$1.9M" }
+    {
+      "id": "DEP-01",
+      "name": "Engineering",
+      "head": "David Miller",
+      "count": 24,
+      "budget": "$2.8M"
+    },
+    {
+      "id": "DEP-02",
+      "name": "Design & UX",
+      "head": "Sarah Chen",
+      "count": 8,
+      "budget": "$950K"
+    },
+    {
+      "id": "DEP-03",
+      "name": "Product Management",
+      "head": "Sophia Taylor",
+      "count": 12,
+      "budget": "$1.4M"
+    },
+    {
+      "id": "DEP-04",
+      "name": "Infrastructure & Sec",
+      "head": "Marcus Vance",
+      "count": 10,
+      "budget": "$1.6M"
+    },
+    {
+      "id": "DEP-05",
+      "name": "People & Culture",
+      "head": "Elena Rostova",
+      "count": 6,
+      "budget": "$720K"
+    },
+    {
+      "id": "DEP-06",
+      "name": "Marketing & Growth",
+      "head": "Rachel Adams",
+      "count": 14,
+      "budget": "$1.9M"
+    }
   ]
 }

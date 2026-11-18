@@ -58,16 +58,6 @@ const Auth = {
     }
   },
 
-  quickLogin(email, password) {
-    const emailInput = document.getElementById('login-email');
-    const passInput = document.getElementById('login-password');
-    if (emailInput && passInput) {
-      emailInput.value = email;
-      passInput.value = password;
-    }
-    this.handleLogin();
-  },
-
   logout() {
     localStorage.removeItem('nexus_token');
     localStorage.removeItem('nexus_user');
@@ -88,7 +78,6 @@ const Auth = {
     document.getElementById('view-login').classList.add('hidden');
     document.getElementById('view-app').classList.remove('hidden');
 
-    // Update Header
     const avatar = this.employee?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces';
     const name = this.employee?.name || this.user.email;
     const title = this.employee?.jobTitle || (this.user.role === 'hr' ? 'HR Administrator' : 'Staff Member');
@@ -107,7 +96,6 @@ const Auth = {
       badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Employee Portal`;
     }
 
-    // Initialize Role Navigation and Views
     App.setupRoleNavigation(this.user.role);
   }
 };

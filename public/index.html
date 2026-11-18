@@ -331,17 +331,17 @@
   <!-- MODALS -->
   <!-- ============================================================== -->
 
-  <!-- 1. Add Employee Modal (HR) -->
+  <!-- 1. Add Employee / HR Modal -->
   <div id="modal-add-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 modal-enter overflow-hidden my-8">
       <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+          <div id="modal-employee-icon" class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
             <i class="fa-solid fa-user-plus"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">Add New Employee</h3>
-            <p class="text-xs text-slate-500">Employee profile and login credentials will be created</p>
+            <h3 id="modal-employee-title" class="font-bold text-slate-900 text-base">Add New Employee</h3>
+            <p id="modal-employee-subtitle" class="text-xs text-slate-500">Employee profile and login credentials will be created</p>
           </div>
         </div>
         <button onclick="UI.closeModal('modal-add-employee')" class="text-slate-400 hover:text-slate-600">
@@ -368,24 +368,27 @@
           </div>
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Department</label>
-            <select name="department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+            <select name="department" id="modal-employee-department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
               <option value="Engineering">Engineering</option>
               <option value="Design">Design</option>
               <option value="Product">Product</option>
               <option value="Infrastructure">Infrastructure</option>
-              <option value="Human Resources">Human Resources</option>
               <option value="Marketing">Marketing</option>
+              <option value="Human Resources" id="dept-option-hr">Human Resources</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Role / Access Level *</label>
-            <select name="role" id="modal-employee-role" onchange="HR.onRoleSelectChange(this.value)" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
-              <option value="employee">Staff / Standard Employee</option>
-              <option value="hr" id="role-option-hr">HR Account</option>
-            </select>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employee Type / Category</label>
+            <input type="hidden" name="role" id="modal-employee-role" value="employee">
+            <div id="modal-employee-type-display" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-sm font-medium">
+              <span id="modal-employee-type-text" class="text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-user text-slate-400"></i> Standard Employee
+              </span>
+              <span id="modal-employee-type-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Staff</span>
+            </div>
           </div>
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary (₹ / INR)</label>
@@ -409,7 +412,7 @@
 
         <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
           <button type="button" onclick="UI.closeModal('modal-add-employee')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
-          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20">Save Employee</button>
+          <button id="modal-employee-submit-btn" type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors">Save Employee</button>
         </div>
       </form>
     </div>

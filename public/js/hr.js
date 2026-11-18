@@ -657,6 +657,7 @@ const HR = {
     const monthlyPool = Math.round(totalAnnual / 12);
     const pendingSlips = (this.payslips || []).filter(p => p.status === 'Pending Approval');
     const approvedSlips = (this.payslips || []).filter(p => p.status === 'Approved' || p.status === 'Paid');
+    const totalLopDeductions = (this.payslips || []).reduce((acc, p) => acc + (p.deductions?.attendanceDeduction || p.deductions?.lossOfPay || 0), 0);
 
     const activeFilter = this.payrollFilter || 'all';
     let displayedSlips = [...(this.payslips || [])];
@@ -670,9 +671,13 @@ const HR = {
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Payroll & Salary Slips Review</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Review and approve employee monthly payslips before releasing them to employee self-service</p>
+          <p class="text-xs text-slate-500 mt-0.5">Review monthly compensation, verified attendance deductions (LOP), and release statements to employees</p>
         </div>
         <div class="flex items-center gap-2">
+          <button onclick="HR.recalculateAttendancePayroll()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl text-xs sm:text-sm border border-indigo-200 shadow-xs flex items-center gap-2 transition-colors">
+            <i class="fa-solid fa-arrows-rotate text-xs"></i>
+            <span>Recalculate with Attendance</span>
+          </button>
           ${pendingSlips.length > 0 ? `
             <button onclick="HR.approveAllPending()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-colors">
               <i class="fa-solid fa-check-double text-xs"></i>
@@ -687,11 +692,16 @@ const HR = {
       </div>
 
       <!-- Payroll Summary KPI -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
           <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Estimated Monthly Outflow</div>
           <div class="text-2xl font-extrabold text-indigo-600 mt-1">${UI.formatCurrency(monthlyPool)}</div>
           <div class="text-[11px] text-slate-500 mt-0.5">Across ${this.employees.length} active employees</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Attendance Deductions (LOP)</div>
+          <div class="text-2xl font-extrabold text-rose-600 mt-1">-${UI.formatCurrency(totalLopDeductions)}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Applied from attendance & leaves</div>
         </div>
         <div class="bg-white rounded-2xl p-5 border ${pendingSlips.length > 0 ? 'border-amber-300 bg-amber-50/30' : 'border-slate-200'} shadow-sm">
           <div class="flex items-center justify-between">
@@ -731,7 +741,7 @@ const HR = {
                 <th class="px-5 py-3.5">Employee</th>
                 <th class="px-5 py-3.5">Pay Period</th>
                 <th class="px-5 py-3.5">Gross Pay</th>
-                <th class="px-5 py-3.5">Deductions</th>
+                <th class="px-5 py-3.5">Total Deductions (Inc. LOP)</th>
                 <th class="px-5 py-3.5">Net Disbursed</th>
                 <th class="px-5 py-3.5 text-center">Visibility Status</th>
                 <th class="px-5 py-3.5 text-right">Actions</th>
@@ -747,6 +757,8 @@ const HR = {
               ` : displayedSlips.map(slip => {
                 const emp = this.employees.find(e => e.id === slip.employeeId) || { name: slip.employeeName || slip.employeeId, jobTitle: 'Staff' };
                 const isPending = slip.status === 'Pending Approval';
+                const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0;
+                const lopDays = slip.attendanceSummary?.lopDays || (lopAmount > 0 ? 1 : 0);
                 return `
                   <tr class="hover:bg-slate-50/80 transition-colors ${isPending ? 'bg-amber-50/20' : ''}">
                     <td class="px-5 py-3.5">
@@ -758,7 +770,18 @@ const HR = {
                       <div class="text-[10px] text-slate-400">Pay Date: ${UI.formatDate(slip.payDate)}</div>
                     </td>
                     <td class="px-5 py-3.5 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
-                    <td class="px-5 py-3.5 font-mono text-xs text-rose-600">-${UI.formatCurrency(slip.totalDeductions || 0)}</td>
+                    <td class="px-5 py-3.5">
+                      <div class="font-mono text-xs text-rose-600 font-semibold">-${UI.formatCurrency(slip.totalDeductions || 0)}</div>
+                      ${lopAmount > 0 ? `
+                        <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 mt-0.5">
+                          <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
+                          <span>LOP: -${UI.formatCurrency(lopAmount)}</span>
+                          <span class="text-rose-500 font-normal">(${lopDays}d)</span>
+                        </div>
+                      ` : `
+                        <div class="text-[10px] text-emerald-600 mt-0.5 font-medium">₹0 LOP (100% Present)</div>
+                      `}
+                    </td>
                     <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
                     <td class="px-5 py-3.5 text-center">
                       ${isPending ? `
@@ -840,21 +863,58 @@ const HR = {
     const form = document.getElementById('form-add-employee');
     if (form) form.reset();
 
-    const roleSelect = document.getElementById('modal-employee-role');
-    const hrOption = document.getElementById('role-option-hr');
+    // 1. Role is strictly Standard Employee: HR option completely removed
+    const roleInput = document.getElementById('modal-employee-role');
+    if (roleInput) roleInput.value = 'employee';
 
-    if (roleSelect && hrOption) {
-      if (Auth.isHrAdmin) {
-        hrOption.disabled = false;
-        hrOption.textContent = 'HR Account (Admin Level)';
-      } else {
-        hrOption.disabled = true;
-        hrOption.textContent = 'HR Account (HR Admin Only - Locked)';
-      }
-      roleSelect.value = 'employee';
+    // 2. Fixed visual display for Standard Employee
+    const typeDisplay = document.getElementById('modal-employee-type-display');
+    const typeText = document.getElementById('modal-employee-type-text');
+    const typeBadge = document.getElementById('modal-employee-type-badge');
+    if (typeDisplay && typeText && typeBadge) {
+      typeDisplay.className = 'px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-sm font-medium';
+      typeText.innerHTML = `<span class="text-slate-700 flex items-center gap-2"><i class="fa-solid fa-user text-slate-500"></i> Standard Employee</span>`;
+      typeBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700';
+      typeBadge.textContent = 'Staff Member';
     }
 
-    this.onRoleSelectChange('employee');
+    // 3. Department: Hide Human Resources department for standard employee
+    const deptHrOption = document.getElementById('dept-option-hr');
+    if (deptHrOption) deptHrOption.style.display = 'none';
+    const deptSelect = document.getElementById('modal-employee-department');
+    if (deptSelect && (deptSelect.value === 'Human Resources' || !deptSelect.value)) {
+      deptSelect.value = 'Engineering';
+    }
+
+    // 4. Job title placeholder
+    const jobTitleInput = document.querySelector('#modal-add-employee input[name="jobTitle"]');
+    if (jobTitleInput) jobTitleInput.placeholder = 'e.g. Backend Engineer';
+
+    // 5. Modal header & Icon
+    const icon = document.getElementById('modal-employee-icon');
+    if (icon) {
+      icon.className = 'w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm';
+      icon.innerHTML = `<i class="fa-solid fa-user-plus"></i>`;
+    }
+    const title = document.getElementById('modal-employee-title');
+    if (title) title.textContent = 'Add New Employee';
+    const subtitle = document.getElementById('modal-employee-subtitle');
+    if (subtitle) subtitle.textContent = 'Standard employee profile and login credentials will be created';
+
+    // 6. Submit button
+    const submitBtn = document.getElementById('modal-employee-submit-btn');
+    if (submitBtn) {
+      submitBtn.className = 'px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors';
+      submitBtn.textContent = 'Save Employee';
+    }
+
+    // 7. Hide banner
+    const banner = document.getElementById('role-access-banner');
+    if (banner) {
+      banner.className = 'hidden';
+      banner.innerHTML = '';
+    }
+
     UI.openModal('modal-add-employee');
   },
 
@@ -867,52 +927,63 @@ const HR = {
     const form = document.getElementById('form-add-employee');
     if (form) form.reset();
 
-    const roleSelect = document.getElementById('modal-employee-role');
-    const hrOption = document.getElementById('role-option-hr');
-    const deptSelect = document.querySelector('#modal-add-employee select[name="department"]');
-    const titleInput = document.querySelector('#modal-add-employee input[name="jobTitle"]');
+    // 1. Role is strictly FIXED on HR: Cannot be changed to employee!
+    const roleInput = document.getElementById('modal-employee-role');
+    if (roleInput) roleInput.value = 'hr';
 
-    if (hrOption) {
-      hrOption.disabled = false;
-      hrOption.textContent = 'HR Account (Admin Level)';
+    // 2. Fixed visual display for HR category
+    const typeDisplay = document.getElementById('modal-employee-type-display');
+    const typeText = document.getElementById('modal-employee-type-text');
+    const typeBadge = document.getElementById('modal-employee-type-badge');
+    if (typeDisplay && typeText && typeBadge) {
+      typeDisplay.className = 'px-3.5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 flex items-center justify-between text-sm font-semibold';
+      typeText.innerHTML = `<span class="text-purple-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-purple-600"></i> HR Account (Fixed)</span>`;
+      typeBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-purple-200 text-purple-800';
+      typeBadge.textContent = 'HR Access';
     }
-    if (roleSelect) roleSelect.value = 'hr';
+
+    // 3. Department: Enable and select Human Resources
+    const deptHrOption = document.getElementById('dept-option-hr');
+    if (deptHrOption) deptHrOption.style.display = 'block';
+    const deptSelect = document.getElementById('modal-employee-department');
     if (deptSelect) deptSelect.value = 'Human Resources';
-    if (titleInput && !titleInput.value) titleInput.value = 'HR Specialist';
 
-    this.onRoleSelectChange('hr');
-    UI.openModal('modal-add-employee');
-  },
+    // 4. Job title default
+    const jobTitleInput = document.querySelector('#modal-add-employee input[name="jobTitle"]');
+    if (jobTitleInput) jobTitleInput.value = 'HR Specialist';
 
-  onRoleSelectChange(role) {
-    const banner = document.getElementById('role-access-banner');
-    if (!banner) return;
-
-    if (role === 'hr') {
-      if (Auth.isHrAdmin) {
-        banner.className = 'col-span-2 p-3.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-900 text-xs flex items-start gap-2.5';
-        banner.innerHTML = `
-          <i class="fa-solid fa-user-shield text-purple-600 text-base mt-0.5 shrink-0"></i>
-          <div>
-            <div class="font-bold text-purple-900">Creating HR Account (Authorized by HR Admin)</div>
-            <div class="text-purple-700 text-[11px] mt-0.5">This user will be provisioned with HR portal privileges to review attendance, leaves, payroll, and publish announcements.</div>
-          </div>
-        `;
-      } else {
-        banner.className = 'col-span-2 p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs flex items-start gap-2.5';
-        banner.innerHTML = `
-          <i class="fa-solid fa-lock text-rose-600 text-base mt-0.5 shrink-0"></i>
-          <div>
-            <div class="font-bold text-rose-900">Restricted Action: HR Account Creation</div>
-            <div class="text-rose-700 text-[11px] mt-0.5">Only the HR Administrator (Elena Rostova) has permissions to create or provision a new HR account.</div>
-          </div>
-        `;
-      }
-      banner.classList.remove('hidden');
-    } else {
-      banner.className = 'hidden';
-      banner.innerHTML = '';
+    // 5. Modal header & Icon
+    const icon = document.getElementById('modal-employee-icon');
+    if (icon) {
+      icon.className = 'w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm';
+      icon.innerHTML = `<i class="fa-solid fa-user-shield"></i>`;
     }
+    const title = document.getElementById('modal-employee-title');
+    if (title) title.textContent = 'Create New HR Account';
+    const subtitle = document.getElementById('modal-employee-subtitle');
+    if (subtitle) subtitle.textContent = 'Provision a new HR account with management credentials (HR Admin Only)';
+
+    // 6. Submit button
+    const submitBtn = document.getElementById('modal-employee-submit-btn');
+    if (submitBtn) {
+      submitBtn.className = 'px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-purple-600/20 transition-colors';
+      submitBtn.textContent = 'Create HR Account';
+    }
+
+    // 7. Show confirmation banner
+    const banner = document.getElementById('role-access-banner');
+    if (banner) {
+      banner.className = 'col-span-2 p-3.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-900 text-xs flex items-start gap-2.5';
+      banner.innerHTML = `
+        <i class="fa-solid fa-shield-halved text-purple-600 text-base mt-0.5 shrink-0"></i>
+        <div>
+          <div class="font-bold text-purple-900">Provisioning HR Account (HR Admin Authorized)</div>
+          <div class="text-purple-700 text-[11px] mt-0.5">This user will be created with fixed HR privileges to review attendance, leaves, payroll, and publish announcements. Employee type is locked to HR.</div>
+        </div>
+      `;
+    }
+
+    UI.openModal('modal-add-employee');
   },
 
   async submitNewEmployee(event) {
@@ -1056,6 +1127,17 @@ const HR = {
 
     const isPending = slip.status === 'Pending Approval';
     const payslipContainer = document.getElementById('printable-payslip');
+    const attSummary = slip.attendanceSummary || {
+      totalWorkingDays: 22,
+      presentDays: 22,
+      paidLeaveDays: 0,
+      absentDays: 0,
+      lateDays: 0,
+      lopDays: 0,
+      perDayRate: Math.round((slip.baseSalary || 0) / 22),
+      attendanceDeduction: slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0
+    };
+    const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || attSummary.attendanceDeduction || 0;
 
     payslipContainer.innerHTML = `
       ${isPending ? `
@@ -1119,6 +1201,39 @@ const HR = {
         </div>
       </div>
 
+      <!-- Attendance & Working Days Summary Card -->
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-6">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-xs font-bold text-indigo-900 uppercase tracking-wide flex items-center gap-1.5">
+            <i class="fa-solid fa-calendar-check text-indigo-600"></i>
+            <span>Monthly Attendance & Leave Summary</span>
+          </span>
+          <span class="text-[11px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Total Working Days</span>
+            <strong class="text-slate-900 text-sm font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
+            <span class="text-[10px] text-slate-500 block">Standard Shift Calendar</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Days Present / Paid</span>
+            <strong class="text-emerald-700 text-sm font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
+            <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Paid Lv</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Loss of Pay (LOP) Days</span>
+            <strong class="${(attSummary.lopDays || 0) > 0 ? 'text-rose-600' : 'text-slate-900'} text-sm font-mono">${attSummary.lopDays || 0} Day(s)</strong>
+            <span class="text-[10px] text-slate-500 block">${attSummary.absentDays || 0} Absent • ${attSummary.lateDays || 0} Late</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Daily Salary Rate</span>
+            <strong class="text-slate-900 text-sm font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
+            <span class="text-[10px] text-slate-500 block">Based on Basic Salary</span>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-2 gap-6 text-xs mb-6">
         <div>
           <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
@@ -1161,6 +1276,23 @@ const HR = {
               <span class="text-slate-600">Health & Group Insurance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
             </div>
+            ${lopAmount > 0 ? `
+              <div class="flex justify-between py-1.5 border-b border-rose-100 bg-rose-50/70 px-2 rounded -mx-2">
+                <div>
+                  <span class="text-rose-800 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-user-clock text-rose-500 text-[10px]"></i>
+                    Attendance / Loss of Pay (LOP)
+                  </span>
+                  <span class="text-[10px] text-rose-600 block mt-0.5">${attSummary.lopDays} day(s) deduction (${attSummary.absentDays} absent${attSummary.lateDays > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
+                </div>
+                <span class="font-mono font-bold text-rose-700">-${UI.formatCurrency(lopAmount)}</span>
+              </div>
+            ` : `
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">Attendance / LOP Deduction</span>
+                <span class="font-mono text-emerald-600 font-medium">₹0 (100% Present)</span>
+              </div>
+            `}
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Deductions</span>
               <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>
@@ -1181,6 +1313,22 @@ const HR = {
     `;
 
     UI.openModal('modal-view-payslip');
+  },
+
+  async recalculateAttendancePayroll() {
+    try {
+      UI.toast('Recalculating payroll with attendance data...', 'info');
+      const res = await API.post('/payslips/recalculate-all', {
+        month: 'November',
+        year: 2026
+      });
+      this.payslips = await API.get('/payslips');
+      UI.toast(res.message || 'Attendance deductions recalculated successfully!', 'success');
+      this.renderPayroll();
+    } catch (err) {
+      console.error('Failed to recalculate attendance payroll:', err);
+      UI.toast(err.message || 'Could not recalculate attendance deductions', 'error');
+    }
   },
 
   async viewPayslipForEmployee(empId) {

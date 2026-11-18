@@ -493,27 +493,41 @@ const Employee = {
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
-                ${approvedSlips.map(slip => `
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-5 py-4">
-                      <div class="font-bold text-slate-900">${slip.month} ${slip.year}</div>
-                      <div class="text-[11px] text-slate-400">Paid on ${UI.formatDate(slip.payDate)}</div>
-                    </td>
-                    <td class="px-5 py-4 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
-                    <td class="px-5 py-4 font-mono text-xs text-rose-600">-${UI.formatCurrency(slip.totalDeductions || 0)}</td>
-                    <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
-                    <td class="px-5 py-4 text-center">
-                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <i class="fa-solid fa-circle-check text-[10px]"></i> Approved & Released
-                      </span>
-                    </td>
-                    <td class="px-5 py-4 text-right">
-                      <button onclick="Employee.viewPayslip('${slip.id}')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors inline-flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-invoice"></i> View Statement
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
+                ${approvedSlips.map(slip => {
+                  const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0;
+                  const lopDays = slip.attendanceSummary?.lopDays || (lopAmount > 0 ? 1 : 0);
+                  return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                      <td class="px-5 py-4">
+                        <div class="font-bold text-slate-900">${slip.month} ${slip.year}</div>
+                        <div class="text-[11px] text-slate-400">Paid on ${UI.formatDate(slip.payDate)}</div>
+                      </td>
+                      <td class="px-5 py-4 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
+                      <td class="px-5 py-4">
+                        <div class="font-mono text-xs text-rose-600 font-semibold">-${UI.formatCurrency(slip.totalDeductions || 0)}</div>
+                        ${lopAmount > 0 ? `
+                          <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 mt-1">
+                            <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
+                            <span>LOP: -${UI.formatCurrency(lopAmount)} (${lopDays}d)</span>
+                          </div>
+                        ` : `
+                          <div class="text-[10px] text-emerald-600 mt-0.5 font-medium">₹0 LOP (100% Present)</div>
+                        `}
+                      </td>
+                      <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
+                      <td class="px-5 py-4 text-center">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <i class="fa-solid fa-circle-check text-[10px]"></i> Approved & Released
+                        </span>
+                      </td>
+                      <td class="px-5 py-4 text-right">
+                        <button onclick="Employee.viewPayslip('${slip.id}')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors inline-flex items-center gap-1.5">
+                          <i class="fa-solid fa-file-invoice"></i> View Statement
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </div>
@@ -537,6 +551,17 @@ const Employee = {
 
     const emp = this.employeeData || Auth.employee || {};
     const payslipContainer = document.getElementById('printable-payslip');
+    const attSummary = slip.attendanceSummary || {
+      totalWorkingDays: 22,
+      presentDays: 22,
+      paidLeaveDays: 0,
+      absentDays: 0,
+      lateDays: 0,
+      lopDays: 0,
+      perDayRate: Math.round((slip.baseSalary || 0) / 22),
+      attendanceDeduction: slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0
+    };
+    const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || attSummary.attendanceDeduction || 0;
 
     payslipContainer.innerHTML = `
       <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-emerald-800 no-print">
@@ -578,6 +603,39 @@ const Employee = {
           <span class="text-slate-400 block">Designation & Department</span>
           <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
           <span class="text-slate-500 block mt-1">${emp.department}</span>
+        </div>
+      </div>
+
+      <!-- Attendance & Working Days Summary Card -->
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-6">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-xs font-bold text-indigo-900 uppercase tracking-wide flex items-center gap-1.5">
+            <i class="fa-solid fa-calendar-check text-indigo-600"></i>
+            <span>Monthly Attendance & Leave Summary</span>
+          </span>
+          <span class="text-[11px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Working Days</span>
+            <strong class="text-slate-900 text-sm font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
+            <span class="text-[10px] text-slate-500 block">Standard Shift Calendar</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Days Present / Paid</span>
+            <strong class="text-emerald-700 text-sm font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
+            <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Paid Lv</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Loss of Pay (LOP) Days</span>
+            <strong class="${(attSummary.lopDays || 0) > 0 ? 'text-rose-600' : 'text-slate-900'} text-sm font-mono">${attSummary.lopDays || 0} Day(s)</strong>
+            <span class="text-[10px] text-slate-500 block">${attSummary.absentDays || 0} Absent • ${attSummary.lateDays || 0} Late</span>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Per-Day Salary Rate</span>
+            <strong class="text-slate-900 text-sm font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
+            <span class="text-[10px] text-slate-500 block">Based on Basic Salary</span>
+          </div>
         </div>
       </div>
 
@@ -623,6 +681,23 @@ const Employee = {
               <span class="text-slate-600">Health & Group Insurance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
             </div>
+            ${lopAmount > 0 ? `
+              <div class="flex justify-between py-1.5 border-b border-rose-100 bg-rose-50/70 px-2 rounded -mx-2">
+                <div>
+                  <span class="text-rose-800 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-user-clock text-rose-500 text-[10px]"></i>
+                    Attendance / Loss of Pay (LOP)
+                  </span>
+                  <span class="text-[10px] text-rose-600 block mt-0.5">${attSummary.lopDays} day(s) deduction (${attSummary.absentDays} absent${attSummary.lateDays > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
+                </div>
+                <span class="font-mono font-bold text-rose-700">-${UI.formatCurrency(lopAmount)}</span>
+              </div>
+            ` : `
+              <div class="flex justify-between py-1 border-b border-slate-100">
+                <span class="text-slate-600">Attendance / LOP Deduction</span>
+                <span class="font-mono text-emerald-600 font-medium">₹0 (100% Present)</span>
+              </div>
+            `}
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Deductions</span>
               <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>

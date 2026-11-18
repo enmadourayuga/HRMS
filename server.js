@@ -549,6 +549,88 @@ app.patch('/api/payslips/:id', (req, res) => {
   res.json(slip);
 });
 
+// Helper: Calculate attendance summary and Loss of Pay (LOP) deductions for payroll
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+function calculateAttendanceSummary(employeeId, month, year, baseSalary) {
+  const totalWorkingDays = 22; // Standard 22 working days in standard monthly payroll cycle
+  const perDayRate = Math.round((baseSalary || 0) / totalWorkingDays);
+
+  const monthIdx = MONTH_NAMES.findIndex(m => m.toLowerCase() === (month || '').toLowerCase());
+  const monthPrefix = monthIdx !== -1 
+    ? `${year}-${String(monthIdx + 1).padStart(2, '0')}`
+    : `${year}-11`;
+
+  // 1. Attendance records in this payroll month
+  const empAtt = (db.attendance || []).filter(a => 
+    a.employeeId === employeeId && 
+    (a.date ? a.date.startsWith(monthPrefix) : true)
+  );
+
+  let presentCount = 0;
+  let lateCount = 0;
+  let absentCount = 0;
+
+  empAtt.forEach(a => {
+    if (a.status === 'Present') presentCount++;
+    else if (a.status === 'Late') lateCount++;
+    else if (a.status === 'Absent') absentCount++;
+  });
+
+  // 2. Leaves in this payroll month
+  const empLeaves = (db.leaves || []).filter(l => {
+    if (l.employeeId !== employeeId) return false;
+    const startMatches = (l.startDate || '').startsWith(monthPrefix);
+    const endMatches = (l.endDate || '').startsWith(monthPrefix);
+    return startMatches || endMatches;
+  });
+
+  let paidLeaveDays = 0;
+  let unpaidLeaveDays = 0;
+
+  empLeaves.forEach(l => {
+    if (l.status === 'Approved') {
+      // Annual, Sick, Casual leaves that are approved are Paid Leaves
+      if (['annual', 'sick', 'casual'].includes((l.leaveType || '').toLowerCase())) {
+        paidLeaveDays += Number(l.days) || 0;
+      } else {
+        unpaidLeaveDays += Number(l.days) || 0;
+      }
+    } else if (l.status === 'Rejected') {
+      // Unapproved / rejected leaves are treated as unexcused absence if the employee was absent
+      unpaidLeaveDays += Number(l.days) || 0;
+    }
+  });
+
+  // 3. Late policy penalty: 3 or more late punches = 0.5 day LOP deduction
+  const latePenaltyDays = Math.floor(lateCount / 3) * 0.5;
+
+  // Total LOP (Loss of Pay) days = unexcused absent days + unpaid leaves + late penalties
+  const lopDays = absentCount + unpaidLeaveDays + latePenaltyDays;
+
+  // Effective days present or paid in the 22-day cycle
+  const effectivePresentDays = Math.max(0, totalWorkingDays - lopDays - paidLeaveDays);
+
+  // Attendance deduction = daily rate * LOP days
+  const attendanceDeduction = Math.round(perDayRate * lopDays);
+
+  return {
+    totalWorkingDays,
+    presentDays: effectivePresentDays,
+    paidLeaveDays,
+    absentDays: absentCount,
+    lateDays: lateCount,
+    unpaidLeaveDays,
+    latePenaltyDays,
+    lopDays,
+    perDayRate,
+    attendanceDeduction
+  };
+}
+
 app.post('/api/payslips/approve-all', (req, res) => {
   const { month, year, reviewedBy = 'Elena Rostova (HR)' } = req.body;
   const today = new Date().toISOString().split('T')[0];
@@ -570,30 +652,35 @@ app.post('/api/payslips/approve-all', (req, res) => {
 });
 
 app.post('/api/payslips/generate-cycle', (req, res) => {
-  const { month, year = 2026 } = req.body;
+  const { month, year = 2026, forceRecalculate = false } = req.body;
   if (!month) return res.status(400).json({ error: 'Month is required' });
 
   let added = 0;
+  let updated = 0;
+
   (db.employees || []).forEach(emp => {
-    const existing = (db.payslips || []).find(p => 
+    let slip = (db.payslips || []).find(p => 
       p.employeeId === emp.id && 
       p.month.toLowerCase() === month.toLowerCase() && 
       String(p.year) === String(year)
     );
 
-    if (!existing) {
-      const monthly = Math.round((emp.salary || 900000) / 12);
-      const hra = Math.round(monthly * 0.40);
-      const special = Math.round(monthly * 0.20);
-      const conveyance = 1600;
-      const gross = monthly + hra + special + conveyance;
-      const tax = Math.round(gross * 0.10);
-      const pf = Math.round(monthly * 0.12);
-      const insurance = 1200;
-      const totalDeductions = tax + pf + insurance;
-      const net = gross - totalDeductions;
+    const monthly = Math.round((emp.salary || 900000) / 12);
+    const hra = Math.round(monthly * 0.40);
+    const special = Math.round(monthly * 0.20);
+    const conveyance = 1600;
+    const gross = monthly + hra + special + conveyance;
 
-      const newSlip = {
+    const attSummary = calculateAttendanceSummary(emp.id, month, Number(year), monthly);
+    const tax = Math.round(gross * 0.10);
+    const pf = Math.round(monthly * 0.12);
+    const insurance = 1200;
+    const attDeduction = attSummary.attendanceDeduction;
+    const totalDeductions = tax + pf + insurance + attDeduction;
+    const net = gross - totalDeductions;
+
+    if (!slip) {
+      slip = {
         id: `PS-${year}-${month.slice(0, 3).toUpperCase()}-${emp.id.replace('EMP-', '')}`,
         employeeId: emp.id,
         employeeName: emp.name,
@@ -602,7 +689,14 @@ app.post('/api/payslips/generate-cycle', (req, res) => {
         payDate: `${year}-${month === 'November' ? '11-30' : (month === 'December' ? '12-31' : '10-31')}`,
         baseSalary: monthly,
         allowances: { hra, specialAllowance: special, conveyance },
-        deductions: { incomeTax: tax, providentFund: pf, healthInsurance: insurance },
+        deductions: { 
+          incomeTax: tax, 
+          providentFund: pf, 
+          healthInsurance: insurance,
+          attendanceDeduction: attDeduction,
+          lossOfPay: attDeduction
+        },
+        attendanceSummary: attSummary,
         grossPay: gross,
         totalDeductions,
         netPay: net,
@@ -612,13 +706,70 @@ app.post('/api/payslips/generate-cycle', (req, res) => {
       };
 
       if (!db.payslips) db.payslips = [];
-      db.payslips.unshift(newSlip);
+      db.payslips.unshift(slip);
       added++;
+    } else if (forceRecalculate) {
+      slip.baseSalary = monthly;
+      slip.allowances = { hra, specialAllowance: special, conveyance };
+      slip.attendanceSummary = attSummary;
+      slip.deductions = {
+        incomeTax: tax,
+        providentFund: pf,
+        healthInsurance: insurance,
+        attendanceDeduction: attDeduction,
+        lossOfPay: attDeduction
+      };
+      slip.grossPay = gross;
+      slip.totalDeductions = totalDeductions;
+      slip.netPay = net;
+      updated++;
     }
   });
 
   saveDatabase();
-  res.json({ message: `Generated ${added} payslips in Pending Approval status for ${month} ${year}`, added });
+  res.json({ 
+    message: `Processed cycle for ${month} ${year}: ${added} added, ${updated} recalculated with attendance deductions`, 
+    added, 
+    updated 
+  });
+});
+
+// Endpoint to recalculate attendance deductions across all payslips
+app.post('/api/payslips/recalculate-all', (req, res) => {
+  const { month = 'November', year = 2026 } = req.body;
+  let count = 0;
+
+  (db.payslips || []).forEach(slip => {
+    const matchesMonth = month ? slip.month.toLowerCase() === month.toLowerCase() : true;
+    const matchesYear = year ? String(slip.year) === String(year) : true;
+    if (matchesMonth && matchesYear) {
+      const emp = (db.employees || []).find(e => e.id === slip.employeeId);
+      const baseSalary = slip.baseSalary || Math.round((emp?.salary || 900000) / 12);
+      const attSummary = calculateAttendanceSummary(slip.employeeId, slip.month, slip.year, baseSalary);
+
+      slip.attendanceSummary = attSummary;
+      const tax = slip.deductions?.incomeTax || Math.round((slip.grossPay || 0) * 0.10);
+      const pf = slip.deductions?.providentFund || Math.round(baseSalary * 0.12);
+      const insurance = slip.deductions?.healthInsurance || 1200;
+      const attDeduction = attSummary.attendanceDeduction;
+
+      slip.deductions = {
+        ...slip.deductions,
+        incomeTax: tax,
+        providentFund: pf,
+        healthInsurance: insurance,
+        attendanceDeduction: attDeduction,
+        lossOfPay: attDeduction
+      };
+
+      slip.totalDeductions = tax + pf + insurance + attDeduction;
+      slip.netPay = (slip.grossPay || 0) - slip.totalDeductions;
+      count++;
+    }
+  });
+
+  saveDatabase();
+  res.json({ message: `Successfully recalculated attendance deductions for ${count} payslip(s)`, count });
 });
 
 app.get('/api/departments', (req, res) => {

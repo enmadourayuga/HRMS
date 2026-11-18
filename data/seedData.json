@@ -62,9 +62,18 @@
       "status": "Active",
       "manager": "Executive Team",
       "leaveBalances": {
-        "annual": { "total": 22, "used": 5 },
-        "sick": { "total": 12, "used": 2 },
-        "casual": { "total": 6, "used": 1 }
+        "annual": {
+          "total": 22,
+          "used": 5
+        },
+        "sick": {
+          "total": 12,
+          "used": 2
+        },
+        "casual": {
+          "total": 6,
+          "used": 1
+        }
       }
     },
     {
@@ -82,9 +91,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 6 },
-        "sick": { "total": 10, "used": 2 },
-        "casual": { "total": 5, "used": 2 }
+        "annual": {
+          "total": 20,
+          "used": 6
+        },
+        "sick": {
+          "total": 10,
+          "used": 2
+        },
+        "casual": {
+          "total": 5,
+          "used": 2
+        }
       }
     },
     {
@@ -102,9 +120,18 @@
       "status": "Active",
       "manager": "Elena Rostova",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 4 },
-        "sick": { "total": 10, "used": 1 },
-        "casual": { "total": 5, "used": 0 }
+        "annual": {
+          "total": 20,
+          "used": 4
+        },
+        "sick": {
+          "total": 10,
+          "used": 1
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
       }
     },
     {
@@ -122,9 +149,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 8 },
-        "sick": { "total": 10, "used": 3 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 20,
+          "used": 8
+        },
+        "sick": {
+          "total": 10,
+          "used": 3
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -142,9 +178,18 @@
       "status": "On Leave",
       "manager": "Rachel Adams",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 5 },
-        "sick": { "total": 10, "used": 4 },
-        "casual": { "total": 5, "used": 2 }
+        "annual": {
+          "total": 18,
+          "used": 5
+        },
+        "sick": {
+          "total": 10,
+          "used": 4
+        },
+        "casual": {
+          "total": 5,
+          "used": 2
+        }
       }
     },
     {
@@ -162,9 +207,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 2 },
-        "sick": { "total": 10, "used": 0 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 18,
+          "used": 2
+        },
+        "sick": {
+          "total": 10,
+          "used": 0
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -182,9 +236,18 @@
       "status": "Active",
       "manager": "Elena Rostova",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 7 },
-        "sick": { "total": 10, "used": 1 },
-        "casual": { "total": 5, "used": 1 }
+        "annual": {
+          "total": 20,
+          "used": 7
+        },
+        "sick": {
+          "total": 10,
+          "used": 1
+        },
+        "casual": {
+          "total": 5,
+          "used": 1
+        }
       }
     },
     {
@@ -202,9 +265,18 @@
       "status": "Active",
       "manager": "David Miller",
       "leaveBalances": {
-        "annual": { "total": 18, "used": 3 },
-        "sick": { "total": 10, "used": 2 },
-        "casual": { "total": 5, "used": 0 }
+        "annual": {
+          "total": 18,
+          "used": 3
+        },
+        "sick": {
+          "total": 10,
+          "used": 2
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
       }
     },
     {
@@ -223,9 +295,18 @@
       "status": "Active",
       "manager": "Elena Rostova",
       "leaveBalances": {
-        "annual": { "total": 20, "used": 2 },
-        "sick": { "total": 10, "used": 1 },
-        "casual": { "total": 5, "used": 0 }
+        "annual": {
+          "total": 20,
+          "used": 2
+        },
+        "sick": {
+          "total": 10,
+          "used": 1
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
       }
     }
   ],
@@ -350,7 +431,7 @@
       "clockIn": "09:25 AM",
       "clockOut": null,
       "status": "Late",
-      "totalHours": 2.0
+      "totalHours": 2
     },
     {
       "id": "ATT-004",
@@ -401,6 +482,1096 @@
       "clockOut": null,
       "status": "Present",
       "totalHours": 2.2
+    },
+    {
+      "id": "ATT-009",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-18",
+      "clockIn": "08:55 AM",
+      "clockOut": null,
+      "status": "Present",
+      "totalHours": 2.5
+    },
+    {
+      "id": "ATT-207",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-206",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-205",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-204",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-203",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-17",
+      "clockIn": null,
+      "clockOut": null,
+      "status": "On Leave",
+      "totalHours": 0
+    },
+    {
+      "id": "ATT-202",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-201",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-200",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-199",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-17",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-198",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-197",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-196",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-195",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-194",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-193",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-192",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-191",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-190",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-16",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-189",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-188",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-187",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-186",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-13",
+      "clockIn": null,
+      "clockOut": null,
+      "status": "Absent",
+      "totalHours": 0
+    },
+    {
+      "id": "ATT-185",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-184",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-183",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-182",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-181",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-13",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-180",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-179",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-178",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-177",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-176",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-175",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-174",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-12",
+      "clockIn": "09:35 AM",
+      "clockOut": "06:00 PM",
+      "status": "Late",
+      "totalHours": 8
+    },
+    {
+      "id": "ATT-173",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-172",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-12",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-171",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-170",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-169",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-168",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-167",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-166",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-165",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-164",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-163",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-11",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-162",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-161",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-160",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-159",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-158",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-157",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-156",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-155",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-10",
+      "clockIn": null,
+      "clockOut": null,
+      "status": "Absent",
+      "totalHours": 0
+    },
+    {
+      "id": "ATT-154",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-10",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-153",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-152",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-151",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-150",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-09",
+      "clockIn": null,
+      "clockOut": null,
+      "status": "Absent",
+      "totalHours": 0
+    },
+    {
+      "id": "ATT-149",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-148",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-147",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-146",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-145",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-09",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-144",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-143",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-142",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-06",
+      "clockIn": null,
+      "clockOut": null,
+      "status": "Absent",
+      "totalHours": 0
+    },
+    {
+      "id": "ATT-141",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-140",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-139",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-138",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-137",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-136",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-06",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-135",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-134",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-133",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-132",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-131",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-130",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-129",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-05",
+      "clockIn": "09:20 AM",
+      "clockOut": "06:00 PM",
+      "status": "Late",
+      "totalHours": 8
+    },
+    {
+      "id": "ATT-128",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-127",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-05",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-126",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-125",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-124",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-123",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-122",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-121",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-120",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-119",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-118",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-04",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-117",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-116",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-115",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-114",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-113",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-112",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-111",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-110",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-109",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-03",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-108",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-107",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-106",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-105",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-104",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-103",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-102",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-101",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
+    },
+    {
+      "id": "ATT-100",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "date": "2026-11-02",
+      "clockIn": "09:00 AM",
+      "clockOut": "05:30 PM",
+      "status": "Present",
+      "totalHours": 8.5
     }
   ],
   "payslips": [
@@ -420,14 +1591,28 @@
       "deductions": {
         "incomeTax": 29493,
         "providentFund": 22000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 8333,
+        "lossOfPay": 8333
       },
       "grossPay": 294932,
-      "totalDeductions": 52693,
-      "netPay": 242239,
+      "totalDeductions": 61026,
+      "netPay": 233906,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 21,
+        "paidLeaveDays": 0,
+        "absentDays": 1,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 1,
+        "perDayRate": 8333,
+        "attendanceDeduction": 8333
+      }
     },
     {
       "id": "PS-2026-11-003",
@@ -445,14 +1630,28 @@
       "deductions": {
         "incomeTax": 26160,
         "providentFund": 19500,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 3693,
+        "lossOfPay": 3693
       },
       "grossPay": 261600,
-      "totalDeductions": 46860,
-      "netPay": 214740,
+      "totalDeductions": 50553,
+      "netPay": 211047,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 21.5,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 3,
+        "latePenaltyDays": 0.5,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0.5,
+        "perDayRate": 7386,
+        "attendanceDeduction": 3693
+      }
     },
     {
       "id": "PS-2026-11-004",
@@ -470,14 +1669,28 @@
       "deductions": {
         "incomeTax": 18827,
         "providentFund": 14000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 188267,
       "totalDeductions": 34027,
       "netPay": 154240,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 5303,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-11-005",
@@ -495,14 +1708,28 @@
       "deductions": {
         "incomeTax": 21493,
         "providentFund": 16000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 214933,
       "totalDeductions": 38693,
       "netPay": 176240,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 19,
+        "paidLeaveDays": 3,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 6061,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-11-001",
@@ -520,14 +1747,28 @@
       "deductions": {
         "incomeTax": 24827,
         "providentFund": 18500,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 248267,
       "totalDeductions": 44527,
       "netPay": 203740,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 7008,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-10-002",
@@ -545,14 +1786,28 @@
       "deductions": {
         "incomeTax": 29493,
         "providentFund": 22000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 294932,
       "totalDeductions": 52693,
       "netPay": 242239,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
-      "approvedAt": "2026-10-30"
+      "approvedAt": "2026-10-30",
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 8333,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-09-002",
@@ -570,14 +1825,28 @@
       "deductions": {
         "incomeTax": 29493,
         "providentFund": 22000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 294932,
       "totalDeductions": 52693,
       "netPay": 242239,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
-      "approvedAt": "2026-09-29"
+      "approvedAt": "2026-09-29",
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 8333,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-10-003",
@@ -595,14 +1864,28 @@
       "deductions": {
         "incomeTax": 26160,
         "providentFund": 19500,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 261600,
       "totalDeductions": 46860,
       "netPay": 214740,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
-      "approvedAt": "2026-10-30"
+      "approvedAt": "2026-10-30",
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 7386,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-10-004",
@@ -620,14 +1903,28 @@
       "deductions": {
         "incomeTax": 18827,
         "providentFund": 14000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 188267,
       "totalDeductions": 34027,
       "netPay": 154240,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
-      "approvedAt": "2026-10-30"
+      "approvedAt": "2026-10-30",
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 5303,
+        "attendanceDeduction": 0
+      }
     },
     {
       "id": "PS-2026-10-005",
@@ -645,14 +1942,184 @@
       "deductions": {
         "incomeTax": 21493,
         "providentFund": 16000,
-        "healthInsurance": 1200
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "grossPay": 214933,
       "totalDeductions": 38693,
       "netPay": 176240,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
-      "approvedAt": "2026-10-30"
+      "approvedAt": "2026-10-30",
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 6061,
+        "attendanceDeduction": 0
+      }
+    },
+    {
+      "id": "PS-2026-11-006",
+      "employeeId": "EMP-006",
+      "employeeName": "Liam Davis",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 133333,
+      "allowances": {
+        "hra": 53333,
+        "specialAllowance": 26667,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 21493,
+        "providentFund": 16000,
+        "healthInsurance": 1200,
+        "attendanceDeduction": 12122,
+        "lossOfPay": 12122
+      },
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 20,
+        "paidLeaveDays": 0,
+        "absentDays": 2,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 2,
+        "perDayRate": 6061,
+        "attendanceDeduction": 12122
+      },
+      "grossPay": 214933,
+      "totalDeductions": 50815,
+      "netPay": 164118,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-007",
+      "employeeId": "EMP-007",
+      "employeeName": "Sophia Taylor",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 175000,
+      "allowances": {
+        "hra": 70000,
+        "specialAllowance": 35000,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 28160,
+        "providentFund": 21000,
+        "healthInsurance": 1200,
+        "attendanceDeduction": 7955,
+        "lossOfPay": 7955
+      },
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 21,
+        "paidLeaveDays": 0,
+        "absentDays": 1,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 1,
+        "perDayRate": 7955,
+        "attendanceDeduction": 7955
+      },
+      "grossPay": 281600,
+      "totalDeductions": 58315,
+      "netPay": 223285,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-008",
+      "employeeId": "EMP-008",
+      "employeeName": "Daniel Kim",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 158333,
+      "allowances": {
+        "hra": 63333,
+        "specialAllowance": 31667,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 25493,
+        "providentFund": 19000,
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
+      },
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 7197,
+        "attendanceDeduction": 0
+      },
+      "grossPay": 254933,
+      "totalDeductions": 45693,
+      "netPay": 209240,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-009",
+      "employeeId": "EMP-009",
+      "employeeName": "Clara Oswald",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 95833,
+      "allowances": {
+        "hra": 38333,
+        "specialAllowance": 19167,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 15493,
+        "providentFund": 11500,
+        "healthInsurance": 1200,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
+      },
+      "attendanceSummary": {
+        "totalWorkingDays": 22,
+        "presentDays": 22,
+        "paidLeaveDays": 0,
+        "absentDays": 0,
+        "lateDays": 0,
+        "latePenaltyDays": 0,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
+        "perDayRate": 4356,
+        "attendanceDeduction": 0
+      },
+      "grossPay": 154933,
+      "totalDeductions": 28193,
+      "netPay": 126740,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
     }
   ],
   "announcements": [
@@ -685,11 +2152,47 @@
     }
   ],
   "departments": [
-    { "id": "DEP-01", "name": "Engineering", "head": "David Miller", "count": 24, "budget": "₹2.8 Cr" },
-    { "id": "DEP-02", "name": "Design & UX", "head": "Sarah Chen", "count": 8, "budget": "₹95 L" },
-    { "id": "DEP-03", "name": "Product Management", "head": "Sophia Taylor", "count": 12, "budget": "₹1.4 Cr" },
-    { "id": "DEP-04", "name": "Infrastructure & Sec", "head": "Marcus Vance", "count": 10, "budget": "₹1.6 Cr" },
-    { "id": "DEP-05", "name": "People & Culture", "head": "Elena Rostova", "count": 6, "budget": "₹72 L" },
-    { "id": "DEP-06", "name": "Marketing & Growth", "head": "Rachel Adams", "count": 14, "budget": "₹1.9 Cr" }
+    {
+      "id": "DEP-01",
+      "name": "Engineering",
+      "head": "David Miller",
+      "count": 24,
+      "budget": "₹2.8 Cr"
+    },
+    {
+      "id": "DEP-02",
+      "name": "Design & UX",
+      "head": "Sarah Chen",
+      "count": 8,
+      "budget": "₹95 L"
+    },
+    {
+      "id": "DEP-03",
+      "name": "Product Management",
+      "head": "Sophia Taylor",
+      "count": 12,
+      "budget": "₹1.4 Cr"
+    },
+    {
+      "id": "DEP-04",
+      "name": "Infrastructure & Sec",
+      "head": "Marcus Vance",
+      "count": 10,
+      "budget": "₹1.6 Cr"
+    },
+    {
+      "id": "DEP-05",
+      "name": "People & Culture",
+      "head": "Elena Rostova",
+      "count": 6,
+      "budget": "₹72 L"
+    },
+    {
+      "id": "DEP-06",
+      "name": "Marketing & Growth",
+      "head": "Rachel Adams",
+      "count": 14,
+      "budget": "₹1.9 Cr"
+    }
   ]
 }

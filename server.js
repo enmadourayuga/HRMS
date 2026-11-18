@@ -28,6 +28,19 @@ function saveDatabase() {
   fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
 }
 
+// Helper: Extract authenticated user from Authorization header
+function getAuthUser(req) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return null;
+  const token = authHeader.replace('Bearer ', '').trim();
+  const parts = token.split('-');
+  if (parts.length >= 3) {
+    const userId = parts.slice(1, -1).join('-');
+    return db.users.find(u => u.id === userId) || null;
+  }
+  return null;
+}
+
 // ----------------- AUTH ROUTES -----------------
 app.get('/api/auth/demo-users', (req, res) => {
   const demoList = db.users.map(u => {
@@ -338,12 +351,144 @@ app.post('/api/attendance/clock-out', (req, res) => {
 
 // ----------------- PAYSLIPS & DEPARTMENTS & ANNOUNCEMENTS -----------------
 app.get('/api/payslips', (req, res) => {
-  const { employeeId } = req.query;
-  let results = [...db.payslips];
+  const { employeeId, status, month, year } = req.query;
+  const authUser = getAuthUser(req);
+  let results = [...(db.payslips || [])];
+
   if (employeeId) {
     results = results.filter(p => p.employeeId === employeeId);
   }
+
+  if (month) {
+    results = results.filter(p => p.month.toLowerCase() === month.toLowerCase());
+  }
+
+  if (year) {
+    results = results.filter(p => String(p.year) === String(year));
+  }
+
+  // Employees ONLY see Approved or Paid payslips! Unapproved/pending slips are strictly hidden from employees.
+  if (authUser && authUser.role === 'employee') {
+    results = results.filter(p => p.status === 'Approved' || p.status === 'Paid');
+  } else if (!authUser && req.query.role === 'employee') {
+    results = results.filter(p => p.status === 'Approved' || p.status === 'Paid');
+  } else if (req.query.approvedOnly === 'true') {
+    results = results.filter(p => p.status === 'Approved' || p.status === 'Paid');
+  }
+
+  if (status && status !== 'All') {
+    results = results.filter(p => p.status.toLowerCase() === status.toLowerCase());
+  }
+
+  // Sort descending by payDate or year/month
+  results.sort((a, b) => (b.payDate || '').localeCompare(a.payDate || ''));
   res.json(results);
+});
+
+app.get('/api/payslips/:id', (req, res) => {
+  const authUser = getAuthUser(req);
+  const slip = (db.payslips || []).find(p => p.id === req.params.id);
+  if (!slip) return res.status(404).json({ error: 'Payslip not found' });
+
+  // If employee requests an unapproved slip, forbid access
+  if (authUser && authUser.role === 'employee' && slip.status !== 'Approved' && slip.status !== 'Paid') {
+    return res.status(403).json({ error: 'This payslip has not been approved by HR yet' });
+  }
+
+  res.json(slip);
+});
+
+app.patch('/api/payslips/:id', (req, res) => {
+  const { status, reviewedBy = 'Elena Rostova (HR)' } = req.body;
+  const slip = (db.payslips || []).find(p => p.id === req.params.id);
+  if (!slip) return res.status(404).json({ error: 'Payslip not found' });
+
+  if (status && !['Approved', 'Pending Approval', 'Paid', 'Rejected'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+
+  if (status) {
+    slip.status = status;
+    slip.reviewedBy = reviewedBy;
+    slip.approvedAt = (status === 'Approved' || status === 'Paid') 
+      ? new Date().toISOString().split('T')[0] 
+      : null;
+  }
+
+  saveDatabase();
+  res.json(slip);
+});
+
+app.post('/api/payslips/approve-all', (req, res) => {
+  const { month, year, reviewedBy = 'Elena Rostova (HR)' } = req.body;
+  const today = new Date().toISOString().split('T')[0];
+  let count = 0;
+
+  (db.payslips || []).forEach(p => {
+    const matchesMonth = month ? p.month.toLowerCase() === month.toLowerCase() : true;
+    const matchesYear = year ? String(p.year) === String(year) : true;
+    if (matchesMonth && matchesYear && p.status === 'Pending Approval') {
+      p.status = 'Approved';
+      p.reviewedBy = reviewedBy;
+      p.approvedAt = today;
+      count++;
+    }
+  });
+
+  saveDatabase();
+  res.json({ message: `Successfully approved ${count} payslip(s)`, count });
+});
+
+app.post('/api/payslips/generate-cycle', (req, res) => {
+  const { month, year = 2026 } = req.body;
+  if (!month) return res.status(400).json({ error: 'Month is required' });
+
+  let added = 0;
+  (db.employees || []).forEach(emp => {
+    const existing = (db.payslips || []).find(p => 
+      p.employeeId === emp.id && 
+      p.month.toLowerCase() === month.toLowerCase() && 
+      String(p.year) === String(year)
+    );
+
+    if (!existing) {
+      const monthly = Math.round((emp.salary || 900000) / 12);
+      const hra = Math.round(monthly * 0.40);
+      const special = Math.round(monthly * 0.20);
+      const conveyance = 1600;
+      const gross = monthly + hra + special + conveyance;
+      const tax = Math.round(gross * 0.10);
+      const pf = Math.round(monthly * 0.12);
+      const insurance = 1200;
+      const totalDeductions = tax + pf + insurance;
+      const net = gross - totalDeductions;
+
+      const newSlip = {
+        id: `PS-${year}-${month.slice(0, 3).toUpperCase()}-${emp.id.replace('EMP-', '')}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        month,
+        year: Number(year),
+        payDate: `${year}-${month === 'November' ? '11-30' : (month === 'December' ? '12-31' : '10-31')}`,
+        baseSalary: monthly,
+        allowances: { hra, specialAllowance: special, conveyance },
+        deductions: { incomeTax: tax, providentFund: pf, healthInsurance: insurance },
+        grossPay: gross,
+        totalDeductions,
+        netPay: net,
+        status: 'Pending Approval',
+        reviewedBy: null,
+        approvedAt: null
+      };
+
+      if (!db.payslips) db.payslips = [];
+      db.payslips.unshift(newSlip);
+      added++;
+    }
+  });
+
+  saveDatabase();
+  res.json({ message: `Generated ${added} payslips in Pending Approval status for ${month} ${year}`, added });
 });
 
 app.get('/api/departments', (req, res) => {

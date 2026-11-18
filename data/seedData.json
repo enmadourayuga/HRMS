@@ -374,8 +374,134 @@
   ],
   "payslips": [
     {
+      "id": "PS-2026-11-002",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 183333,
+      "allowances": {
+        "hra": 73333,
+        "specialAllowance": 36666,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 29493,
+        "providentFund": 22000,
+        "healthInsurance": 1200
+      },
+      "grossPay": 294932,
+      "totalDeductions": 52693,
+      "netPay": 242239,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-003",
+      "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 162500,
+      "allowances": {
+        "hra": 65000,
+        "specialAllowance": 32500,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 26160,
+        "providentFund": 19500,
+        "healthInsurance": 1200
+      },
+      "grossPay": 261600,
+      "totalDeductions": 46860,
+      "netPay": 214740,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-004",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 116667,
+      "allowances": {
+        "hra": 46667,
+        "specialAllowance": 23333,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 18827,
+        "providentFund": 14000,
+        "healthInsurance": 1200
+      },
+      "grossPay": 188267,
+      "totalDeductions": 34027,
+      "netPay": 154240,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-005",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 133333,
+      "allowances": {
+        "hra": 53333,
+        "specialAllowance": 26667,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 21493,
+        "providentFund": 16000,
+        "healthInsurance": 1200
+      },
+      "grossPay": 214933,
+      "totalDeductions": 38693,
+      "netPay": 176240,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
+      "id": "PS-2026-11-001",
+      "employeeId": "EMP-001",
+      "employeeName": "Elena Rostova",
+      "month": "November",
+      "year": 2026,
+      "payDate": "2026-11-30",
+      "baseSalary": 154167,
+      "allowances": {
+        "hra": 61667,
+        "specialAllowance": 30833,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 24827,
+        "providentFund": 18500,
+        "healthInsurance": 1200
+      },
+      "grossPay": 248267,
+      "totalDeductions": 44527,
+      "netPay": 203740,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null
+    },
+    {
       "id": "PS-2026-10-002",
       "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
@@ -393,11 +519,14 @@
       "grossPay": 294932,
       "totalDeductions": 52693,
       "netPay": 242239,
-      "status": "Paid"
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova (HR)",
+      "approvedAt": "2026-10-30"
     },
     {
       "id": "PS-2026-09-002",
       "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
       "month": "September",
       "year": 2026,
       "payDate": "2026-09-30",
@@ -415,11 +544,14 @@
       "grossPay": 294932,
       "totalDeductions": 52693,
       "netPay": 242239,
-      "status": "Paid"
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova (HR)",
+      "approvedAt": "2026-09-29"
     },
     {
       "id": "PS-2026-10-003",
       "employeeId": "EMP-003",
+      "employeeName": "Sarah Chen",
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
@@ -437,7 +569,59 @@
       "grossPay": 261600,
       "totalDeductions": 46860,
       "netPay": 214740,
-      "status": "Paid"
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova (HR)",
+      "approvedAt": "2026-10-30"
+    },
+    {
+      "id": "PS-2026-10-004",
+      "employeeId": "EMP-004",
+      "employeeName": "Marcus Vance",
+      "month": "October",
+      "year": 2026,
+      "payDate": "2026-10-31",
+      "baseSalary": 116667,
+      "allowances": {
+        "hra": 46667,
+        "specialAllowance": 23333,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 18827,
+        "providentFund": 14000,
+        "healthInsurance": 1200
+      },
+      "grossPay": 188267,
+      "totalDeductions": 34027,
+      "netPay": 154240,
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova (HR)",
+      "approvedAt": "2026-10-30"
+    },
+    {
+      "id": "PS-2026-10-005",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "month": "October",
+      "year": 2026,
+      "payDate": "2026-10-31",
+      "baseSalary": 133333,
+      "allowances": {
+        "hra": 53333,
+        "specialAllowance": 26667,
+        "conveyance": 1600
+      },
+      "deductions": {
+        "incomeTax": 21493,
+        "providentFund": 16000,
+        "healthInsurance": 1200
+      },
+      "grossPay": 214933,
+      "totalDeductions": 38693,
+      "netPay": 176240,
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova (HR)",
+      "approvedAt": "2026-10-30"
     }
   ],
   "announcements": [

@@ -52,6 +52,9 @@ const Employee = {
       tabEl.classList.remove('hidden');
     }
     this.renderActiveTab();
+    if (window.App && typeof App.setActiveNav === 'function') {
+      App.setActiveNav(tabName);
+    }
   },
 
   renderActiveTab() {
@@ -454,63 +457,192 @@ const Employee = {
     if (!container) return;
 
     const emp = this.employeeData || Auth.employee || {};
-    const monthly = Math.round(emp.salary / 12);
+    // ONLY display payslips that HR has approved / paid!
+    const approvedSlips = (this.myPayslips || []).filter(p => p.status === 'Approved' || p.status === 'Paid');
 
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Salary & Compensation Slips</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Access and print official monthly payroll statements</p>
+          <p class="text-xs text-slate-500 mt-0.5">Access and print official monthly payroll statements approved by HR</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-              <tr>
-                <th class="px-5 py-3.5">Pay Period</th>
-                <th class="px-5 py-3.5">Gross Earnings</th>
-                <th class="px-5 py-3.5">Tax & Deductions</th>
-                <th class="px-5 py-3.5">Net Take-Home</th>
-                <th class="px-5 py-3.5 text-center">Status</th>
-                <th class="px-5 py-3.5 text-right">Statement</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              <tr class="hover:bg-slate-50 transition-colors">
-                <td class="px-5 py-4 font-bold text-slate-900">October 2026</td>
-                <td class="px-5 py-4 font-mono text-xs text-slate-900">${UI.formatCurrency(monthly + 3983)}</td>
-                <td class="px-5 py-4 font-mono text-xs text-rose-600">-${UI.formatCurrency(3350)}</td>
-                <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(monthly + 3983 - 3350)}</td>
-                <td class="px-5 py-4 text-center">
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">Paid</span>
-                </td>
-                <td class="px-5 py-4 text-right">
-                  <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors">
-                    <i class="fa-solid fa-file-invoice mr-1"></i> View Statement
-                  </button>
-                </td>
-              </tr>
-              <tr class="hover:bg-slate-50 transition-colors">
-                <td class="px-5 py-4 font-bold text-slate-900">September 2026</td>
-                <td class="px-5 py-4 font-mono text-xs text-slate-900">${UI.formatCurrency(monthly + 3983)}</td>
-                <td class="px-5 py-4 font-mono text-xs text-rose-600">-${UI.formatCurrency(3350)}</td>
-                <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(monthly + 3983 - 3350)}</td>
-                <td class="px-5 py-4 text-center">
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">Paid</span>
-                </td>
-                <td class="px-5 py-4 text-right">
-                  <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors">
-                    <i class="fa-solid fa-file-invoice mr-1"></i> View Statement
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      ${approvedSlips.length === 0 ? `
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-sm">
+          <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-100">
+            <i class="fa-solid fa-file-invoice text-2xl"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">No Approved Payslips Available Yet</h3>
+          <p class="text-xs text-slate-500 mt-1.5 max-w-md mx-auto leading-relaxed">
+            Your payroll statements are currently being reviewed by HR. Once HR approves and releases your salary slips, they will automatically appear here for you to view and download.
+          </p>
+        </div>
+      ` : `
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                <tr>
+                  <th class="px-5 py-3.5">Pay Period</th>
+                  <th class="px-5 py-3.5">Gross Earnings</th>
+                  <th class="px-5 py-3.5">Tax & Deductions</th>
+                  <th class="px-5 py-3.5">Net Take-Home</th>
+                  <th class="px-5 py-3.5 text-center">HR Approval Status</th>
+                  <th class="px-5 py-3.5 text-right">Statement</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                ${approvedSlips.map(slip => `
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-5 py-4">
+                      <div class="font-bold text-slate-900">${slip.month} ${slip.year}</div>
+                      <div class="text-[11px] text-slate-400">Paid on ${UI.formatDate(slip.payDate)}</div>
+                    </td>
+                    <td class="px-5 py-4 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
+                    <td class="px-5 py-4 font-mono text-xs text-rose-600">-${UI.formatCurrency(slip.totalDeductions || 0)}</td>
+                    <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
+                    <td class="px-5 py-4 text-center">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i class="fa-solid fa-circle-check text-[10px]"></i> Approved & Released
+                      </span>
+                    </td>
+                    <td class="px-5 py-4 text-right">
+                      <button onclick="Employee.viewPayslip('${slip.id}')" class="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-invoice"></i> View Statement
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `}
+    `;
+  },
+
+  viewPayslip(slipId) {
+    const slip = (this.myPayslips || []).find(p => p.id === slipId);
+    if (!slip) {
+      UI.toast('Could not find selected payslip', 'error');
+      return;
+    }
+
+    // Safety check: employee should NEVER view unapproved slips
+    if (slip.status !== 'Approved' && slip.status !== 'Paid') {
+      UI.toast('This payslip has not been approved by HR yet', 'warning');
+      return;
+    }
+
+    const emp = this.employeeData || Auth.employee || {};
+    const payslipContainer = document.getElementById('printable-payslip');
+
+    payslipContainer.innerHTML = `
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-emerald-800 no-print">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+          <div>
+            <span class="font-bold">Official Approved Statement</span>
+            <span class="text-slate-500 text-[11px] ml-1.5">• Approved by HR on ${slip.approvedAt || UI.formatDate(slip.payDate)}</span>
+          </div>
+        </div>
+        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">VERIFIED</span>
+      </div>
+
+      <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
+        <div>
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-people-roof"></i>
+            </div>
+            <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Pvt. Ltd.</span>
+          </div>
+          <p class="text-xs text-slate-500">Outer Ring Road, Bengaluru, Karnataka 560103</p>
+          <p class="text-xs text-slate-500">PAN: AABCN8192F • payroll@nexushr.in</p>
+        </div>
+        <div class="text-right">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">APPROVED / PAID</span>
+          <div class="text-xs text-slate-400 mt-2">Statement Month</div>
+          <div class="text-sm font-bold text-slate-900">${slip.month} ${slip.year}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 text-xs">
+        <div>
+          <span class="text-slate-400 block">Employee Name</span>
+          <strong class="text-slate-900 text-sm">${emp.name || slip.employeeName}</strong>
+          <span class="text-slate-500 block mt-1">ID: ${emp.id || slip.employeeId}</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Designation & Department</span>
+          <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
+          <span class="text-slate-500 block mt-1">${emp.department}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 text-xs mb-6">
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
+          <div class="space-y-1.5">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Basic Salary</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.baseSalary)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">House Rent Allowance (HRA)</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.hra || Math.round(slip.baseSalary * 0.40))}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Special Allowance</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.specialAllowance || Math.round(slip.baseSalary * 0.20))}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Conveyance Allowance</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.conveyance || 1600)}</span>
+            </div>
+            <div class="flex justify-between py-2 font-bold text-slate-900">
+              <span>Total Gross Earnings</span>
+              <span class="font-mono text-emerald-700">${UI.formatCurrency(slip.grossPay)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions (INR)</h4>
+          <div class="space-y-1.5">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Income Tax (TDS)</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.incomeTax || Math.round(slip.grossPay * 0.10))}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Employees' Provident Fund (EPF)</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.providentFund || Math.round(slip.baseSalary * 0.12))}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Health & Group Insurance</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
+            </div>
+            <div class="flex justify-between py-2 font-bold text-slate-900">
+              <span>Total Deductions</span>
+              <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
+        <div>
+          <span class="text-xs text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
+          <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
+        </div>
+        <div class="text-2xl font-black text-indigo-900 font-mono">
+          ${UI.formatCurrency(slip.netPay)}
         </div>
       </div>
     `;
+
+    UI.openModal('modal-view-payslip');
   },
 
   // ---------------- 5. EMPLOYEE TEAM DIRECTORY ----------------

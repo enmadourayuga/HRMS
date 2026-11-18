@@ -99,7 +99,10 @@ const App = {
     document.querySelectorAll('#sidebar-nav-links button').forEach(btn => {
       btn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors';
       const icon = btn.querySelector('i');
-      if (icon) icon.className = icon.className.replace('text-indigo-600 text-emerald-600', 'text-slate-400');
+      if (icon) {
+        icon.classList.remove('text-indigo-600', 'text-emerald-600');
+        icon.classList.add('text-slate-400');
+      }
     });
 
     const activeBtn = document.getElementById(`nav-${tab}`);
@@ -107,11 +110,17 @@ const App = {
       if (this.currentRole === 'hr') {
         activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100/80 transition-colors';
         const icon = activeBtn.querySelector('i');
-        if (icon) icon.className = icon.className.replace('text-slate-400', 'text-indigo-600');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-indigo-600');
+        }
       } else {
         activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100/80 transition-colors';
         const icon = activeBtn.querySelector('i');
-        if (icon) icon.className = icon.className.replace('text-slate-400', 'text-emerald-600');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-emerald-600');
+        }
       }
     }
   }

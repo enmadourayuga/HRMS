@@ -6,6 +6,8 @@ const HR = {
   attendance: [],
   announcements: [],
   departments: [],
+  payslips: [],
+  payrollFilter: 'all',
   currentReviewLeaveId: null,
 
   async init() {
@@ -15,12 +17,13 @@ const HR = {
 
   async loadAllData() {
     try {
-      const [empList, leaveList, attList, annList, deptList] = await Promise.all([
+      const [empList, leaveList, attList, annList, deptList, payslipList] = await Promise.all([
         API.get('/employees'),
         API.get('/leaves'),
         API.get('/attendance'),
         API.get('/announcements'),
-        API.get('/departments')
+        API.get('/departments'),
+        API.get('/payslips')
       ]);
 
       this.employees = empList;
@@ -28,6 +31,7 @@ const HR = {
       this.attendance = attList;
       this.announcements = annList;
       this.departments = deptList;
+      this.payslips = payslipList || [];
     } catch (err) {
       console.error('Failed to load HR data:', err);
       UI.toast('Could not refresh HR dataset', 'error');
@@ -42,6 +46,9 @@ const HR = {
       tabEl.classList.remove('hidden');
     }
     this.renderActiveTab();
+    if (window.App && typeof App.setActiveNav === 'function') {
+      App.setActiveNav(tabName);
+    }
   },
 
   renderActiveTab() {
@@ -614,70 +621,146 @@ const HR = {
   },
 
   // ---------------- 5. HR PAYROLL & COMPENSATION ----------------
+  setPayrollFilter(filter) {
+    this.payrollFilter = filter;
+    this.renderPayroll();
+  },
+
   renderPayroll() {
     const container = document.getElementById('hr-tab-payroll');
     if (!container) return;
 
     const totalAnnual = this.employees.reduce((acc, c) => acc + (c.salary || 0), 0);
-    const avgSalary = Math.round(totalAnnual / (this.employees.length || 1));
+    const monthlyPool = Math.round(totalAnnual / 12);
+    const pendingSlips = (this.payslips || []).filter(p => p.status === 'Pending Approval');
+    const approvedSlips = (this.payslips || []).filter(p => p.status === 'Approved' || p.status === 'Paid');
+
+    const activeFilter = this.payrollFilter || 'all';
+    let displayedSlips = [...(this.payslips || [])];
+    if (activeFilter === 'pending') {
+      displayedSlips = pendingSlips;
+    } else if (activeFilter === 'approved') {
+      displayedSlips = approvedSlips;
+    }
 
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">Payroll & Compensation Management</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Overview of employee compensation, allowances, deductions, and salary slips</p>
+          <h2 class="text-xl font-bold text-slate-900">Payroll & Salary Slips Review</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Review and approve employee monthly payslips before releasing them to employee self-service</p>
+        </div>
+        <div class="flex items-center gap-2">
+          ${pendingSlips.length > 0 ? `
+            <button onclick="HR.approveAllPending()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-colors">
+              <i class="fa-solid fa-check-double text-xs"></i>
+              <span>Approve All Pending (${pendingSlips.length})</span>
+            </button>
+          ` : `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <i class="fa-solid fa-circle-check"></i> All Slips Up to Date
+            </span>
+          `}
         </div>
       </div>
 
       <!-- Payroll Summary KPI -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Annual Compensation Pool</div>
-          <div class="text-2xl font-extrabold text-slate-900 mt-1">${UI.formatCurrency(totalAnnual)}</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">Across ${this.employees.length} full-time staff</div>
-        </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
           <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Estimated Monthly Outflow</div>
-          <div class="text-2xl font-extrabold text-indigo-600 mt-1">${UI.formatCurrency(Math.round(totalAnnual / 12))}</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">Next pay cycle: Last business day</div>
+          <div class="text-2xl font-extrabold text-indigo-600 mt-1">${UI.formatCurrency(monthlyPool)}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Across ${this.employees.length} active employees</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border ${pendingSlips.length > 0 ? 'border-amber-300 bg-amber-50/30' : 'border-slate-200'} shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Pending HR Approval</div>
+            ${pendingSlips.length > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 animate-pulse">Action Required</span>` : ''}
+          </div>
+          <div class="text-2xl font-extrabold ${pendingSlips.length > 0 ? 'text-amber-700' : 'text-slate-800'} mt-1">${pendingSlips.length} Statements</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Hidden from employees until approved</div>
         </div>
         <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Average Annual Salary</div>
-          <div class="text-2xl font-extrabold text-emerald-600 mt-1">${UI.formatCurrency(avgSalary)}</div>
-          <div class="text-[11px] text-slate-500 mt-0.5">Competitive market index: +12%</div>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Approved & Released</div>
+          <div class="text-2xl font-extrabold text-emerald-600 mt-1">${approvedSlips.length} Statements</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Visible in employee self-service</div>
         </div>
       </div>
 
-      <!-- Compensation Table -->
+      <!-- Filter Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs font-semibold">
+        <button onclick="HR.setPayrollFilter('all')" class="px-3.5 py-1.5 rounded-lg transition-colors ${activeFilter === 'all' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+          All Slips (${(this.payslips || []).length})
+        </button>
+        <button onclick="HR.setPayrollFilter('pending')" class="px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${activeFilter === 'pending' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+          <span>Pending Review</span>
+          ${pendingSlips.length > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${activeFilter === 'pending' ? 'bg-amber-800 text-white' : 'bg-amber-100 text-amber-800'}">${pendingSlips.length}</span>` : ''}
+        </button>
+        <button onclick="HR.setPayrollFilter('approved')" class="px-3.5 py-1.5 rounded-lg transition-colors ${activeFilter === 'approved' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+          Approved & Released (${approvedSlips.length})
+        </button>
+      </div>
+
+      <!-- Compensation & Slips Table -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
               <tr>
                 <th class="px-5 py-3.5">Employee</th>
-                <th class="px-5 py-3.5">Role</th>
-                <th class="px-5 py-3.5">Base Monthly</th>
-                <th class="px-5 py-3.5">Estimated Deductions</th>
-                <th class="px-5 py-3.5">Net Monthly</th>
-                <th class="px-5 py-3.5 text-right">Statements</th>
+                <th class="px-5 py-3.5">Pay Period</th>
+                <th class="px-5 py-3.5">Gross Pay</th>
+                <th class="px-5 py-3.5">Deductions</th>
+                <th class="px-5 py-3.5">Net Disbursed</th>
+                <th class="px-5 py-3.5 text-center">Visibility Status</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700">
-              ${this.employees.map(emp => {
-                const monthly = Math.round(emp.salary / 12);
-                const deductions = Math.round(monthly * 0.22);
-                const net = monthly - deductions;
+              ${displayedSlips.length === 0 ? `
+                <tr>
+                  <td colspan="7" class="px-5 py-8 text-center text-xs text-slate-500">
+                    No payslips found matching this filter.
+                  </td>
+                </tr>
+              ` : displayedSlips.map(slip => {
+                const emp = this.employees.find(e => e.id === slip.employeeId) || { name: slip.employeeName || slip.employeeId, jobTitle: 'Staff' };
+                const isPending = slip.status === 'Pending Approval';
                 return `
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-5 py-3.5 font-bold text-slate-900">${emp.name}</td>
-                    <td class="px-5 py-3.5 text-xs text-slate-600">${emp.jobTitle}</td>
-                    <td class="px-5 py-3.5 font-mono text-xs text-slate-900">${UI.formatCurrency(monthly)}</td>
-                    <td class="px-5 py-3.5 font-mono text-xs text-rose-600">-${UI.formatCurrency(deductions)}</td>
-                    <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(net)}</td>
+                  <tr class="hover:bg-slate-50/80 transition-colors ${isPending ? 'bg-amber-50/20' : ''}">
+                    <td class="px-5 py-3.5">
+                      <div class="font-bold text-slate-900">${emp.name}</div>
+                      <div class="text-[11px] text-slate-500">${emp.jobTitle} • ${slip.employeeId}</div>
+                    </td>
+                    <td class="px-5 py-3.5">
+                      <div class="font-semibold text-slate-800 text-xs">${slip.month} ${slip.year}</div>
+                      <div class="text-[10px] text-slate-400">Pay Date: ${UI.formatDate(slip.payDate)}</div>
+                    </td>
+                    <td class="px-5 py-3.5 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
+                    <td class="px-5 py-3.5 font-mono text-xs text-rose-600">-${UI.formatCurrency(slip.totalDeductions || 0)}</td>
+                    <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
+                    <td class="px-5 py-3.5 text-center">
+                      ${isPending ? `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                          <i class="fa-solid fa-clock text-[10px]"></i> Pending Approval
+                        </span>
+                        <div class="text-[10px] text-amber-600/80 mt-0.5">Hidden from employee</div>
+                      ` : `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <i class="fa-solid fa-circle-check text-[10px]"></i> Approved
+                        </span>
+                        <div class="text-[10px] text-emerald-600/80 mt-0.5">Visible to employee</div>
+                      `}
+                    </td>
                     <td class="px-5 py-3.5 text-right">
-                      <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors">
-                        View Statement
-                      </button>
+                      <div class="inline-flex items-center gap-2">
+                        <button onclick="HR.viewPayslip('${slip.id}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1">
+                          <i class="fa-solid fa-eye text-[11px]"></i> View Slip
+                        </button>
+                        ${isPending ? `
+                          <button onclick="HR.approvePayslip('${slip.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-sm flex items-center gap-1 transition-colors">
+                            <i class="fa-solid fa-check text-[11px]"></i> Approve
+                          </button>
+                        ` : ''}
+                      </div>
                     </td>
                   </tr>
                 `;
@@ -843,24 +926,56 @@ const HR = {
     }
   },
 
-  async viewPayslipForEmployee(empId) {
-    const emp = this.employees.find(e => e.id === empId);
-    if (!emp) return;
+  async viewPayslip(slipId) {
+    let slip = (this.payslips || []).find(p => p.id === slipId);
+    if (!slip) {
+      try {
+        slip = await API.get(`/payslips/${slipId}`);
+      } catch (e) {
+        UI.toast('Could not load payslip', 'error');
+        return;
+      }
+    }
 
-    const monthly = Math.round(emp.salary / 12);
-    const hra = Math.round(monthly * 0.40);
-    const special = Math.round(monthly * 0.20);
-    const conveyance = 1600;
-    const gross = monthly + hra + special + conveyance;
+    const emp = this.employees.find(e => e.id === slip.employeeId) || {
+      name: slip.employeeName || slip.employeeId,
+      id: slip.employeeId,
+      jobTitle: 'Staff Member',
+      department: 'NexusHR'
+    };
 
-    const tax = Math.round(gross * 0.10);
-    const pf = Math.round(monthly * 0.12);
-    const insurance = 1200;
-    const totalDeductions = tax + pf + insurance;
-    const net = gross - totalDeductions;
-
+    const isPending = slip.status === 'Pending Approval';
     const payslipContainer = document.getElementById('printable-payslip');
+
     payslipContainer.innerHTML = `
+      ${isPending ? `
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs no-print">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shrink-0">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+              <span class="font-bold text-amber-900 text-sm block">Awaiting HR Approval</span>
+              <p class="text-amber-700 text-[11px] mt-0.5">This statement is currently hidden from ${emp.name}. Inspect the details below and click approve to release it to the employee portal.</p>
+            </div>
+          </div>
+          <button onclick="HR.approvePayslip('${slip.id}', true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors shrink-0">
+            <i class="fa-solid fa-check"></i> Approve & Release to Employee
+          </button>
+        </div>
+      ` : `
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-emerald-800 no-print">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+            <div>
+              <span class="font-bold">Approved & Published</span>
+              <span class="text-slate-500 text-[11px] ml-1.5">• Released to employee on ${slip.approvedAt || UI.formatDate(slip.payDate)}</span>
+            </div>
+          </div>
+          <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">ACTIVE IN PORTAL</span>
+        </div>
+      `}
+
       <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
         <div>
           <div class="flex items-center gap-2.5 mb-2">
@@ -873,9 +988,11 @@ const HR = {
           <p class="text-xs text-slate-500">PAN: AABCN8192F • payroll@nexushr.in</p>
         </div>
         <div class="text-right">
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">PAID</span>
+          <span class="px-3 py-1 ${isPending ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} text-xs font-bold rounded-full">
+            ${isPending ? 'PENDING APPROVAL' : 'APPROVED / PAID'}
+          </span>
           <div class="text-xs text-slate-400 mt-2">Statement Month</div>
-          <div class="text-sm font-bold text-slate-900">October 2026</div>
+          <div class="text-sm font-bold text-slate-900">${slip.month} ${slip.year}</div>
         </div>
       </div>
 
@@ -888,7 +1005,7 @@ const HR = {
         <div>
           <span class="text-slate-400 block">Designation & Department</span>
           <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
-          <span class="text-slate-500 block mt-1">${emp.department}</span>
+          <span class="text-slate-500 block mt-1">${emp.department || 'General'}</span>
         </div>
       </div>
 
@@ -898,23 +1015,23 @@ const HR = {
           <div class="space-y-1.5">
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Basic Salary</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(monthly)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.baseSalary)}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">House Rent Allowance (HRA)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(hra)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.hra || Math.round(slip.baseSalary * 0.40))}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Special Allowance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(special)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.specialAllowance || Math.round(slip.baseSalary * 0.20))}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Conveyance Allowance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(conveyance)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.conveyance || 1600)}</span>
             </div>
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Gross Earnings</span>
-              <span class="font-mono text-emerald-700">${UI.formatCurrency(gross)}</span>
+              <span class="font-mono text-emerald-700">${UI.formatCurrency(slip.grossPay)}</span>
             </div>
           </div>
         </div>
@@ -924,19 +1041,19 @@ const HR = {
           <div class="space-y-1.5">
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Income Tax (TDS)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(tax)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.incomeTax || Math.round(slip.grossPay * 0.10))}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Employees' Provident Fund (EPF)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(pf)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.providentFund || Math.round(slip.baseSalary * 0.12))}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Health & Group Insurance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(insurance)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
             </div>
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Deductions</span>
-              <span class="font-mono text-rose-700">-${UI.formatCurrency(totalDeductions)}</span>
+              <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>
             </div>
           </div>
         </div>
@@ -948,11 +1065,60 @@ const HR = {
           <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
         </div>
         <div class="text-2xl font-black text-indigo-900 font-mono">
-          ${UI.formatCurrency(net)}
+          ${UI.formatCurrency(slip.netPay)}
         </div>
       </div>
     `;
 
     UI.openModal('modal-view-payslip');
+  },
+
+  async viewPayslipForEmployee(empId) {
+    const slip = (this.payslips || []).find(p => p.employeeId === empId);
+    if (slip) {
+      await this.viewPayslip(slip.id);
+    } else {
+      UI.toast('No payslip found for this employee', 'warning');
+    }
+  },
+
+  async approvePayslip(slipId, closeModal = false) {
+    try {
+      const updated = await API.patch(`/payslips/${slipId}`, {
+        status: 'Approved',
+        reviewedBy: Auth.employee?.name || 'Elena Rostova (HR)'
+      });
+
+      const idx = (this.payslips || []).findIndex(p => p.id === slipId);
+      if (idx !== -1) {
+        this.payslips[idx] = updated;
+      }
+
+      UI.toast(`Payslip for ${updated.employeeName || updated.employeeId} (${updated.month} ${updated.year}) approved and released!`, 'success');
+
+      if (closeModal) {
+        UI.closeModal('modal-view-payslip');
+      }
+
+      this.renderPayroll();
+    } catch (err) {
+      console.error('Failed to approve payslip:', err);
+      UI.toast('Could not approve payslip', 'error');
+    }
+  },
+
+  async approveAllPending() {
+    try {
+      const res = await API.post('/payslips/approve-all', {
+        reviewedBy: Auth.employee?.name || 'Elena Rostova (HR)'
+      });
+
+      this.payslips = await API.get('/payslips');
+      UI.toast(res.message || 'All pending payslips approved and released to employees!', 'success');
+      this.renderPayroll();
+    } catch (err) {
+      console.error('Failed to bulk approve payslips:', err);
+      UI.toast('Could not approve pending payslips', 'error');
+    }
   }
 };

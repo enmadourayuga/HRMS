@@ -315,6 +315,10 @@ const Employee = {
           <h2 class="text-xl font-bold text-slate-900">My Attendance & Hours</h2>
           <p class="text-xs text-slate-500 mt-0.5">Punch in/out daily and review historical working hours</p>
         </div>
+        <button onclick="UI.openModal('modal-request-attendance-correction')" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl text-xs sm:text-sm border border-indigo-200 flex items-center gap-1.5 transition-colors">
+          <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+          <span>Request Punch Correction</span>
+        </button>
       </div>
 
       <!-- Action Card -->
@@ -325,8 +329,9 @@ const Employee = {
         </div>
 
         <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-center mb-5">
-          <div class="text-3xl font-extrabold text-slate-900 font-mono mb-1" id="emp-live-clock">
-            ${new Date().toLocaleTimeString()}
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Checked In Time</div>
+          <div class="text-3xl font-extrabold ${todayAtt?.clockIn ? 'text-slate-900' : 'text-slate-400'} font-mono mb-1" id="emp-checked-in-time">
+            ${todayAtt?.clockIn || '--:--'}
           </div>
           <p class="text-xs text-slate-500">Official Office Hours: 09:00 AM - 05:30 PM</p>
         </div>
@@ -338,8 +343,9 @@ const Employee = {
               <span>Punch Clock In</span>
             </button>
           ` : (!todayAtt?.clockOut ? `
-            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-medium mb-2">
-              Clocked in at <strong class="text-emerald-900">${todayAtt.clockIn}</strong>
+            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-medium mb-2 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Currently Clocked In &amp; Active</span>
             </div>
             <button onclick="Employee.clockOut()" class="w-full py-4 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-rose-600/20 transition-all flex items-center justify-center gap-2">
               <i class="fa-solid fa-right-from-bracket"></i>
@@ -1039,6 +1045,30 @@ const Employee = {
       this.renderActiveTab();
     } catch (e) {
       console.error('Failed to mark notification read:', e);
+    }
+  },
+
+  async submitAttendanceCorrectionRequest(event) {
+    event.preventDefault();
+    const date = document.getElementById('req-corr-date').value;
+    const requestedIn = document.getElementById('req-corr-in').value.trim();
+    const requestedOut = document.getElementById('req-corr-out').value.trim();
+    const reason = document.getElementById('req-corr-reason').value.trim();
+
+    try {
+      const res = await API.post('/attendance/correction-requests', {
+        employeeId: Auth.employee?.id || Auth.user?.employeeId,
+        date,
+        requestedIn,
+        requestedOut,
+        reason
+      });
+
+      UI.toast('Correction request submitted to HR for review!', 'success');
+      UI.closeModal('modal-request-attendance-correction');
+      document.getElementById('form-request-attendance-correction').reset();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to submit correction request', 'error');
     }
   }
 };

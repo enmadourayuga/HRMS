@@ -171,10 +171,10 @@
   <!-- ============================================================== -->
   <!-- MAIN APP VIEW (Shown after authentication) -->
   <!-- ============================================================== -->
-  <div id="view-app" class="hidden min-h-screen flex flex-col bg-slate-100">
+  <div id="view-app" class="hidden fixed inset-0 flex flex-col bg-slate-100 overflow-hidden">
     
     <!-- Top Header Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <header class="bg-white border-b border-slate-200 z-30 shadow-sm shrink-0">
       <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <!-- Brand & Portal Tag -->
@@ -277,13 +277,13 @@
       </div>
     </header>
 
-    <!-- App Body: Sidebar + Main Content -->
-    <div class="flex-1 flex overflow-hidden">
+    <!-- App Body: Sidebar + Main Content (Separated Layout) -->
+    <div class="flex-1 flex overflow-hidden relative">
       
-      <!-- Left Sidebar Navigation -->
-      <aside id="app-sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden md:flex shrink-0">
-        <div class="p-4 space-y-6">
-          
+      <!-- Left Sidebar Navigation (Fixed height, independent scroll, fixed footer) -->
+      <aside id="app-sidebar" class="fixed md:static inset-y-0 left-0 top-16 md:top-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden md:flex shrink-0 h-[calc(100vh-4rem)] md:h-full shadow-2xl md:shadow-none">
+        <!-- Navigation Links Scroll Area -->
+        <div class="p-4 space-y-6 flex-1 overflow-y-auto">
           <!-- Dynamic Navigation Links (Populated by role) -->
           <div>
             <div id="sidebar-role-label" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">
@@ -293,23 +293,25 @@
               <!-- Injected by role -->
             </nav>
           </div>
-
         </div>
 
-        <!-- Sidebar Footer Status -->
-        <div class="p-4 border-t border-slate-200 bg-slate-50/50">
+        <!-- Sidebar Footer Status - Fixed at bottom left corner -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50/80 shrink-0">
           <div class="flex items-center justify-between text-xs text-slate-500">
-            <span class="flex items-center gap-1.5">
+            <span class="flex items-center gap-1.5 font-medium text-slate-600">
               <span class="w-2 h-2 rounded-full bg-emerald-500 clock-live-dot"></span>
               <span>System Online</span>
             </span>
-            <span id="current-clock-display" class="font-mono text-slate-600 font-semibold">--:--</span>
+            <span id="current-clock-display" class="font-mono text-slate-700 font-semibold bg-white px-2 py-0.5 rounded border border-slate-200 shadow-xs">--:--</span>
           </div>
         </div>
       </aside>
 
-      <!-- Main Content Container -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70">
+      <!-- Mobile Sidebar Backdrop -->
+      <div id="sidebar-backdrop" onclick="UI.toggleMobileSidebar()" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-30 md:hidden top-16"></div>
+
+      <!-- Main Content Container (Separated scrollable area) -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70 h-full">
         <div class="max-w-7xl mx-auto">
           
           <!-- Dynamic Views for HR -->
@@ -720,6 +722,133 @@
   <div id="modal-salary-structures" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="salary-structures-content">
       <!-- Rendered dynamically by HR.openSalaryStructuresModal -->
+    </div>
+  </div>
+
+  <!-- 4c. Correct Attendance Discrepancy Modal (ATT-010, BR-ATT-03) -->
+  <div id="modal-correct-attendance" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 modal-enter overflow-hidden my-8">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Correct Attendance Discrepancy</h3>
+            <p class="text-xs text-slate-500">Manual adjustments require mandatory reason and audit trail (ATT-010)</p>
+          </div>
+        </div>
+        <button onclick="UI.closeModal('modal-correct-attendance')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-correct-attendance" onsubmit="HR.submitAttendanceCorrection(event)" class="p-6 space-y-4">
+        <input type="hidden" id="correct-att-id">
+        
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-1.5" id="correct-att-info">
+          <!-- Filled dynamically -->
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-in Time *</label>
+            <input type="text" id="correct-att-in" required placeholder="e.g. 09:00 AM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-out Time *</label>
+            <input type="text" id="correct-att-out" required placeholder="e.g. 05:30 PM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Status Classification *</label>
+          <select id="correct-att-status" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+            <option value="Present">Present (Full Day)</option>
+            <option value="Late">Late Arrival</option>
+            <option value="Half Day">Half Day</option>
+            <option value="Absent">Absent / Loss of Pay</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700">Correction Reason * (Mandatory - BR-ATT-03)</label>
+            <span class="text-[10px] text-rose-500 font-semibold">Audit Recorded</span>
+          </div>
+          <textarea id="correct-att-reason" rows="3" required placeholder="Provide an official business reason (e.g. Employee visited on-site client; biometric reader failed to log checkout; approved by manager)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"></textarea>
+        </div>
+
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5"></i>
+          <div>
+            <strong>Original Biometric Preservation (BR-ATT-02):</strong> The raw machine punches will remain permanently preserved and cannot be overwritten or deleted.
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-correct-attendance')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-semibold">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-amber-600/20 transition-colors">
+            Save Correction & Validate
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4d. Biometric Raw Punches & Device Stream Modal (ATT-011, BR-ATT-06) -->
+  <div id="modal-biometric-stream" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="biometric-stream-content">
+      <!-- Rendered dynamically by HR.openBiometricStreamModal -->
+    </div>
+  </div>
+
+  <!-- 4e. Attendance Correction Requests Modal (HR) -->
+  <div id="modal-attendance-correction-requests" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="attendance-correction-requests-content">
+      <!-- Rendered dynamically by HR.openCorrectionRequestsModal -->
+    </div>
+  </div>
+
+  <!-- 4f. Request Attendance Correction Modal (Employee Self-Service) -->
+  <div id="modal-request-attendance-correction" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 modal-enter overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 text-base">Request Attendance Correction</h3>
+        <button onclick="UI.closeModal('modal-request-attendance-correction')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-request-attendance-correction" onsubmit="Employee.submitAttendanceCorrectionRequest(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Date *</label>
+          <input type="date" id="req-corr-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-in Time *</label>
+            <input type="text" id="req-corr-in" required placeholder="09:00 AM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-out Time *</label>
+            <input type="text" id="req-corr-out" required placeholder="05:30 PM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Reason for Adjustment *</label>
+          <textarea id="req-corr-reason" rows="3" required placeholder="e.g. Biometric device failed to record punch on exit; official off-site client meeting..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm"></textarea>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-request-attendance-correction')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20">Submit Request</button>
+        </div>
+      </form>
     </div>
   </div>
 

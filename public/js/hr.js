@@ -236,41 +236,11 @@ const HR = {
             </div>
           </div>
 
-          <!-- Department Headcount & Budget Table -->
-          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-              <h3 class="font-bold text-slate-900 text-sm">Department Allocations</h3>
-              <span class="text-xs text-slate-500">${this.departments.length} Units Active</span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                  <tr>
-                    <th class="px-5 py-3">Department</th>
-                    <th class="px-5 py-3">Department Head</th>
-                    <th class="px-5 py-3 text-center">Team Size</th>
-                    <th class="px-5 py-3 text-right">Budget</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 text-slate-700">
-                  ${this.departments.map(dept => `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                      <td class="px-5 py-3.5 font-semibold text-slate-900">${dept.name}</td>
-                      <td class="px-5 py-3.5 text-slate-600">${dept.head}</td>
-                      <td class="px-5 py-3.5 text-center">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">${dept.count} members</span>
-                      </td>
-                      <td class="px-5 py-3.5 text-right font-mono font-medium text-slate-900">${dept.budget}</td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
+
 
         </div>
 
-        <!-- Right Column: Announcements Bulletin & Quick Directory (4 cols) -->
+        <!-- Right Column: Notice Board Bulletin (4 cols) -->
         <div class="lg:col-span-4 space-y-6">
           
           <!-- Bulletin Board -->
@@ -298,27 +268,7 @@ const HR = {
             </div>
           </div>
 
-          <!-- Quick Directory Summary -->
-          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-bold text-slate-900 text-sm">Quick Directory</h3>
-              <button onclick="HR.switchTab('employees')" class="text-xs text-indigo-600 font-semibold hover:underline">View All</button>
-            </div>
-            <div class="space-y-3">
-              ${this.employees.slice(0, 4).map(e => `
-                <div class="flex items-center gap-3">
-                  <img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover" alt="${e.name}">
-                  <div class="min-w-0 flex-1">
-                    <div class="text-xs font-bold text-slate-900 truncate">${e.name}</div>
-                    <div class="text-[11px] text-slate-500 truncate">${e.jobTitle}</div>
-                  </div>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full ${e.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'} font-semibold">
-                    ${e.status}
-                  </span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
+
 
         </div>
 
@@ -643,66 +593,258 @@ const HR = {
     `;
   },
 
-  // ---------------- 4. HR ATTENDANCE TRACKER ----------------
+  // ---------------- 4. HR ATTENDANCE TRACKER (MODULE 2: ATT-001 to ATT-012) ----------------
+  setAttendanceDate(date) {
+    this.selectedAttendanceDate = date;
+    this.renderAttendance();
+  },
+
+  setAttendanceFilter(filter) {
+    this.attendanceFilter = filter;
+    this.renderAttendance();
+  },
+
   renderAttendance() {
     const container = document.getElementById('hr-tab-attendance');
     if (!container) return;
 
     const today = new Date().toISOString().split('T')[0];
-    const todayLogs = this.attendance.filter(a => a.date === today);
+    const selectedDate = this.selectedAttendanceDate || today;
+    const activeFilter = this.attendanceFilter || 'all';
+
+    const dayRecords = (this.attendance || []).filter(a => a.date === selectedDate);
+    
+    // Calculate stats
+    const stats = {
+      total: dayRecords.length,
+      present: dayRecords.filter(a => a.status === 'Present').length,
+      late: dayRecords.filter(a => a.isLate || a.status === 'Late').length,
+      earlyDeparture: dayRecords.filter(a => a.isEarlyDeparture).length,
+      missingPunches: dayRecords.filter(a => Boolean(a.missingPunch)).length,
+      validated: dayRecords.filter(a => a.isValidated).length,
+      pendingValidation: dayRecords.filter(a => !a.isValidated).length,
+      corrected: dayRecords.filter(a => a.isCorrected).length
+    };
+
+    // Filter displayed records
+    let displayed = [...dayRecords];
+    if (activeFilter === 'pending') {
+      displayed = displayed.filter(a => !a.isValidated);
+    } else if (activeFilter === 'validated') {
+      displayed = displayed.filter(a => a.isValidated);
+    } else if (activeFilter === 'late') {
+      displayed = displayed.filter(a => a.isLate || a.status === 'Late');
+    } else if (activeFilter === 'early') {
+      displayed = displayed.filter(a => a.isEarlyDeparture);
+    } else if (activeFilter === 'missing') {
+      displayed = displayed.filter(a => Boolean(a.missingPunch));
+    } else if (activeFilter === 'corrected') {
+      displayed = displayed.filter(a => a.isCorrected);
+    }
 
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">Daily Attendance Tracker</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Live check-in and working hours log for ${UI.formatDate(today)}</p>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-bold text-slate-900">Attendance & Biometrics Validation</h2>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+              Module 2
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Daily HR validation, biometric device punch stream, and discrepancy audit trail</p>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 clock-live-dot"></span> Live Tracking
-          </span>
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Date Picker -->
+          <div class="flex items-center gap-1.5 bg-white border border-slate-300 rounded-xl px-3 py-1.5 shadow-xs">
+            <i class="fa-solid fa-calendar text-indigo-600 text-xs"></i>
+            <input type="date" value="${selectedDate}" onchange="HR.setAttendanceDate(this.value)" class="text-xs font-semibold text-slate-700 focus:outline-none bg-transparent">
+          </div>
+
+          <button onclick="HR.syncBiometricData()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm border border-slate-300 shadow-xs flex items-center gap-1.5 transition-colors" title="Synchronize pending device punches">
+            <i class="fa-solid fa-arrows-rotate text-xs text-indigo-600"></i>
+            <span>Sync Biometrics (ATT-001)</span>
+          </button>
+          <button onclick="HR.openBiometricStreamModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm border border-slate-200 shadow-xs flex items-center gap-1.5 transition-colors" title="Inspect raw device logs">
+            <i class="fa-solid fa-fingerprint text-xs text-slate-600"></i>
+            <span>Machine Logs (ATT-011)</span>
+          </button>
+          <button onclick="HR.openCorrectionRequestsModal()" class="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold rounded-xl text-xs sm:text-sm border border-amber-200 shadow-xs flex items-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-inbox text-xs text-amber-600"></i>
+            <span>Requests</span>
+          </button>
+          <button onclick="HR.validateDayAttendance('${selectedDate}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-colors" title="Validate all clean records for this date">
+            <i class="fa-solid fa-check-double text-xs"></i>
+            <span>Validate Day (${stats.pendingValidation} Pending)</span>
+          </button>
         </div>
       </div>
 
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs">
+          <div class="text-[10px] font-bold text-slate-400 uppercase">Total Logged</div>
+          <div class="text-xl font-black text-slate-900 mt-0.5">${stats.total}</div>
+          <div class="text-[10px] text-slate-500">Employees on date</div>
+        </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs">
+          <div class="text-[10px] font-bold text-emerald-600 uppercase">Present (Clean)</div>
+          <div class="text-xl font-black text-emerald-600 mt-0.5">${stats.present}</div>
+          <div class="text-[10px] text-slate-500">Full shift recorded</div>
+        </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs">
+          <div class="text-[10px] font-bold text-amber-600 uppercase">Late Arrivals</div>
+          <div class="text-xl font-black text-amber-600 mt-0.5">${stats.late}</div>
+          <div class="text-[10px] text-slate-500">In > 09:15 AM (ATT-006)</div>
+        </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs">
+          <div class="text-[10px] font-bold text-orange-600 uppercase">Early Departures</div>
+          <div class="text-xl font-black text-orange-600 mt-0.5">${stats.earlyDeparture}</div>
+          <div class="text-[10px] text-slate-500">Out < 05:30 PM (ATT-006)</div>
+        </div>
+        <div class="bg-white rounded-xl p-3.5 border ${stats.missingPunches > 0 ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200'} shadow-xs">
+          <div class="text-[10px] font-bold text-rose-600 uppercase">Missing Punches</div>
+          <div class="text-xl font-black text-rose-600 mt-0.5">${stats.missingPunches}</div>
+          <div class="text-[10px] text-rose-600 font-semibold">BR-ATT-04 Held</div>
+        </div>
+        <div class="bg-white rounded-xl p-3.5 border ${stats.pendingValidation > 0 ? 'border-amber-300 bg-amber-50/20' : 'border-slate-200'} shadow-xs">
+          <div class="text-[10px] font-bold text-indigo-600 uppercase">Validated by HR</div>
+          <div class="text-xl font-black text-indigo-700 mt-0.5">${stats.validated} / ${stats.total}</div>
+          <div class="text-[10px] text-slate-500">Payroll Eligible (BR-ATT-05)</div>
+        </div>
+      </div>
+
+      <!-- Discrepancy & Validation Filter Tabs -->
+      <div class="flex flex-wrap items-center gap-1.5 border-b border-slate-200 pb-2 text-xs font-semibold">
+        <button onclick="HR.setAttendanceFilter('all')" class="px-3 py-1.5 rounded-lg transition-colors ${activeFilter === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          All Logs (${stats.total})
+        </button>
+        <button onclick="HR.setAttendanceFilter('pending')" class="px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${activeFilter === 'pending' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          <span>Pending Validation</span>
+          ${stats.pendingValidation > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${activeFilter === 'pending' ? 'bg-amber-800 text-white' : 'bg-amber-100 text-amber-800'}">${stats.pendingValidation}</span>` : ''}
+        </button>
+        <button onclick="HR.setAttendanceFilter('validated')" class="px-3 py-1.5 rounded-lg transition-colors ${activeFilter === 'validated' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          Validated (${stats.validated})
+        </button>
+        <button onclick="HR.setAttendanceFilter('missing')" class="px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 ${activeFilter === 'missing' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          <span>Missing Punches (ATT-007)</span>
+          ${stats.missingPunches > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold ${activeFilter === 'missing' ? 'bg-rose-800 text-white' : 'bg-rose-100 text-rose-800'}">${stats.missingPunches}</span>` : ''}
+        </button>
+        <button onclick="HR.setAttendanceFilter('late')" class="px-3 py-1.5 rounded-lg transition-colors ${activeFilter === 'late' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          Late Arrivals (${stats.late})
+        </button>
+        <button onclick="HR.setAttendanceFilter('early')" class="px-3 py-1.5 rounded-lg transition-colors ${activeFilter === 'early' ? 'bg-orange-500 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          Early Departures (${stats.earlyDeparture})
+        </button>
+        <button onclick="HR.setAttendanceFilter('corrected')" class="px-3 py-1.5 rounded-lg transition-colors ${activeFilter === 'corrected' ? 'bg-purple-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}">
+          Corrected (${stats.corrected})
+        </button>
+      </div>
+
+      <!-- Attendance Table -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
               <tr>
                 <th class="px-5 py-3.5">Employee</th>
-                <th class="px-5 py-3.5">Date</th>
-                <th class="px-5 py-3.5">Clock In</th>
-                <th class="px-5 py-3.5">Clock Out</th>
-                <th class="px-5 py-3.5">Hours Tracked</th>
-                <th class="px-5 py-3.5 text-center">Status</th>
+                <th class="px-5 py-3.5">Check In (Entry)</th>
+                <th class="px-5 py-3.5">Check Out (Exit)</th>
+                <th class="px-5 py-3.5">Daily Hours</th>
+                <th class="px-5 py-3.5 text-center">Status & Discrepancies</th>
+                <th class="px-5 py-3.5 text-center">HR Validation (ATT-009)</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700">
-              ${todayLogs.map(att => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                  <td class="px-5 py-3.5 font-bold text-slate-900 flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center text-xs font-bold">
-                      ${att.employeeName.charAt(0)}
-                    </div>
-                    <span>${att.employeeName}</span>
-                  </td>
-                  <td class="px-5 py-3.5 text-xs text-slate-500 font-mono">${att.date}</td>
-                  <td class="px-5 py-3.5 text-xs font-mono font-semibold text-emerald-600">
-                    ${att.clockIn ? `<i class="fa-regular fa-clock mr-1"></i> ${att.clockIn}` : '--'}
-                  </td>
-                  <td class="px-5 py-3.5 text-xs font-mono text-slate-500">
-                    ${att.clockOut ? `<i class="fa-regular fa-clock mr-1"></i> ${att.clockOut}` : '<span class="text-amber-500 italic">In Progress</span>'}
-                  </td>
-                  <td class="px-5 py-3.5 text-xs font-semibold text-slate-800">
-                    ${att.totalHours ? `${att.totalHours} hrs` : (att.clockIn ? 'Active' : '--')}
-                  </td>
-                  <td class="px-5 py-3.5 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-bold ${att.status === 'Present' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (att.status === 'Late' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600')}">
-                      ${att.status}
-                    </span>
+              ${displayed.length === 0 ? `
+                <tr>
+                  <td colspan="7" class="px-5 py-8 text-center text-xs text-slate-400">
+                    No attendance records found for ${UI.formatDate(selectedDate)} matching this filter.
                   </td>
                 </tr>
-              `).join('')}
+              ` : displayed.map(att => {
+                const isMissing = Boolean(att.missingPunch);
+                const isLate = att.isLate || att.status === 'Late';
+                const isEarly = att.isEarlyDeparture;
+                const isCorrected = att.isCorrected;
+                const isValidated = att.isValidated;
+
+                return `
+                  <tr class="hover:bg-slate-50/80 transition-colors ${isMissing ? 'bg-rose-50/20' : (isLate ? 'bg-amber-50/15' : '')}">
+                    <td class="px-5 py-3.5">
+                      <div class="font-bold text-slate-900 text-xs">${att.employeeName}</div>
+                      <div class="text-[11px] text-slate-500">${att.department || 'Staff'} • ${att.employeeId}</div>
+                    </td>
+                    <td class="px-5 py-3.5">
+                      ${att.clockIn ? `
+                        <div class="font-mono text-xs font-semibold ${isLate ? 'text-amber-700' : 'text-emerald-700'} flex items-center gap-1">
+                          <i class="fa-regular fa-clock text-[10px]"></i>
+                          <span>${att.clockIn}</span>
+                        </div>
+                        ${isLate ? `<span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 mt-0.5">Late Arrival</span>` : ''}
+                      ` : `
+                        <span class="text-rose-600 font-semibold text-xs flex items-center gap-1">
+                          <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Missing Entry
+                        </span>
+                      `}
+                    </td>
+                    <td class="px-5 py-3.5">
+                      ${att.clockOut ? `
+                        <div class="font-mono text-xs font-semibold ${isEarly ? 'text-orange-700' : 'text-slate-700'} flex items-center gap-1">
+                          <i class="fa-regular fa-clock text-[10px]"></i>
+                          <span>${att.clockOut}</span>
+                        </div>
+                        ${isEarly ? `<span class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-orange-100 text-orange-800 border border-orange-200 mt-0.5">Early Departure</span>` : ''}
+                      ` : `
+                        <span class="text-rose-600 font-semibold text-xs flex items-center gap-1">
+                          <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Missing Exit
+                        </span>
+                      `}
+                    </td>
+                    <td class="px-5 py-3.5 font-mono text-xs font-bold text-slate-800">
+                      ${att.totalHours ? `${att.totalHours} hrs` : '--'}
+                      ${isCorrected ? `<span class="text-[10px] text-purple-600 font-sans font-normal block">Adjusted</span>` : ''}
+                    </td>
+                    <td class="px-5 py-3.5 text-center">
+                      <div class="flex flex-col items-center gap-1">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${att.status === 'Present' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (att.status === 'Late' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-rose-50 text-rose-700 border border-rose-200')}">
+                          ${att.status}
+                        </span>
+                        ${isCorrected ? `
+                          <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded border border-purple-200" title="Reason: ${att.correctionReason}">
+                            <i class="fa-solid fa-pen-to-square text-[9px]"></i> Corrected (ATT-010)
+                          </span>
+                        ` : ''}
+                      </div>
+                    </td>
+                    <td class="px-5 py-3.5 text-center">
+                      ${isValidated ? `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <i class="fa-solid fa-circle-check text-[9px]"></i> Validated
+                        </span>
+                        <div class="text-[9px] text-slate-400 mt-0.5">${att.validatedBy || 'HR Admin'}</div>
+                      ` : `
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                          <i class="fa-solid fa-clock text-[9px]"></i> Pending
+                        </span>
+                        <div class="text-[9px] text-amber-600/80 mt-0.5">Held from Payroll</div>
+                      `}
+                    </td>
+                    <td class="px-5 py-3.5 text-right">
+                      <div class="inline-flex items-center gap-1.5">
+                        ${!isValidated ? `
+                          <button onclick="HR.validateAttendance('${att.id}')" title="Validate attendance record (ATT-009)" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-check text-[11px]"></i> Validate
+                          </button>
+                        ` : ''}
+                        <button onclick="HR.openCorrectAttendanceModal('${att.id}')" title="Correct attendance discrepancy (ATT-010, BR-ATT-03)" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold rounded-lg border border-amber-200 transition-colors flex items-center gap-1">
+                          <i class="fa-solid fa-user-pen text-[11px]"></i> Correct
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -1828,6 +1970,294 @@ const HR = {
       this.renderPayroll();
     } catch (err) {
       UI.toast(err.message || 'Failed to finalize payroll cycle', 'error');
+    }
+  },
+
+  // ATT-009: Validate individual attendance record
+  async validateAttendance(id) {
+    try {
+      const res = await API.patch(`/attendance/${id}/validate`, {});
+      UI.toast(res.message || 'Attendance record validated successfully!', 'success');
+      await this.loadAllData();
+      this.renderAttendance();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to validate record', 'error');
+    }
+  },
+
+  // ATT-009 & BR-ATT-04: Validate all clean attendance records for selected date
+  async validateDayAttendance(date) {
+    const targetDate = date || this.selectedAttendanceDate || new Date().toISOString().split('T')[0];
+    try {
+      const res = await API.post('/attendance/validate-all', { date: targetDate });
+      UI.toast(res.message || 'Clean attendance records validated for the day!', 'success');
+      await this.loadAllData();
+      this.renderAttendance();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to validate daily attendance', 'error');
+    }
+  },
+
+  // ATT-010 & BR-ATT-03: Open attendance correction modal
+  openCorrectAttendanceModal(id) {
+    const record = (this.attendance || []).find(a => a.id === id);
+    if (!record) return;
+
+    document.getElementById('correct-att-id').value = id;
+    document.getElementById('correct-att-in').value = record.clockIn || '';
+    document.getElementById('correct-att-out').value = record.clockOut || '';
+    document.getElementById('correct-att-status').value = record.status || 'Present';
+    document.getElementById('correct-att-reason').value = '';
+
+    const orig = record.originalBiometric || { clockIn: record.clockIn, clockOut: record.clockOut };
+    const info = document.getElementById('correct-att-info');
+    if (info) {
+      info.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-900">${record.employeeName} (${record.employeeId})</span>
+          <span class="text-slate-500 font-mono text-[11px]">${record.date}</span>
+        </div>
+        <div class="text-[11px] text-slate-600 flex items-center gap-3 pt-1 border-t border-slate-200">
+          <span>Machine Check-in: <strong class="font-mono text-slate-800">${orig.clockIn || '--'}</strong></span>
+          <span>Machine Check-out: <strong class="font-mono text-slate-800">${orig.clockOut || '--'}</strong></span>
+        </div>
+        ${record.isCorrected ? `
+          <div class="text-[11px] text-purple-700 bg-purple-50 p-2 rounded-lg mt-1 border border-purple-100">
+            <strong>Previous Correction:</strong> "${record.correctionReason}" (by ${record.correctedBy})
+          </div>
+        ` : ''}
+      `;
+    }
+
+    UI.openModal('modal-correct-attendance');
+  },
+
+  // ATT-010 & BR-ATT-03: Submit correction with reason
+  async submitAttendanceCorrection(event) {
+    event.preventDefault();
+    const id = document.getElementById('correct-att-id').value;
+    const clockIn = document.getElementById('correct-att-in').value.trim();
+    const clockOut = document.getElementById('correct-att-out').value.trim();
+    const status = document.getElementById('correct-att-status').value;
+    const correctionReason = document.getElementById('correct-att-reason').value.trim();
+
+    if (!correctionReason) {
+      UI.toast('Correction reason is mandatory (BR-ATT-03)', 'error');
+      return;
+    }
+
+    try {
+      const res = await API.patch(`/attendance/${id}/correct`, {
+        clockIn,
+        clockOut,
+        status,
+        correctionReason
+      });
+
+      UI.toast(res.message || 'Attendance discrepancy corrected with audit trail!', 'success');
+      UI.closeModal('modal-correct-attendance');
+      await this.loadAllData();
+      this.renderAttendance();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to correct attendance', 'error');
+    }
+  },
+
+  // ATT-001: Sync biometric device data
+  async syncBiometricData() {
+    try {
+      UI.toast('Synchronizing biometric device logs...', 'info');
+      const res = await API.post('/biometric/sync', {});
+      UI.toast(res.message || 'Biometric data synchronized successfully!', 'success');
+      await this.loadAllData();
+      this.renderAttendance();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to synchronize biometric device', 'error');
+    }
+  },
+
+  // ATT-011 & BR-ATT-06: Open biometric punch stream & sync failures modal
+  async openBiometricStreamModal() {
+    try {
+      const date = this.selectedAttendanceDate || new Date().toISOString().split('T')[0];
+      const punches = await API.get('/biometric/punches', { date });
+      const failures = await API.get('/biometric/sync-failures');
+
+      const content = document.getElementById('biometric-stream-content');
+      if (!content) return;
+
+      content.innerHTML = `
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Raw Biometric Machine Stream</h3>
+              <p class="text-xs text-slate-500">Immutable device log records (ATT-011, BR-ATT-02)</p>
+            </div>
+          </div>
+          <button onclick="UI.closeModal('modal-biometric-stream')" class="text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+          <!-- Device Sync Failure Alert (BR-ATT-06) -->
+          ${failures.length > 0 ? `
+            <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-2">
+              <div class="font-bold flex items-center gap-2 text-rose-900">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Biometric Device Synchronization Failures (${failures.length} Unresolved)</span>
+              </div>
+              <div class="space-y-1">
+                ${failures.map(f => `
+                  <div class="bg-white p-2 rounded-lg border border-rose-200 flex items-center justify-between">
+                    <div>
+                      <span class="font-mono font-bold text-rose-700">${f.biometricRef}</span>
+                      <span class="text-slate-500">• ${f.timestamp}</span>
+                      <p class="text-slate-600 text-[11px] mt-0.5">${f.errorReason}</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">BR-ATT-06 Flag</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Device Punch Events (${punches.length} for ${UI.formatDate(date)})</h4>
+              <span class="text-[11px] text-slate-400">Device: DEV-HQ-MAIN</span>
+            </div>
+            <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 font-bold text-slate-500 uppercase text-[10px] border-b border-slate-100">
+                  <tr>
+                    <th class="px-4 py-2.5">Punch ID</th>
+                    <th class="px-4 py-2.5">Biometric Ref / ID</th>
+                    <th class="px-4 py-2.5">Punch Time</th>
+                    <th class="px-4 py-2.5">Type</th>
+                    <th class="px-4 py-2.5 text-right">Device ID</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700 font-mono">
+                  ${punches.length === 0 ? `
+                    <tr><td colspan="5" class="text-center py-6 text-slate-400 font-sans">No punches recorded for this date.</td></tr>
+                  ` : punches.map(p => `
+                    <tr class="hover:bg-slate-50">
+                      <td class="px-4 py-2 text-slate-400">${p.id}</td>
+                      <td class="px-4 py-2 font-bold text-slate-900">${p.employeeId || p.biometricRef}</td>
+                      <td class="px-4 py-2 font-semibold text-emerald-700">${p.punchTime}</td>
+                      <td class="px-4 py-2">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${p.punchType === 'ENTRY' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+                          ${p.punchType || 'PUNCH'}
+                        </span>
+                      </td>
+                      <td class="px-4 py-2 text-right text-slate-500">${p.deviceId || 'DEV-HQ-MAIN'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+          <button onclick="UI.closeModal('modal-biometric-stream')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+            Close
+          </button>
+        </div>
+      `;
+
+      UI.openModal('modal-biometric-stream');
+    } catch (err) {
+      UI.toast(err.message || 'Could not load biometric logs', 'error');
+    }
+  },
+
+  // Open employee correction requests modal
+  async openCorrectionRequestsModal() {
+    try {
+      const requests = await API.get('/attendance/correction-requests');
+      const content = document.getElementById('attendance-correction-requests-content');
+      if (!content) return;
+
+      content.innerHTML = `
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-inbox"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Employee Attendance Correction Requests</h3>
+              <p class="text-xs text-slate-500">Review employee-requested punch corrections</p>
+            </div>
+          </div>
+          <button onclick="UI.closeModal('modal-attendance-correction-requests')" class="text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-3 max-h-[70vh] overflow-y-auto">
+          ${requests.length === 0 ? `
+            <div class="text-center py-10 text-slate-400 text-xs">No pending attendance correction requests.</div>
+          ` : requests.map(r => `
+            <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-xs space-y-2">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-bold text-slate-900 text-sm">${r.employeeName} (${r.employeeId})</h4>
+                  <span class="text-xs text-slate-400 font-mono">Date: ${r.date}</span>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${r.status === 'Pending' ? 'bg-amber-100 text-amber-800' : (r.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800')}">
+                  ${r.status}
+                </span>
+              </div>
+              <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs space-y-1">
+                <div><strong>Requested Times:</strong> ${r.requestedIn} &rarr; ${r.requestedOut}</div>
+                <div><strong>Reason:</strong> "${r.reason}"</div>
+              </div>
+              ${r.status === 'Pending' ? `
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+                  <button onclick="HR.handleCorrectionRequestDecision('${r.id}', 'Rejected')" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-semibold">
+                    Reject
+                  </button>
+                  <button onclick="HR.handleCorrectionRequestDecision('${r.id}', 'Approved')" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow-xs">
+                    Approve & Apply
+                  </button>
+                </div>
+              ` : `
+                <div class="text-[11px] text-slate-500 italic pt-1 border-t border-slate-100">Reviewed by ${r.reviewedBy || 'HR Admin'}</div>
+              `}
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+          <button onclick="UI.closeModal('modal-attendance-correction-requests')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+            Close
+          </button>
+        </div>
+      `;
+
+      UI.openModal('modal-attendance-correction-requests');
+    } catch (err) {
+      UI.toast(err.message || 'Could not load requests', 'error');
+    }
+  },
+
+  async handleCorrectionRequestDecision(id, decision) {
+    try {
+      const res = await API.patch(`/attendance/correction-requests/${id}`, {
+        status: decision,
+        reviewComment: `Decision by ${Auth.employee?.name || 'HR Admin'}`
+      });
+      UI.toast(res.message || `Correction request ${decision.toLowerCase()} successfully!`, 'success');
+      await this.loadAllData();
+      this.openCorrectionRequestsModal();
+      this.renderAttendance();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to update request', 'error');
     }
   }
 };

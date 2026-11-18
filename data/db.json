@@ -380,7 +380,7 @@
   ],
   "leaves": [
     {
-      "id": "LV-485",
+      "id": "LV-765",
       "employeeId": "EMP-002",
       "employeeName": "Alex Morgan",
       "department": "Engineering",
@@ -395,7 +395,7 @@
       "reviewComment": "Critical sprint release dates. Please reschedule if possible."
     },
     {
-      "id": "LV-574",
+      "id": "LV-307",
       "employeeId": "EMP-002",
       "employeeName": "Alex Morgan",
       "department": "Engineering",
@@ -507,12 +507,20 @@
       "employeeName": "Elena Rostova",
       "date": "2026-11-18",
       "clockIn": "08:52 AM",
-      "clockOut": null,
+      "clockOut": "05:35 PM",
       "status": "Present",
-      "totalHours": 2.5,
+      "totalHours": 8.7,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "08:52 AM",
+        "clockOut": "05:35 PM",
+        "totalHours": 8.7
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-002",
@@ -520,77 +528,125 @@
       "employeeName": "Alex Morgan",
       "date": "2026-11-18",
       "clockIn": "09:05 AM",
-      "clockOut": null,
+      "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 2.3,
+      "totalHours": 8.4,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "09:05 AM",
+        "clockOut": "05:30 PM",
+        "totalHours": 8.4
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-003",
       "employeeId": "EMP-003",
       "employeeName": "Sarah Chen",
       "date": "2026-11-18",
-      "clockIn": "09:25 AM",
-      "clockOut": null,
+      "clockIn": "09:28 AM",
+      "clockOut": "05:45 PM",
       "status": "Late",
-      "totalHours": 2,
+      "totalHours": 8.3,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "09:28 AM",
+        "clockOut": "05:45 PM",
+        "totalHours": 8.3
+      },
+      "isLate": true,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-004",
       "employeeId": "EMP-004",
       "employeeName": "Marcus Vance",
       "date": "2026-11-18",
-      "clockIn": "08:30 AM",
-      "clockOut": null,
+      "clockIn": "08:58 AM",
+      "clockOut": "04:15 PM",
       "status": "Present",
-      "totalHours": 2.9,
+      "totalHours": 7.3,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "08:58 AM",
+        "clockOut": "04:15 PM",
+        "totalHours": 7.3
+      },
+      "isLate": false,
+      "isEarlyDeparture": true,
+      "missingPunch": null
     },
     {
       "id": "ATT-005",
       "employeeId": "EMP-005",
       "employeeName": "Priya Patel",
       "date": "2026-11-18",
-      "clockIn": null,
+      "clockIn": "09:02 AM",
       "clockOut": null,
-      "status": "On Leave",
+      "status": "Missing Punch",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "09:02 AM",
+        "clockOut": null,
+        "totalHours": 0
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": "checkout"
     },
     {
       "id": "ATT-006",
       "employeeId": "EMP-006",
       "employeeName": "Liam Davis",
       "date": "2026-11-18",
-      "clockIn": "09:00 AM",
-      "clockOut": null,
+      "clockIn": "08:45 AM",
+      "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 2.4,
+      "totalHours": 8.8,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "08:45 AM",
+        "clockOut": "05:30 PM",
+        "totalHours": 8.8
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-007",
       "employeeId": "EMP-007",
       "employeeName": "Sophia Taylor",
       "date": "2026-11-18",
-      "clockIn": "08:45 AM",
-      "clockOut": null,
+      "clockIn": "09:10 AM",
+      "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 2.6,
+      "totalHours": 8.3,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "09:10 AM",
+        "clockOut": "05:30 PM",
+        "totalHours": 8.3
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-008",
@@ -727,13 +783,21 @@
       "employeeId": "EMP-001",
       "employeeName": "Elena Rostova",
       "date": "2026-11-17",
-      "clockIn": "09:00 AM",
+      "clockIn": "08:50 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5,
+      "totalHours": 8.7,
       "isValidated": true,
       "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedAt": "2026-11-18",
+      "originalBiometric": {
+        "clockIn": "08:50 AM",
+        "clockOut": "05:30 PM",
+        "totalHours": 8.7
+      },
+      "isLate": false,
+      "isEarlyDeparture": false,
+      "missingPunch": null
     },
     {
       "id": "ATT-198",
@@ -2782,23 +2846,23 @@
   },
   "notifications": [
     {
-      "id": "NTF-1794995728671-280",
+      "id": "NTF-1794998756490-866",
       "employeeId": "EMP-002",
       "title": "Leave Request Rejected",
       "message": "Your Sick leave application for 2026-12-10 to 2026-12-11 (2 day(s)) has been rejected by Elena Rostova (HR). Note: Critical sprint release dates. Please reschedule if possible.",
       "type": "leave_rejected",
-      "referenceId": "LV-485",
-      "createdAt": "2026-11-18T09:55:28.671Z",
+      "referenceId": "LV-765",
+      "createdAt": "2026-11-18T10:45:56.490Z",
       "read": false
     },
     {
-      "id": "NTF-1794995728665-419",
+      "id": "NTF-1794998756483-527",
       "employeeId": "EMP-002",
       "title": "Leave Request Approved",
       "message": "Your Annual leave application for 2026-12-01 to 2026-12-03 (3 day(s)) has been approved by Elena Rostova (HR). Note: Approved. Enjoy your time off!",
       "type": "leave_approved",
-      "referenceId": "LV-574",
-      "createdAt": "2026-11-18T09:55:28.665Z",
+      "referenceId": "LV-307",
+      "createdAt": "2026-11-18T10:45:56.483Z",
       "read": true
     },
     {
@@ -2820,6 +2884,186 @@
       "referenceId": "PS-2026-10-002",
       "createdAt": "2026-10-31T17:00:00.000Z",
       "read": false
+    }
+  ],
+  "biometricPunches": [
+    {
+      "id": "BIO-PUNCH-001",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-18 08:52:00",
+      "punchTime": "08:52 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-002",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-18 17:35:00",
+      "punchTime": "05:35 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-003",
+      "employeeId": "EMP-002",
+      "biometricRef": "BIO-EMP-002",
+      "timestamp": "2026-11-18 09:05:00",
+      "punchTime": "09:05 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-004",
+      "employeeId": "EMP-002",
+      "biometricRef": "BIO-EMP-002",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-005",
+      "employeeId": "EMP-003",
+      "biometricRef": "BIO-EMP-003",
+      "timestamp": "2026-11-18 09:28:00",
+      "punchTime": "09:28 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-006",
+      "employeeId": "EMP-003",
+      "biometricRef": "BIO-EMP-003",
+      "timestamp": "2026-11-18 17:45:00",
+      "punchTime": "05:45 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-007",
+      "employeeId": "EMP-004",
+      "biometricRef": "BIO-EMP-004",
+      "timestamp": "2026-11-18 08:58:00",
+      "punchTime": "08:58 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-008",
+      "employeeId": "EMP-004",
+      "biometricRef": "BIO-EMP-004",
+      "timestamp": "2026-11-18 16:15:00",
+      "punchTime": "04:15 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-009",
+      "employeeId": "EMP-005",
+      "biometricRef": "BIO-EMP-005",
+      "timestamp": "2026-11-18 09:02:00",
+      "punchTime": "09:02 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-010",
+      "employeeId": "EMP-006",
+      "biometricRef": "BIO-EMP-006",
+      "timestamp": "2026-11-18 08:45:00",
+      "punchTime": "08:45 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-011",
+      "employeeId": "EMP-006",
+      "biometricRef": "BIO-EMP-006",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-012",
+      "employeeId": "EMP-007",
+      "biometricRef": "BIO-EMP-007",
+      "timestamp": "2026-11-18 09:10:00",
+      "punchTime": "09:10 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-013",
+      "employeeId": "EMP-007",
+      "biometricRef": "BIO-EMP-007",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-014",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-17 08:50:00",
+      "punchTime": "08:50 AM",
+      "date": "2026-11-17",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-015",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-17 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-17",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    }
+  ],
+  "biometricSyncFailures": [
+    {
+      "id": "SYNC-ERR-001",
+      "deviceId": "DEV-LOBBY-02",
+      "timestamp": "2026-11-18 08:15:00",
+      "date": "2026-11-18",
+      "biometricRef": "BIO-UNKNOWN-X99",
+      "errorReason": "Unmapped biometric reference: No matching employee profile registered (BR-ATT-06)",
+      "status": "Logged",
+      "resolved": false
+    }
+  ],
+  "attendanceCorrectionRequests": [
+    {
+      "id": "CORR-REQ-001",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "department": "Marketing",
+      "date": "2026-11-17",
+      "requestedIn": "09:00 AM",
+      "requestedOut": "05:30 PM",
+      "reason": "Biometric reader did not register exit punch due to device sensor freeze",
+      "status": "Pending",
+      "requestedAt": "2026-11-17 18:05:00",
+      "reviewedBy": null,
+      "reviewComment": ""
     }
   ]
 }

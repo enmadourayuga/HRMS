@@ -2687,5 +2687,185 @@
       "createdAt": "2026-10-31T17:00:00.000Z",
       "read": false
     }
+  ],
+  "biometricPunches": [
+    {
+      "id": "BIO-PUNCH-001",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-18 08:52:00",
+      "punchTime": "08:52 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-002",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-18 17:35:00",
+      "punchTime": "05:35 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-003",
+      "employeeId": "EMP-002",
+      "biometricRef": "BIO-EMP-002",
+      "timestamp": "2026-11-18 09:05:00",
+      "punchTime": "09:05 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-004",
+      "employeeId": "EMP-002",
+      "biometricRef": "BIO-EMP-002",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-005",
+      "employeeId": "EMP-003",
+      "biometricRef": "BIO-EMP-003",
+      "timestamp": "2026-11-18 09:28:00",
+      "punchTime": "09:28 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-006",
+      "employeeId": "EMP-003",
+      "biometricRef": "BIO-EMP-003",
+      "timestamp": "2026-11-18 17:45:00",
+      "punchTime": "05:45 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-007",
+      "employeeId": "EMP-004",
+      "biometricRef": "BIO-EMP-004",
+      "timestamp": "2026-11-18 08:58:00",
+      "punchTime": "08:58 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-008",
+      "employeeId": "EMP-004",
+      "biometricRef": "BIO-EMP-004",
+      "timestamp": "2026-11-18 16:15:00",
+      "punchTime": "04:15 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-009",
+      "employeeId": "EMP-005",
+      "biometricRef": "BIO-EMP-005",
+      "timestamp": "2026-11-18 09:02:00",
+      "punchTime": "09:02 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-010",
+      "employeeId": "EMP-006",
+      "biometricRef": "BIO-EMP-006",
+      "timestamp": "2026-11-18 08:45:00",
+      "punchTime": "08:45 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-011",
+      "employeeId": "EMP-006",
+      "biometricRef": "BIO-EMP-006",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-012",
+      "employeeId": "EMP-007",
+      "biometricRef": "BIO-EMP-007",
+      "timestamp": "2026-11-18 09:10:00",
+      "punchTime": "09:10 AM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-013",
+      "employeeId": "EMP-007",
+      "biometricRef": "BIO-EMP-007",
+      "timestamp": "2026-11-18 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-18",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    },
+    {
+      "id": "BIO-PUNCH-014",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-17 08:50:00",
+      "punchTime": "08:50 AM",
+      "date": "2026-11-17",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "ENTRY"
+    },
+    {
+      "id": "BIO-PUNCH-015",
+      "employeeId": "EMP-001",
+      "biometricRef": "BIO-EMP-001",
+      "timestamp": "2026-11-17 17:30:00",
+      "punchTime": "05:30 PM",
+      "date": "2026-11-17",
+      "deviceId": "DEV-HQ-MAIN",
+      "punchType": "EXIT"
+    }
+  ],
+  "biometricSyncFailures": [
+    {
+      "id": "SYNC-ERR-001",
+      "deviceId": "DEV-LOBBY-02",
+      "timestamp": "2026-11-18 08:15:00",
+      "date": "2026-11-18",
+      "biometricRef": "BIO-UNKNOWN-X99",
+      "errorReason": "Unmapped biometric reference: No matching employee profile registered (BR-ATT-06)",
+      "status": "Logged",
+      "resolved": false
+    }
+  ],
+  "attendanceCorrectionRequests": [
+    {
+      "id": "CORR-REQ-001",
+      "employeeId": "EMP-005",
+      "employeeName": "Priya Patel",
+      "department": "Marketing",
+      "date": "2026-11-17",
+      "requestedIn": "09:00 AM",
+      "requestedOut": "05:30 PM",
+      "reason": "Biometric reader did not register exit punch due to device sensor freeze",
+      "status": "Pending",
+      "requestedAt": "2026-11-17 18:05:00",
+      "reviewedBy": null,
+      "reviewComment": ""
+    }
   ]
 }

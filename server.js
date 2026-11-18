@@ -72,6 +72,15 @@ function loadDatabase() {
   if (!data.notifications) {
     data.notifications = [];
   }
+  if (!data.biometricPunches) {
+    data.biometricPunches = [];
+  }
+  if (!data.biometricSyncFailures) {
+    data.biometricSyncFailures = [];
+  }
+  if (!data.attendanceCorrectionRequests) {
+    data.attendanceCorrectionRequests = [];
+  }
   return data;
 }
 
@@ -630,10 +639,183 @@ app.post('/api/notifications/mark-all-read', (req, res) => {
   res.json({ message: `Marked ${count} notifications as read`, count });
 });
 
-// ----------------- ATTENDANCE ROUTES & VALIDATION (PAY-002, BR-PAY-01) -----------------
+// ----------------- MODULE 2: ATTENDANCE MANAGEMENT & BIOMETRICS (ATT-001 to ATT-012, BR-ATT-01 to BR-ATT-06) -----------------
+
+// Helper: Parse 12-hour or 24-hour time to minutes from midnight
+function parseTimeToMinutes(t) {
+  if (!t) return null;
+  t = String(t).trim();
+  const match12 = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+  if (!match12) return null;
+  let h = parseInt(match12[1], 10);
+  const m = parseInt(match12[2], 10);
+  const ampm = match12[3] ? match12[3].toUpperCase() : null;
+  if (ampm === 'PM' && h < 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  return h * 60 + m;
+}
+
+// ATT-005: Calculate daily working hours based on check-in and check-out
+function calculateWorkingHours(clockIn, clockOut) {
+  if (!clockIn || !clockOut) return 0;
+  const inMin = parseTimeToMinutes(clockIn);
+  const outMin = parseTimeToMinutes(clockOut);
+  if (inMin === null || outMin === null || outMin <= inMin) return 0;
+  return Math.round(((outMin - inMin) / 60) * 10) / 10;
+}
+
+// ATT-001, ATT-004, ATT-011, BR-ATT-01, BR-ATT-02, BR-ATT-06:
+// Synchronize raw biometric punches with daily attendance records
+function syncBiometricPunches() {
+  if (!db.biometricPunches) db.biometricPunches = [];
+  if (!db.biometricSyncFailures) db.biometricSyncFailures = [];
+
+  const punchesByEmpDate = {};
+
+  db.biometricPunches.forEach(punch => {
+    // ATT-004: Map biometric records to Employee ID
+    let emp = null;
+    if (punch.employeeId) {
+      emp = (db.employees || []).find(e => e.id === punch.employeeId);
+    }
+    if (!emp && punch.biometricRef) {
+      emp = (db.employees || []).find(e => e.biometricRef === punch.biometricRef || e.id === punch.biometricRef);
+    }
+
+    if (!emp) {
+      // BR-ATT-06: Flag biometric synchronization failure
+      const exists = db.biometricSyncFailures.find(f => f.biometricRef === punch.biometricRef && f.timestamp === punch.timestamp);
+      if (!exists) {
+        db.biometricSyncFailures.push({
+          id: `SYNC-ERR-${Date.now()}-${Math.floor(Math.random() * 900)}`,
+          deviceId: punch.deviceId || 'DEV-HQ-MAIN',
+          timestamp: punch.timestamp,
+          date: punch.date,
+          biometricRef: punch.biometricRef,
+          errorReason: `Unmapped biometric reference: No matching employee profile found for "${punch.biometricRef}" (BR-ATT-06)`,
+          status: 'Logged',
+          resolved: false
+        });
+      }
+      return;
+    }
+
+    const key = `${emp.id}_${punch.date}`;
+    if (!punchesByEmpDate[key]) {
+      punchesByEmpDate[key] = {
+        emp,
+        date: punch.date,
+        punches: []
+      };
+    }
+    punchesByEmpDate[key].punches.push(punch);
+  });
+
+  let syncedCount = 0;
+
+  Object.values(punchesByEmpDate).forEach(({ emp, date, punches }) => {
+    punches.sort((a, b) => (a.timestamp || '').localeCompare(b.timestamp || ''));
+
+    // ATT-002: First punch = Entry time (Check-in)
+    const firstPunch = punches[0];
+    const clockIn = firstPunch ? firstPunch.punchTime : null;
+
+    // ATT-003: Subsequent punch = Exit time (Check-out)
+    let clockOut = null;
+    if (punches.length > 1) {
+      const lastPunch = punches[punches.length - 1];
+      clockOut = lastPunch.punchTime;
+    }
+
+    // ATT-005: Calculate daily working hours
+    const totalHours = calculateWorkingHours(clockIn, clockOut);
+
+    // ATT-006: Identify late arrivals (> 09:15 AM) and early departures (< 05:30 PM)
+    const inMinutes = parseTimeToMinutes(clockIn);
+    const outMinutes = parseTimeToMinutes(clockOut);
+    const isLate = inMinutes !== null && inMinutes > 555;
+    const isEarlyDeparture = outMinutes !== null && outMinutes < 1050;
+
+    // ATT-007: Identify missing check-in/check-out records
+    let missingPunch = null;
+    if (clockIn && !clockOut) {
+      missingPunch = 'checkout';
+    } else if (!clockIn && clockOut) {
+      missingPunch = 'checkin';
+    }
+
+    let status = 'Present';
+    if (isLate) {
+      status = 'Late';
+    } else if (missingPunch) {
+      status = 'Missing Punch';
+    } else if (totalHours > 0 && totalHours < 4.0) {
+      status = 'Half Day';
+    }
+
+    let attRecord = (db.attendance || []).find(a => a.employeeId === emp.id && a.date === date);
+
+    if (attRecord) {
+      // ATT-011 & BR-ATT-02: Maintain original biometric records separately
+      if (!attRecord.originalBiometric) {
+        attRecord.originalBiometric = {
+          clockIn: attRecord.clockIn || clockIn,
+          clockOut: attRecord.clockOut || clockOut,
+          totalHours: attRecord.totalHours || totalHours
+        };
+      }
+
+      if (!attRecord.isCorrected) {
+        attRecord.clockIn = clockIn;
+        attRecord.clockOut = clockOut;
+        attRecord.totalHours = totalHours;
+        attRecord.status = status;
+        attRecord.isLate = isLate;
+        attRecord.isEarlyDeparture = isEarlyDeparture;
+        attRecord.missingPunch = missingPunch;
+      }
+      attRecord.originalBiometric = { clockIn, clockOut, totalHours };
+    } else {
+      attRecord = {
+        id: `ATT-${date.replace(/-/g, '')}-${emp.id.replace('EMP-', '')}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        department: emp.department,
+        date,
+        clockIn,
+        clockOut,
+        totalHours,
+        status,
+        isLate,
+        isEarlyDeparture,
+        missingPunch,
+        isValidated: false, // BR-ATT-05: requires HR validation
+        validatedBy: null,
+        validatedAt: null,
+        isCorrected: false,
+        correctionReason: '',
+        correctedBy: null,
+        correctedAt: null,
+        originalBiometric: { clockIn, clockOut, totalHours } // ATT-011, BR-ATT-02
+      };
+      if (!db.attendance) db.attendance = [];
+      db.attendance.unshift(attRecord);
+    }
+
+    syncedCount++;
+  });
+
+  saveDatabase();
+  return {
+    syncedCount,
+    failureCount: (db.biometricSyncFailures || []).filter(f => !f.resolved).length
+  };
+}
+
+// ATT-008: Display daily attendance with filtering for HR validation
 app.get('/api/attendance', (req, res) => {
-  const { date, employeeId, isValidated } = req.query;
-  let results = [...db.attendance];
+  const { date, employeeId, isValidated, status, discrepancy, search } = req.query;
+  let results = [...(db.attendance || [])];
 
   if (date) {
     results = results.filter(a => a.date === date);
@@ -641,79 +823,261 @@ app.get('/api/attendance', (req, res) => {
   if (employeeId) {
     results = results.filter(a => a.employeeId === employeeId);
   }
-  if (isValidated !== undefined) {
+  if (isValidated !== undefined && isValidated !== 'All') {
     const boolVal = isValidated === 'true';
     results = results.filter(a => Boolean(a.isValidated) === boolVal);
   }
+  if (status && status !== 'All') {
+    results = results.filter(a => (a.status || '').toLowerCase() === status.toLowerCase());
+  }
+  if (discrepancy) {
+    if (discrepancy === 'late') results = results.filter(a => a.isLate);
+    else if (discrepancy === 'early_departure') results = results.filter(a => a.isEarlyDeparture);
+    else if (discrepancy === 'missing_punch') results = results.filter(a => Boolean(a.missingPunch));
+    else if (discrepancy === 'corrected') results = results.filter(a => a.isCorrected);
+    else if (discrepancy === 'all_discrepancies') results = results.filter(a => a.isLate || a.isEarlyDeparture || Boolean(a.missingPunch));
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    results = results.filter(a => 
+      (a.employeeName && a.employeeName.toLowerCase().includes(q)) || 
+      (a.employeeId && a.employeeId.toLowerCase().includes(q))
+    );
+  }
 
+  results.sort((a, b) => b.date.localeCompare(a.date) || a.employeeId.localeCompare(b.employeeId));
   res.json(results);
 });
 
+// Daily attendance statistics summary for HR dashboard (ATT-008)
+app.get('/api/attendance/summary', (req, res) => {
+  const { date = new Date().toISOString().split('T')[0] } = req.query;
+  const dayRecords = (db.attendance || []).filter(a => a.date === date);
+  const activeEmps = (db.employees || []).filter(e => e.status !== 'Inactive');
+
+  const summary = {
+    date,
+    totalScheduled: activeEmps.length,
+    totalPresent: dayRecords.filter(a => a.status === 'Present').length,
+    totalLate: dayRecords.filter(a => a.isLate || a.status === 'Late').length,
+    totalEarlyDeparture: dayRecords.filter(a => a.isEarlyDeparture).length,
+    totalMissingPunches: dayRecords.filter(a => Boolean(a.missingPunch)).length,
+    totalValidated: dayRecords.filter(a => a.isValidated).length,
+    totalPendingValidation: dayRecords.filter(a => !a.isValidated).length,
+    totalCorrected: dayRecords.filter(a => a.isCorrected).length
+  };
+
+  res.json(summary);
+});
+
+// ATT-001, ATT-002, ATT-003, ATT-004: Live Biometric Punch Ingestion
+// User specification: "the backend data will show employee id with entry time when he uses the biometric first and then employee id and exit time when he uses it again"
+app.post('/api/biometric/punch', (req, res) => {
+  const { employeeId, biometricRef, timestamp, deviceId = 'DEV-HQ-MAIN' } = req.body;
+  if (!employeeId && !biometricRef) {
+    return res.status(400).json({ error: 'employeeId or biometricRef is required' });
+  }
+
+  // ATT-004: Map biometric records to Employee ID
+  let emp = null;
+  if (employeeId) {
+    emp = (db.employees || []).find(e => e.id === employeeId);
+  }
+  if (!emp && biometricRef) {
+    emp = (db.employees || []).find(e => e.biometricRef === biometricRef || e.id === biometricRef);
+  }
+
+  const now = new Date();
+  const dateStr = timestamp ? timestamp.split(' ')[0].split('T')[0] : now.toISOString().split('T')[0];
+  const timeStr = timestamp && timestamp.includes(' ') 
+    ? timestamp.split(' ')[1].slice(0, 5) 
+    : now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const fullTimestamp = timestamp || `${dateStr} ${now.toTimeString().split(' ')[0]}`;
+
+  if (!emp) {
+    // BR-ATT-06: Flag biometric synchronization failure
+    const syncFailure = {
+      id: `SYNC-ERR-${Date.now()}-${Math.floor(Math.random() * 900)}`,
+      deviceId,
+      timestamp: fullTimestamp,
+      date: dateStr,
+      biometricRef: biometricRef || 'UNKNOWN',
+      errorReason: `Unmapped biometric reference: No matching employee profile registered for "${biometricRef}" (BR-ATT-06)`,
+      status: 'Logged',
+      resolved: false
+    };
+    if (!db.biometricSyncFailures) db.biometricSyncFailures = [];
+    db.biometricSyncFailures.unshift(syncFailure);
+    saveDatabase();
+    return res.status(422).json({ 
+      error: 'Biometric mapping failure: Reference could not be mapped to an employee (BR-ATT-06)', 
+      failure: syncFailure 
+    });
+  }
+
+  // Check existing punches today for this employee to determine if ENTRY or EXIT
+  const existingTodayPunches = (db.biometricPunches || []).filter(p => p.employeeId === emp.id && p.date === dateStr);
+  const punchType = existingTodayPunches.length === 0 ? 'ENTRY' : 'EXIT';
+
+  const newPunch = {
+    id: `BIO-PUNCH-${Date.now()}-${Math.floor(Math.random() * 900)}`,
+    employeeId: emp.id,
+    biometricRef: emp.biometricRef || `BIO-${emp.id}`,
+    timestamp: fullTimestamp,
+    punchTime: timeStr,
+    date: dateStr,
+    deviceId,
+    punchType
+  };
+
+  if (!db.biometricPunches) db.biometricPunches = [];
+  db.biometricPunches.push(newPunch);
+
+  // Sync / update attendance record with new punch
+  syncBiometricPunches();
+
+  const record = (db.attendance || []).find(a => a.employeeId === emp.id && a.date === dateStr);
+  res.status(201).json({
+    message: `Biometric ${punchType} recorded successfully for ${emp.name}`,
+    punch: newPunch,
+    punchType,
+    attendanceRecord: record
+  });
+});
+
+// Employee Portal Web Punch-in (wraps biometric punch entry)
 app.post('/api/attendance/clock-in', (req, res) => {
   const { employeeId } = req.body;
-  const emp = db.employees.find(e => e.id === employeeId);
+  const emp = (db.employees || []).find(e => e.id === employeeId);
   if (!emp) return res.status(404).json({ error: 'Employee not found' });
 
   const today = new Date().toISOString().split('T')[0];
   const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const existing = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
 
-  let record = db.attendance.find(a => a.employeeId === employeeId && a.date === today);
-
-  if (record) {
-    if (record.clockIn) {
-      return res.status(400).json({ error: 'Already clocked in for today', record });
-    }
-    record.clockIn = nowTime;
-    record.status = 'Present';
-  } else {
-    record = {
-      id: `ATT-${Date.now().toString().slice(-4)}`,
-      employeeId,
-      employeeName: emp.name,
-      date: today,
-      clockIn: nowTime,
-      clockOut: null,
-      status: 'Present',
-      totalHours: 0,
-      isValidated: true,
-      validatedBy: 'System Auto-Precheck',
-      validatedAt: today
-    };
-    db.attendance.unshift(record);
+  if (existing && existing.clockIn) {
+    return res.status(400).json({ error: 'Already clocked in for today', record: existing });
   }
 
-  saveDatabase();
+  // Record raw biometric punch
+  const punch = {
+    id: `BIO-PUNCH-${Date.now()}-${Math.floor(Math.random() * 900)}`,
+    employeeId: emp.id,
+    biometricRef: emp.biometricRef || `BIO-${emp.id}`,
+    timestamp: `${today} ${new Date().toTimeString().split(' ')[0]}`,
+    punchTime: nowTime,
+    date: today,
+    deviceId: 'WEB-PORTAL-PUNCH',
+    punchType: 'ENTRY'
+  };
+
+  if (!db.biometricPunches) db.biometricPunches = [];
+  db.biometricPunches.push(punch);
+  syncBiometricPunches();
+
+  const record = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
   res.json({ message: 'Clocked in successfully', record });
 });
 
+// Employee Portal Web Punch-out (wraps biometric punch exit)
 app.post('/api/attendance/clock-out', (req, res) => {
   const { employeeId } = req.body;
+  const emp = (db.employees || []).find(e => e.id === employeeId);
+  if (!emp) return res.status(404).json({ error: 'Employee not found' });
+
   const today = new Date().toISOString().split('T')[0];
   const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const existing = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
 
-  const record = db.attendance.find(a => a.employeeId === employeeId && a.date === today);
-  if (!record || !record.clockIn) {
+  if (!existing || !existing.clockIn) {
     return res.status(400).json({ error: 'Cannot clock out without clocking in first' });
   }
 
-  record.clockOut = nowTime;
-  record.totalHours = 8.0;
-  record.isValidated = true;
-  record.validatedBy = 'System Auto-Precheck';
-  record.validatedAt = today;
+  const punch = {
+    id: `BIO-PUNCH-${Date.now()}-${Math.floor(Math.random() * 900)}`,
+    employeeId: emp.id,
+    biometricRef: emp.biometricRef || `BIO-${emp.id}`,
+    timestamp: `${today} ${new Date().toTimeString().split(' ')[0]}`,
+    punchTime: nowTime,
+    date: today,
+    deviceId: 'WEB-PORTAL-PUNCH',
+    punchType: 'EXIT'
+  };
 
-  saveDatabase();
+  if (!db.biometricPunches) db.biometricPunches = [];
+  db.biometricPunches.push(punch);
+  syncBiometricPunches();
+
+  const record = (db.attendance || []).find(a => a.employeeId === employeeId && a.date === today);
   res.json({ message: 'Clocked out successfully', record });
 });
 
-// PAY-002, BR-PAY-01: Attendance validation endpoints
+// ATT-001, ATT-004: Batch synchronization of biometric punches
+app.post('/api/biometric/sync', (req, res) => {
+  const result = syncBiometricPunches();
+  res.json({ message: 'Biometric punches synchronized with daily attendance records', ...result });
+});
+
+// ATT-011: Retrieve original immutable biometric records
+app.get('/api/biometric/punches', (req, res) => {
+  const { date, employeeId, deviceId } = req.query;
+  let list = db.biometricPunches || [];
+  if (date) list = list.filter(p => p.date === date);
+  if (employeeId) list = list.filter(p => p.employeeId === employeeId);
+  if (deviceId) list = list.filter(p => p.deviceId === deviceId);
+  res.json(list);
+});
+
+// BR-ATT-06: Retrieve biometric synchronization failures
+app.get('/api/biometric/sync-failures', (req, res) => {
+  res.json(db.biometricSyncFailures || []);
+});
+
+// BR-ATT-06: Resolve or dismiss synchronization failure
+app.patch('/api/biometric/sync-failures/:id/resolve', (req, res) => {
+  const failure = (db.biometricSyncFailures || []).find(f => f.id === req.params.id);
+  if (!failure) return res.status(404).json({ error: 'Sync failure record not found' });
+
+  failure.resolved = true;
+  failure.resolvedBy = getAuthUser(req)?.email || 'HR Manager';
+  failure.resolvedAt = new Date().toISOString();
+  saveDatabase();
+  res.json({ message: 'Sync failure resolved', failure });
+});
+
+// ATT-009: HR Manager validates single daily attendance record
+app.patch('/api/attendance/:id/validate', (req, res) => {
+  const record = (db.attendance || []).find(a => a.id === req.params.id);
+  if (!record) return res.status(404).json({ error: 'Attendance record not found' });
+
+  const authUser = getAuthUser(req);
+  if (authUser && !isAuthorizedPayrollUser(authUser)) {
+    return res.status(403).json({ error: 'Access denied: Only HR can validate attendance.' });
+  }
+
+  record.isValidated = true;
+  record.validatedBy = authUser ? authUser.email : 'Elena Rostova (HR Admin)';
+  record.validatedAt = new Date().toISOString().split('T')[0];
+
+  saveDatabase();
+  res.json({ message: 'Attendance record validated successfully', record });
+});
+
+// ATT-009 & BR-ATT-04: HR Manager validates all clean daily attendance records
+// Missing punches are flagged and NOT automatically treated as full-day attendance!
 app.post('/api/attendance/validate-all', (req, res) => {
   const authUser = getAuthUser(req);
-  const validatedBy = authUser ? authUser.email : 'Elena Rostova (HR)';
-  const today = new Date().toISOString().split('T')[0];
-  const { date, month, year } = req.body;
+  if (authUser && !isAuthorizedPayrollUser(authUser)) {
+    return res.status(403).json({ error: 'Access denied: Only HR can validate attendance.' });
+  }
 
-  let count = 0;
+  const validatedBy = authUser ? authUser.email : 'Elena Rostova (HR Admin)';
+  const today = new Date().toISOString().split('T')[0];
+  const { date, month, year, allowMissingPunches = false } = req.body;
+
+  let validatedCount = 0;
+  let skippedMissingPunchCount = 0;
+
   (db.attendance || []).forEach(a => {
     let match = true;
     if (date && a.date !== date) match = false;
@@ -721,28 +1085,184 @@ app.post('/api/attendance/validate-all', (req, res) => {
     if (year && a.date && !a.date.startsWith(`${year}-`)) match = false;
 
     if (match) {
+      // BR-ATT-04: Records with missing punches must be flagged for HR review
+      if (a.missingPunch && !allowMissingPunches) {
+        skippedMissingPunchCount++;
+        return;
+      }
       a.isValidated = true;
       a.validatedBy = validatedBy;
       a.validatedAt = today;
-      count++;
+      validatedCount++;
     }
   });
 
   saveDatabase();
-  res.json({ message: `Successfully validated ${count} attendance record(s)`, count });
+  res.json({ 
+    message: `Successfully validated ${validatedCount} attendance record(s). ${skippedMissingPunchCount > 0 ? `${skippedMissingPunchCount} record(s) with missing punches were flagged and held for manual HR review (BR-ATT-04).` : ''}`, 
+    count: validatedCount,
+    validatedCount,
+    skippedMissingPunchCount
+  });
 });
 
-app.patch('/api/attendance/:id/validate', (req, res) => {
+// ATT-010 & BR-ATT-03: HR Manager corrects attendance discrepancies with mandatory reason
+// BR-ATT-02: Original biometric data is preserved separately and never overwritten!
+app.patch('/api/attendance/:id/correct', (req, res) => {
+  const authUser = getAuthUser(req);
+  if (authUser && !isAuthorizedPayrollUser(authUser)) {
+    return res.status(403).json({ error: 'Access denied: Only HR can correct attendance records.' });
+  }
+
   const record = (db.attendance || []).find(a => a.id === req.params.id);
   if (!record) return res.status(404).json({ error: 'Attendance record not found' });
 
-  const authUser = getAuthUser(req);
+  const { clockIn, clockOut, status, correctionReason } = req.body;
+
+  // BR-ATT-03: Any manual correction must capture the reason, user and timestamp
+  if (!correctionReason || !correctionReason.trim()) {
+    return res.status(400).json({ error: 'Correction reason is mandatory (BR-ATT-03)' });
+  }
+
+  // ATT-011 & BR-ATT-02: Ensure original biometric punches are preserved separately
+  if (!record.originalBiometric) {
+    record.originalBiometric = {
+      clockIn: record.clockIn,
+      clockOut: record.clockOut,
+      totalHours: record.totalHours
+    };
+  }
+
+  const updatedClockIn = clockIn !== undefined ? clockIn : record.clockIn;
+  const updatedClockOut = clockOut !== undefined ? clockOut : record.clockOut;
+  const recalculatedHours = calculateWorkingHours(updatedClockIn, updatedClockOut);
+
+  record.clockIn = updatedClockIn;
+  record.clockOut = updatedClockOut;
+  record.totalHours = recalculatedHours;
+  record.status = status || (recalculatedHours >= 8 ? 'Present' : (recalculatedHours > 0 ? 'Half Day' : 'Absent'));
+  
+  const inMinutes = parseTimeToMinutes(record.clockIn);
+  const outMinutes = parseTimeToMinutes(record.clockOut);
+  record.isLate = inMinutes !== null && inMinutes > 555;
+  record.isEarlyDeparture = outMinutes !== null && outMinutes < 1050;
+  record.missingPunch = (!record.clockIn && record.clockOut) ? 'checkin' : (record.clockIn && !record.clockOut) ? 'checkout' : null;
+
+  record.isCorrected = true;
+  record.correctionReason = correctionReason.trim();
+  record.correctedBy = authUser ? authUser.email : 'Elena Rostova (HR Admin)';
+  record.correctedAt = new Date().toISOString();
+
+  // Corrected attendance is certified and validated
   record.isValidated = true;
-  record.validatedBy = authUser ? authUser.email : 'Elena Rostova (HR)';
+  record.validatedBy = record.correctedBy;
   record.validatedAt = new Date().toISOString().split('T')[0];
 
   saveDatabase();
-  res.json({ message: 'Attendance record validated', record });
+  res.json({ message: 'Attendance discrepancy corrected with audit trail', record });
+});
+
+// Section 4 & 5: Employee Attendance Correction Requests
+app.get('/api/attendance/correction-requests', (req, res) => {
+  const { employeeId, status } = req.query;
+  let list = db.attendanceCorrectionRequests || [];
+  if (employeeId) list = list.filter(r => r.employeeId === employeeId);
+  if (status && status !== 'All') list = list.filter(r => r.status.toLowerCase() === status.toLowerCase());
+  res.json(list);
+});
+
+app.post('/api/attendance/correction-requests', (req, res) => {
+  const { employeeId, date, requestedIn, requestedOut, reason } = req.body;
+  if (!employeeId || !date || !reason) {
+    return res.status(400).json({ error: 'employeeId, date, and reason are required' });
+  }
+
+  const emp = (db.employees || []).find(e => e.id === employeeId);
+  if (!emp) return res.status(404).json({ error: 'Employee not found' });
+
+  const newReq = {
+    id: `CORR-REQ-${Date.now().toString().slice(-4)}`,
+    employeeId,
+    employeeName: emp.name,
+    department: emp.department,
+    date,
+    requestedIn: requestedIn || '09:00 AM',
+    requestedOut: requestedOut || '05:30 PM',
+    reason,
+    status: 'Pending',
+    requestedAt: new Date().toISOString().replace('T', ' ').slice(0, 19),
+    reviewedBy: null,
+    reviewComment: ''
+  };
+
+  if (!db.attendanceCorrectionRequests) db.attendanceCorrectionRequests = [];
+  db.attendanceCorrectionRequests.unshift(newReq);
+  saveDatabase();
+  res.status(201).json(newReq);
+});
+
+app.patch('/api/attendance/correction-requests/:id', (req, res) => {
+  const authUser = getAuthUser(req);
+  if (authUser && !isAuthorizedPayrollUser(authUser)) {
+    return res.status(403).json({ error: 'Access denied: Only HR can review attendance correction requests.' });
+  }
+
+  const reqItem = (db.attendanceCorrectionRequests || []).find(r => r.id === req.params.id);
+  if (!reqItem) return res.status(404).json({ error: 'Correction request not found' });
+
+  const { status, reviewComment = '' } = req.body;
+  if (!['Approved', 'Rejected'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid decision status' });
+  }
+
+  reqItem.status = status;
+  reqItem.reviewedBy = authUser ? authUser.email : 'Elena Rostova (HR Admin)';
+  reqItem.reviewComment = reviewComment;
+
+  if (status === 'Approved') {
+    let record = (db.attendance || []).find(a => a.employeeId === reqItem.employeeId && a.date === reqItem.date);
+    const emp = (db.employees || []).find(e => e.id === reqItem.employeeId);
+    
+    if (!record && emp) {
+      record = {
+        id: `ATT-${reqItem.date.replace(/-/g, '')}-${emp.id.replace('EMP-', '')}`,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        department: emp.department,
+        date: reqItem.date,
+        clockIn: null,
+        clockOut: null,
+        totalHours: 0,
+        status: 'Present',
+        isValidated: true,
+        validatedBy: reqItem.reviewedBy,
+        validatedAt: new Date().toISOString().split('T')[0],
+        originalBiometric: { clockIn: null, clockOut: null, totalHours: 0 }
+      };
+      db.attendance.unshift(record);
+    }
+
+    if (record) {
+      if (!record.originalBiometric) {
+        record.originalBiometric = { clockIn: record.clockIn, clockOut: record.clockOut, totalHours: record.totalHours };
+      }
+      record.clockIn = reqItem.requestedIn;
+      record.clockOut = reqItem.requestedOut;
+      record.totalHours = calculateWorkingHours(reqItem.requestedIn, reqItem.requestedOut);
+      record.status = 'Present';
+      record.missingPunch = null;
+      record.isCorrected = true;
+      record.correctionReason = `[Approved Correction Request] ${reqItem.reason}`;
+      record.correctedBy = reqItem.reviewedBy;
+      record.correctedAt = new Date().toISOString();
+      record.isValidated = true;
+      record.validatedBy = reqItem.reviewedBy;
+      record.validatedAt = new Date().toISOString().split('T')[0];
+    }
+  }
+
+  saveDatabase();
+  res.json({ message: `Correction request ${status.toLowerCase()} successfully`, request: reqItem });
 });
 
 // ----------------- SALARY STRUCTURES ROUTES (PAY-001) -----------------
@@ -1287,6 +1807,9 @@ app.post('/api/reset', (req, res) => {
   const seed = fs.readFileSync(SEED_PATH, 'utf8');
   fs.writeFileSync(DB_PATH, seed, 'utf8');
   db = JSON.parse(seed);
+  try {
+    syncBiometricPunches();
+  } catch (e) {}
   res.json({ message: 'Database reset to initial demo seed state' });
 });
 
@@ -1294,6 +1817,13 @@ app.post('/api/reset', (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Synchronize biometric punches upon server startup
+try {
+  syncBiometricPunches();
+} catch (e) {
+  console.error('Initial biometric punch sync error:', e);
+}
 
 app.listen(PORT, () => {
   console.log(`HRMS Server is running at http://localhost:${PORT}`);

@@ -133,8 +133,16 @@ const UI = {
 
   toggleMobileSidebar() {
     const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
     if (sidebar) {
-      sidebar.classList.toggle('hidden');
+      const isHidden = sidebar.classList.toggle('hidden');
+      if (backdrop) {
+        if (isHidden) {
+          backdrop.classList.add('hidden');
+        } else {
+          backdrop.classList.remove('hidden');
+        }
+      }
     }
   },
 

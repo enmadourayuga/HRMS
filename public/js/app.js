@@ -102,6 +102,7 @@ const App = {
     // On mobile, auto-collapse sidebar on link click
     if (window.innerWidth < 768) {
       document.getElementById('app-sidebar')?.classList.add('hidden');
+      document.getElementById('sidebar-backdrop')?.classList.add('hidden');
     }
   },
 

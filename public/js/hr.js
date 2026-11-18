@@ -848,14 +848,14 @@ const HR = {
     if (!emp) return;
 
     const monthly = Math.round(emp.salary / 12);
-    const hra = Math.round(monthly * 0.20);
-    const special = Math.round(monthly * 0.12);
-    const conveyance = 400;
+    const hra = Math.round(monthly * 0.40);
+    const special = Math.round(monthly * 0.20);
+    const conveyance = 1600;
     const gross = monthly + hra + special + conveyance;
 
-    const tax = Math.round(gross * 0.14);
-    const pf = Math.round(monthly * 0.10);
-    const insurance = 250;
+    const tax = Math.round(gross * 0.10);
+    const pf = Math.round(monthly * 0.12);
+    const insurance = 1200;
     const totalDeductions = tax + pf + insurance;
     const net = gross - totalDeductions;
 
@@ -867,10 +867,10 @@ const HR = {
             <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
               <i class="fa-solid fa-people-roof"></i>
             </div>
-            <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Inc.</span>
+            <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Pvt. Ltd.</span>
           </div>
-          <p class="text-xs text-slate-500">100 Market St, Suite 400, San Francisco, CA 94105</p>
-          <p class="text-xs text-slate-500">EIN: 94-8273619 • payroll@nexushr.com</p>
+          <p class="text-xs text-slate-500">Outer Ring Road, Bengaluru, Karnataka 560103</p>
+          <p class="text-xs text-slate-500">PAN: AABCN8192F • payroll@nexushr.in</p>
         </div>
         <div class="text-right">
           <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">PAID</span>
@@ -894,7 +894,7 @@ const HR = {
 
       <div class="grid grid-cols-2 gap-6 text-xs mb-6">
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings</h4>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
           <div class="space-y-1.5">
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Basic Salary</span>
@@ -920,18 +920,18 @@ const HR = {
         </div>
 
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions</h4>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions (INR)</h4>
           <div class="space-y-1.5">
             <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Federal & State Income Tax</span>
+              <span class="text-slate-600">Income Tax (TDS)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(tax)}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Provident / 401(k) Retirement</span>
+              <span class="text-slate-600">Employees' Provident Fund (EPF)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(pf)}</span>
             </div>
             <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Health & Dental Premium</span>
+              <span class="text-slate-600">Health & Group Insurance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(insurance)}</span>
             </div>
             <div class="flex justify-between py-2 font-bold text-slate-900">
@@ -945,7 +945,7 @@ const HR = {
       <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
         <div>
           <span class="text-xs text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
-          <span class="text-xs text-slate-500">Transferred via Direct Deposit</span>
+          <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
         </div>
         <div class="text-2xl font-black text-indigo-900 font-mono">
           ${UI.formatCurrency(net)}

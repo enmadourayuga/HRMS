@@ -45,9 +45,9 @@
       "department": "Human Resources",
       "role": "hr",
       "joinDate": "2022-03-15",
-      "salary": 115000,
-      "phone": "+1 (555) 234-5678",
-      "location": "San Francisco, CA (HQ)",
+      "salary": 1850000,
+      "phone": "+91 98765 43210",
+      "location": "Bengaluru (HQ)",
       "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "Executive Team",
@@ -65,9 +65,9 @@
       "department": "Engineering",
       "role": "employee",
       "joinDate": "2023-01-10",
-      "salary": 125000,
-      "phone": "+1 (555) 345-6789",
-      "location": "New York, NY (Remote)",
+      "salary": 2200000,
+      "phone": "+91 98765 43211",
+      "location": "Hyderabad (Remote)",
       "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "David Miller",
@@ -85,9 +85,9 @@
       "department": "Design",
       "role": "employee",
       "joinDate": "2022-08-20",
-      "salary": 118000,
-      "phone": "+1 (555) 456-7890",
-      "location": "San Francisco, CA (HQ)",
+      "salary": 1950000,
+      "phone": "+91 98765 43212",
+      "location": "Bengaluru (HQ)",
       "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "Elena Rostova",
@@ -105,9 +105,9 @@
       "department": "Infrastructure",
       "role": "employee",
       "joinDate": "2021-11-05",
-      "salary": 135000,
-      "phone": "+1 (555) 567-8901",
-      "location": "Austin, TX (Remote)",
+      "salary": 2400000,
+      "phone": "+91 98765 43213",
+      "location": "Pune (Remote)",
       "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "David Miller",
@@ -125,9 +125,9 @@
       "department": "Marketing",
       "role": "employee",
       "joinDate": "2023-06-01",
-      "salary": 98000,
-      "phone": "+1 (555) 678-9012",
-      "location": "Chicago, IL (Hybrid)",
+      "salary": 1450000,
+      "phone": "+91 98765 43214",
+      "location": "Mumbai (Hybrid)",
       "avatar": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces",
       "status": "On Leave",
       "manager": "Rachel Adams",
@@ -145,9 +145,9 @@
       "department": "Engineering",
       "role": "employee",
       "joinDate": "2023-09-15",
-      "salary": 110000,
-      "phone": "+1 (555) 789-0123",
-      "location": "Seattle, WA (Remote)",
+      "salary": 1600000,
+      "phone": "+91 98765 43215",
+      "location": "Bengaluru (Remote)",
       "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "David Miller",
@@ -165,9 +165,9 @@
       "department": "Product",
       "role": "employee",
       "joinDate": "2022-01-20",
-      "salary": 128000,
-      "phone": "+1 (555) 890-1234",
-      "location": "San Francisco, CA (HQ)",
+      "salary": 2100000,
+      "phone": "+91 98765 43216",
+      "location": "Bengaluru (HQ)",
       "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "Elena Rostova",
@@ -185,9 +185,9 @@
       "department": "Infrastructure",
       "role": "employee",
       "joinDate": "2023-04-03",
-      "salary": 122000,
-      "phone": "+1 (555) 901-2345",
-      "location": "Boston, MA (Remote)",
+      "salary": 1900000,
+      "phone": "+91 98765 43217",
+      "location": "Noida (Remote)",
       "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "David Miller",
@@ -208,7 +208,7 @@
       "startDate": "2026-11-24",
       "endDate": "2026-11-27",
       "days": 4,
-      "reason": "Family thanksgiving trip and rest.",
+      "reason": "Family holiday trip and rest.",
       "status": "Pending",
       "appliedOn": "2026-11-17",
       "reviewedBy": null,
@@ -379,20 +379,20 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 10416,
+      "baseSalary": 183333,
       "allowances": {
-        "hra": 2083,
-        "specialAllowance": 1500,
-        "conveyance": 400
+        "hra": 73333,
+        "specialAllowance": 36666,
+        "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 1850,
-        "providentFund": 1250,
-        "healthInsurance": 250
+        "incomeTax": 29493,
+        "providentFund": 22000,
+        "healthInsurance": 1200
       },
-      "grossPay": 14399,
-      "totalDeductions": 3350,
-      "netPay": 11049,
+      "grossPay": 294932,
+      "totalDeductions": 52693,
+      "netPay": 242239,
       "status": "Paid"
     },
     {
@@ -401,20 +401,20 @@
       "month": "September",
       "year": 2026,
       "payDate": "2026-09-30",
-      "baseSalary": 10416,
+      "baseSalary": 183333,
       "allowances": {
-        "hra": 2083,
-        "specialAllowance": 1500,
-        "conveyance": 400
+        "hra": 73333,
+        "specialAllowance": 36666,
+        "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 1850,
-        "providentFund": 1250,
-        "healthInsurance": 250
+        "incomeTax": 29493,
+        "providentFund": 22000,
+        "healthInsurance": 1200
       },
-      "grossPay": 14399,
-      "totalDeductions": 3350,
-      "netPay": 11049,
+      "grossPay": 294932,
+      "totalDeductions": 52693,
+      "netPay": 242239,
       "status": "Paid"
     },
     {
@@ -423,20 +423,20 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 9833,
+      "baseSalary": 162500,
       "allowances": {
-        "hra": 1966,
-        "specialAllowance": 1400,
-        "conveyance": 400
+        "hra": 65000,
+        "specialAllowance": 32500,
+        "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 1650,
-        "providentFund": 1180,
-        "healthInsurance": 250
+        "incomeTax": 26160,
+        "providentFund": 19500,
+        "healthInsurance": 1200
       },
-      "grossPay": 13599,
-      "totalDeductions": 3080,
-      "netPay": 10519,
+      "grossPay": 261600,
+      "totalDeductions": 46860,
+      "netPay": 214740,
       "status": "Paid"
     }
   ],
@@ -466,15 +466,15 @@
       "priority": "Normal",
       "date": "2026-11-05",
       "author": "Executive Committee",
-      "content": "All full-time team members can claim their $500 quarterly ergonomic home-office and wellness stipend under expenses before the end of the quarter."
+      "content": "All full-time team members can claim their ₹25,000 quarterly ergonomic home-office and wellness stipend under expenses before the end of the quarter."
     }
   ],
   "departments": [
-    { "id": "DEP-01", "name": "Engineering", "head": "David Miller", "count": 24, "budget": "$2.8M" },
-    { "id": "DEP-02", "name": "Design & UX", "head": "Sarah Chen", "count": 8, "budget": "$950K" },
-    { "id": "DEP-03", "name": "Product Management", "head": "Sophia Taylor", "count": 12, "budget": "$1.4M" },
-    { "id": "DEP-04", "name": "Infrastructure & Sec", "head": "Marcus Vance", "count": 10, "budget": "$1.6M" },
-    { "id": "DEP-05", "name": "People & Culture", "head": "Elena Rostova", "count": 6, "budget": "$720K" },
-    { "id": "DEP-06", "name": "Marketing & Growth", "head": "Rachel Adams", "count": 14, "budget": "$1.9M" }
+    { "id": "DEP-01", "name": "Engineering", "head": "David Miller", "count": 24, "budget": "₹2.8 Cr" },
+    { "id": "DEP-02", "name": "Design & UX", "head": "Sarah Chen", "count": 8, "budget": "₹95 L" },
+    { "id": "DEP-03", "name": "Product Management", "head": "Sophia Taylor", "count": 12, "budget": "₹1.4 Cr" },
+    { "id": "DEP-04", "name": "Infrastructure & Sec", "head": "Marcus Vance", "count": 10, "budget": "₹1.6 Cr" },
+    { "id": "DEP-05", "name": "People & Culture", "head": "Elena Rostova", "count": 6, "budget": "₹72 L" },
+    { "id": "DEP-06", "name": "Marketing & Growth", "head": "Rachel Adams", "count": 14, "budget": "₹1.9 Cr" }
   ]
 }

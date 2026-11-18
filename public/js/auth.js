@@ -91,17 +91,29 @@ const Auth = {
     // Update Header
     const avatar = this.employee?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces';
     const name = this.employee?.name || this.user.email;
-    const title = this.employee?.jobTitle || (this.user.role === 'hr' ? 'HR Administrator' : 'Staff Member');
-    const isHR = this.user.role === 'hr';
+    const isHR = this.user.role === 'hr' || this.user.role === 'hr_admin';
+    const isHrAdmin = Boolean(
+      this.user.isHrAdmin === true ||
+      this.user.role === 'hr_admin' ||
+      this.employee?.isHrAdmin === true ||
+      this.user.email?.toLowerCase() === 'hr@hrms.com'
+    );
+    this.isHrAdmin = isHrAdmin;
+
+    const defaultTitle = isHrAdmin ? 'HR Administrator' : (isHR ? 'HR Specialist' : 'Staff Member');
+    const title = this.employee?.jobTitle || defaultTitle;
 
     document.getElementById('header-user-avatar').src = avatar;
     document.getElementById('header-user-name').textContent = name;
     document.getElementById('header-user-title').textContent = title;
 
     const badge = document.getElementById('header-role-badge');
-    if (isHR) {
+    if (isHrAdmin) {
+      badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200';
+      badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-purple-500"></span> 👑 HR Administrator`;
+    } else if (isHR) {
       badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200';
-      badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> HR Administrator`;
+      badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> 🛡️ HR Staff`;
     } else {
       badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
       badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Employee Portal`;

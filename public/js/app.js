@@ -9,13 +9,14 @@ const App = {
 
   setupRoleNavigation(role) {
     this.currentRole = role;
+    const isHR = role === 'hr' || role === 'hr_admin';
     const sidebarLabel = document.getElementById('sidebar-role-label');
     const navContainer = document.getElementById('sidebar-nav-links');
     const hrContainer = document.getElementById('hr-view-container');
     const empContainer = document.getElementById('emp-view-container');
 
-    if (role === 'hr') {
-      sidebarLabel.textContent = 'HR Administration';
+    if (isHR) {
+      sidebarLabel.textContent = Auth.isHrAdmin ? 'HR Administration (Admin)' : 'HR Operations Portal';
       hrContainer.classList.remove('hidden');
       empContainer.classList.add('hidden');
 
@@ -82,7 +83,7 @@ const App = {
   },
 
   navigateTo(tab) {
-    if (this.currentRole === 'hr') {
+    if (this.currentRole === 'hr' || this.currentRole === 'hr_admin') {
       HR.switchTab(tab);
     } else {
       Employee.switchTab(tab);
@@ -107,7 +108,7 @@ const App = {
 
     const activeBtn = document.getElementById(`nav-${tab}`);
     if (activeBtn) {
-      if (this.currentRole === 'hr') {
+      if (this.currentRole === 'hr' || this.currentRole === 'hr_admin') {
         activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100/80 transition-colors';
         const icon = activeBtn.querySelector('i');
         if (icon) {

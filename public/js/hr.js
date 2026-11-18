@@ -106,7 +106,12 @@ const HR = {
           </p>
         </div>
         <div class="flex flex-wrap gap-2.5 shrink-0">
-          <button onclick="UI.openModal('modal-add-employee')" class="px-4 py-2.5 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+          ${Auth.isHrAdmin ? `
+            <button onclick="HR.openAddHrModal()" class="px-3.5 py-2.5 bg-purple-900/60 hover:bg-purple-900 text-purple-100 border border-purple-300/30 font-semibold rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2">
+              <i class="fa-solid fa-user-shield text-amber-300"></i> New HR Account
+            </button>
+          ` : ''}
+          <button onclick="HR.openAddEmployeeModal()" class="px-4 py-2.5 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
             <i class="fa-solid fa-user-plus"></i> Add Employee
           </button>
           <button onclick="HR.switchTab('leaves')" class="px-4 py-2.5 bg-indigo-900/60 hover:bg-indigo-900 text-white border border-white/20 font-semibold rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2">
@@ -332,10 +337,18 @@ const HR = {
           <h2 class="text-xl font-bold text-slate-900">Employee Directory</h2>
           <p class="text-xs text-slate-500 mt-0.5">Manage workforce profiles, roles, departments, and credentials</p>
         </div>
-        <button onclick="UI.openModal('modal-add-employee')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 flex items-center gap-2">
-          <i class="fa-solid fa-user-plus text-xs"></i>
-          <span>Add Employee</span>
-        </button>
+        <div class="flex items-center gap-2">
+          ${Auth.isHrAdmin ? `
+            <button onclick="HR.openAddHrModal()" class="px-3.5 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-semibold rounded-xl text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+              <i class="fa-solid fa-user-shield text-purple-600"></i>
+              <span>New HR Account</span>
+            </button>
+          ` : ''}
+          <button onclick="HR.openAddEmployeeModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 flex items-center gap-2">
+            <i class="fa-solid fa-user-plus text-xs"></i>
+            <span>Add Employee</span>
+          </button>
+        </div>
       </div>
 
       <!-- Filters & Search Toolbar -->
@@ -394,9 +407,19 @@ const HR = {
                   </td>
                   <td class="px-5 py-4">
                     <div class="font-semibold text-slate-800 text-xs">${emp.department}</div>
-                    <span class="inline-block px-2 py-0.5 text-[10px] font-semibold rounded-md ${emp.role === 'hr' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-600'} mt-1">
-                      ${emp.role === 'hr' ? 'HR Administrator' : 'Staff Member'}
-                    </span>
+                    ${(emp.isHrAdmin || emp.role === 'hr_admin' || (emp.role === 'hr' && (emp.id === 'EMP-001' || emp.email === 'hr@hrms.com'))) ? `
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-50 text-purple-700 border border-purple-200 mt-1">
+                        👑 HR Administrator
+                      </span>
+                    ` : (emp.role === 'hr' ? `
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 mt-1">
+                        🛡️ HR Staff
+                      </span>
+                    ` : `
+                      <span class="inline-block px-2 py-0.5 text-[10px] font-semibold rounded-md bg-slate-100 text-slate-600 mt-1">
+                        Staff Member
+                      </span>
+                    `)}
                   </td>
                   <td class="px-5 py-4 text-xs">
                     <div class="text-slate-800 font-medium">${emp.email}</div>
@@ -813,10 +836,96 @@ const HR = {
   },
 
   // ---------------- ACTIONS & MODALS ----------------
+  openAddEmployeeModal() {
+    const form = document.getElementById('form-add-employee');
+    if (form) form.reset();
+
+    const roleSelect = document.getElementById('modal-employee-role');
+    const hrOption = document.getElementById('role-option-hr');
+
+    if (roleSelect && hrOption) {
+      if (Auth.isHrAdmin) {
+        hrOption.disabled = false;
+        hrOption.textContent = 'HR Account (Admin Level)';
+      } else {
+        hrOption.disabled = true;
+        hrOption.textContent = 'HR Account (HR Admin Only - Locked)';
+      }
+      roleSelect.value = 'employee';
+    }
+
+    this.onRoleSelectChange('employee');
+    UI.openModal('modal-add-employee');
+  },
+
+  openAddHrModal() {
+    if (!Auth.isHrAdmin) {
+      UI.toast('Access Denied: Only the HR Admin can create a new HR account.', 'error');
+      return;
+    }
+
+    const form = document.getElementById('form-add-employee');
+    if (form) form.reset();
+
+    const roleSelect = document.getElementById('modal-employee-role');
+    const hrOption = document.getElementById('role-option-hr');
+    const deptSelect = document.querySelector('#modal-add-employee select[name="department"]');
+    const titleInput = document.querySelector('#modal-add-employee input[name="jobTitle"]');
+
+    if (hrOption) {
+      hrOption.disabled = false;
+      hrOption.textContent = 'HR Account (Admin Level)';
+    }
+    if (roleSelect) roleSelect.value = 'hr';
+    if (deptSelect) deptSelect.value = 'Human Resources';
+    if (titleInput && !titleInput.value) titleInput.value = 'HR Specialist';
+
+    this.onRoleSelectChange('hr');
+    UI.openModal('modal-add-employee');
+  },
+
+  onRoleSelectChange(role) {
+    const banner = document.getElementById('role-access-banner');
+    if (!banner) return;
+
+    if (role === 'hr') {
+      if (Auth.isHrAdmin) {
+        banner.className = 'col-span-2 p-3.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-900 text-xs flex items-start gap-2.5';
+        banner.innerHTML = `
+          <i class="fa-solid fa-user-shield text-purple-600 text-base mt-0.5 shrink-0"></i>
+          <div>
+            <div class="font-bold text-purple-900">Creating HR Account (Authorized by HR Admin)</div>
+            <div class="text-purple-700 text-[11px] mt-0.5">This user will be provisioned with HR portal privileges to review attendance, leaves, payroll, and publish announcements.</div>
+          </div>
+        `;
+      } else {
+        banner.className = 'col-span-2 p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs flex items-start gap-2.5';
+        banner.innerHTML = `
+          <i class="fa-solid fa-lock text-rose-600 text-base mt-0.5 shrink-0"></i>
+          <div>
+            <div class="font-bold text-rose-900">Restricted Action: HR Account Creation</div>
+            <div class="text-rose-700 text-[11px] mt-0.5">Only the HR Administrator (Elena Rostova) has permissions to create or provision a new HR account.</div>
+          </div>
+        `;
+      }
+      banner.classList.remove('hidden');
+    } else {
+      banner.className = 'hidden';
+      banner.innerHTML = '';
+    }
+  },
+
   async submitNewEmployee(event) {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
+    const role = formData.get('role');
+
+    // Strict client-side check
+    if ((role === 'hr' || role === 'hr_admin') && !Auth.isHrAdmin) {
+      UI.toast('Permission Denied: Only the HR Admin can create a new HR account.', 'error');
+      return;
+    }
 
     const body = {
       name: formData.get('name'),
@@ -831,7 +940,8 @@ const HR = {
 
     try {
       const created = await API.post('/employees', body);
-      UI.toast(`Employee ${created.name} added successfully! Login credentials created.`, 'success');
+      const isHrCreated = created.role === 'hr' || created.role === 'hr_admin';
+      UI.toast(`${isHrCreated ? 'HR Account' : 'Employee'} for ${created.name} created successfully! Login credentials activated.`, 'success');
       UI.closeModal('modal-add-employee');
       form.reset();
       await this.loadAllData();

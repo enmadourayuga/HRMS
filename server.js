@@ -41,15 +41,28 @@ function getAuthUser(req) {
   return null;
 }
 
+// Helper: Determine if a user has HR Administrator privileges
+function isHrAdminUser(user) {
+  if (!user) return false;
+  if (user.role === 'hr_admin' || user.isHrAdmin === true) return true;
+  const emp = db.employees.find(e => e.id === user.employeeId);
+  if (emp && (emp.role === 'hr_admin' || emp.isHrAdmin === true)) return true;
+  if (user.email && user.email.toLowerCase() === 'hr@hrms.com') return true;
+  if (user.id === 'USR-HR-001' || user.employeeId === 'EMP-001') return true;
+  return false;
+}
+
 // ----------------- AUTH ROUTES -----------------
 app.get('/api/auth/demo-users', (req, res) => {
   const demoList = db.users.map(u => {
     const emp = db.employees.find(e => e.id === u.employeeId) || {};
+    const isAdmin = isHrAdminUser(u);
     return {
       email: u.email,
       role: u.role,
+      isHrAdmin: isAdmin,
       name: emp.name || u.email,
-      jobTitle: emp.jobTitle || (u.role === 'hr' ? 'HR Manager' : 'Employee'),
+      jobTitle: emp.jobTitle || (isAdmin ? 'HR Administrator' : (u.role === 'hr' ? 'HR Specialist' : 'Employee')),
       avatar: emp.avatar
     };
   });
@@ -68,15 +81,21 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   const employee = db.employees.find(e => e.id === user.employeeId) || null;
+  const isHrAdmin = isHrAdminUser(user);
+
   res.json({
     token: `token-${user.id}-${Date.now()}`,
     user: {
       id: user.id,
       email: user.email,
       role: user.role,
+      isHrAdmin,
       employeeId: user.employeeId
     },
-    employee
+    employee: employee ? {
+      ...employee,
+      isHrAdmin
+    } : null
   });
 });
 
@@ -149,9 +168,29 @@ app.get('/api/employees/:id', (req, res) => {
 });
 
 app.post('/api/employees', (req, res) => {
-  const { name, email, jobTitle, department, role = 'employee', salary, phone, location, manager } = req.body;
+  const authUser = getAuthUser(req);
+  const { name, email, jobTitle, department, role = 'employee', salary, phone, location, manager, isHrAdmin } = req.body;
+
   if (!name || !email || !jobTitle) {
     return res.status(400).json({ error: 'Name, email, and job title are required' });
+  }
+
+  const targetRole = (role || 'employee').toLowerCase();
+  const isCreatingHrAccount = targetRole === 'hr' || targetRole === 'hr_admin' || Boolean(isHrAdmin);
+
+  // Authorization check: Only the HR Admin can create an HR account!
+  if (isCreatingHrAccount) {
+    if (!authUser) {
+      return res.status(401).json({ error: 'Authentication required. Only the HR Admin can create a new HR account.' });
+    }
+    if (!isHrAdminUser(authUser)) {
+      return res.status(403).json({ error: 'Access denied: Only the HR Admin can create a new HR account.' });
+    }
+  } else {
+    // If creating a regular employee: must not be an unprivileged employee
+    if (authUser && authUser.role === 'employee') {
+      return res.status(403).json({ error: 'Access denied: Regular employees cannot create accounts.' });
+    }
   }
 
   const existing = db.employees.find(e => e.email.toLowerCase() === email.toLowerCase());
@@ -160,17 +199,21 @@ app.post('/api/employees', (req, res) => {
   }
 
   const newId = `EMP-${String(db.employees.length + 1).padStart(3, '0')}`;
+  const assignedRole = isCreatingHrAccount ? (targetRole === 'hr_admin' ? 'hr_admin' : 'hr') : 'employee';
+  const assignedIsHrAdmin = isCreatingHrAccount && (targetRole === 'hr_admin' || Boolean(isHrAdmin));
+
   const newEmp = {
     id: newId,
     name,
     email,
     jobTitle,
-    department: department || 'Engineering',
-    role: role.toLowerCase() === 'hr' ? 'hr' : 'employee',
+    department: department || (isCreatingHrAccount ? 'Human Resources' : 'Engineering'),
+    role: assignedRole,
+    isHrAdmin: assignedIsHrAdmin,
     joinDate: new Date().toISOString().split('T')[0],
-    salary: Number(salary) || 90000,
-    phone: phone || '+1 (555) 000-0000',
-    location: location || 'Remote',
+    salary: Number(salary) || (isCreatingHrAccount ? 1500000 : 900000),
+    phone: phone || '+91 98765 00000',
+    location: location || 'Bengaluru (HQ)',
     avatar: `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
     status: 'Active',
     manager: manager || 'Elena Rostova',
@@ -187,8 +230,9 @@ app.post('/api/employees', (req, res) => {
   const newUser = {
     id: `USR-${newId}`,
     email: newEmp.email,
-    password: 'password123',
+    password: req.body.password || 'password123',
     role: newEmp.role,
+    isHrAdmin: assignedIsHrAdmin,
     employeeId: newId
   };
   db.users.push(newUser);
@@ -197,11 +241,97 @@ app.post('/api/employees', (req, res) => {
   res.status(201).json(newEmp);
 });
 
+// Dedicated endpoint: Only HR Admin can create an HR account
+app.post('/api/hr-accounts', (req, res) => {
+  const authUser = getAuthUser(req);
+  if (!authUser) {
+    return res.status(401).json({ error: 'Authentication required. Only the HR Admin can create a new HR account.' });
+  }
+  if (!isHrAdminUser(authUser)) {
+    return res.status(403).json({ error: 'Access denied: Only the HR Admin can create a new HR account.' });
+  }
+
+  const { name, email, jobTitle = 'HR Specialist', department = 'Human Resources', salary = 1400000, phone, location, isHrAdmin = false } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Name and email are required' });
+  }
+
+  const existing = db.employees.find(e => e.email.toLowerCase() === email.toLowerCase());
+  if (existing) {
+    return res.status(400).json({ error: 'An employee with this email already exists' });
+  }
+
+  const newId = `EMP-${String(db.employees.length + 1).padStart(3, '0')}`;
+  const newEmp = {
+    id: newId,
+    name,
+    email,
+    jobTitle,
+    department: 'Human Resources',
+    role: isHrAdmin ? 'hr_admin' : 'hr',
+    isHrAdmin: Boolean(isHrAdmin),
+    joinDate: new Date().toISOString().split('T')[0],
+    salary: Number(salary) || 1400000,
+    phone: phone || '+91 98765 00000',
+    location: location || 'Bengaluru (HQ)',
+    avatar: `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
+    status: 'Active',
+    manager: 'Elena Rostova',
+    leaveBalances: {
+      annual: { total: 22, used: 0 },
+      sick: { total: 12, used: 0 },
+      casual: { total: 6, used: 0 }
+    }
+  };
+
+  db.employees.unshift(newEmp);
+
+  const newUser = {
+    id: `USR-${newId}`,
+    email: newEmp.email,
+    password: req.body.password || 'password123',
+    role: newEmp.role,
+    isHrAdmin: Boolean(isHrAdmin),
+    employeeId: newId
+  };
+  db.users.push(newUser);
+
+  saveDatabase();
+  res.status(201).json({
+    message: 'HR account created successfully',
+    employee: newEmp,
+    user: { id: newUser.id, email: newUser.email, role: newUser.role, isHrAdmin: newUser.isHrAdmin }
+  });
+});
+
 app.put('/api/employees/:id', (req, res) => {
   const index = db.employees.findIndex(e => e.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: 'Employee not found' });
 
+  // If modifying role to HR or setting isHrAdmin
+  const newRole = req.body.role ? req.body.role.toLowerCase() : null;
+  const isGrantingHr = newRole === 'hr' || newRole === 'hr_admin' || req.body.isHrAdmin === true;
+
+  if (isGrantingHr) {
+    const authUser = getAuthUser(req);
+    if (!authUser) {
+      return res.status(401).json({ error: 'Authentication required. Only the HR Admin can assign HR privileges.' });
+    }
+    if (!isHrAdminUser(authUser)) {
+      return res.status(403).json({ error: 'Access denied: Only the HR Admin can assign HR privileges or elevate an account to HR.' });
+    }
+  }
+
   db.employees[index] = { ...db.employees[index], ...req.body };
+
+  // Keep db.users in sync if needed
+  const user = db.users.find(u => u.employeeId === req.params.id);
+  if (user) {
+    if (req.body.role) user.role = req.body.role;
+    if (req.body.isHrAdmin !== undefined) user.isHrAdmin = req.body.isHrAdmin;
+    if (req.body.email) user.email = req.body.email;
+  }
+
   saveDatabase();
   res.json(db.employees[index]);
 });

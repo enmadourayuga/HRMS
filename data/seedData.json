@@ -5,7 +5,16 @@
       "email": "hr@hrms.com",
       "password": "password123",
       "role": "hr",
+      "isHrAdmin": true,
       "employeeId": "EMP-001"
+    },
+    {
+      "id": "USR-HR-009",
+      "email": "clara.hr@hrms.com",
+      "password": "password123",
+      "role": "hr",
+      "isHrAdmin": false,
+      "employeeId": "EMP-009"
     },
     {
       "id": "USR-EMP-002",
@@ -44,6 +53,7 @@
       "jobTitle": "Head of People & Culture",
       "department": "Human Resources",
       "role": "hr",
+      "isHrAdmin": true,
       "joinDate": "2022-03-15",
       "salary": 1850000,
       "phone": "+91 98765 43210",
@@ -194,6 +204,27 @@
       "leaveBalances": {
         "annual": { "total": 18, "used": 3 },
         "sick": { "total": 10, "used": 2 },
+        "casual": { "total": 5, "used": 0 }
+      }
+    },
+    {
+      "id": "EMP-009",
+      "name": "Clara Oswald",
+      "email": "clara.hr@hrms.com",
+      "jobTitle": "HR Operations Specialist",
+      "department": "Human Resources",
+      "role": "hr",
+      "isHrAdmin": false,
+      "joinDate": "2023-05-12",
+      "salary": 1150000,
+      "phone": "+91 98765 43218",
+      "location": "Bengaluru (HQ)",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces",
+      "status": "Active",
+      "manager": "Elena Rostova",
+      "leaveBalances": {
+        "annual": { "total": 20, "used": 2 },
+        "sick": { "total": 10, "used": 1 },
         "casual": { "total": 5, "used": 0 }
       }
     }

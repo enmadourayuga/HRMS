@@ -1,0 +1,958 @@
+// HR Administrator Modules & Views
+const HR = {
+  activeTab: 'overview',
+  employees: [],
+  leaves: [],
+  attendance: [],
+  announcements: [],
+  departments: [],
+  currentReviewLeaveId: null,
+
+  async init() {
+    await this.loadAllData();
+    this.renderActiveTab();
+  },
+
+  async loadAllData() {
+    try {
+      const [empList, leaveList, attList, annList, deptList] = await Promise.all([
+        API.get('/employees'),
+        API.get('/leaves'),
+        API.get('/attendance'),
+        API.get('/announcements'),
+        API.get('/departments')
+      ]);
+
+      this.employees = empList;
+      this.leaves = leaveList;
+      this.attendance = attList;
+      this.announcements = annList;
+      this.departments = deptList;
+    } catch (err) {
+      console.error('Failed to load HR data:', err);
+      UI.toast('Could not refresh HR dataset', 'error');
+    }
+  },
+
+  switchTab(tabName) {
+    this.activeTab = tabName;
+    document.querySelectorAll('#hr-view-container .tab-content').forEach(el => el.classList.add('hidden'));
+    const tabEl = document.getElementById(`hr-tab-${tabName}`);
+    if (tabEl) {
+      tabEl.classList.remove('hidden');
+    }
+    this.renderActiveTab();
+  },
+
+  renderActiveTab() {
+    switch (this.activeTab) {
+      case 'overview':
+        this.renderOverview();
+        break;
+      case 'employees':
+        this.renderEmployees();
+        break;
+      case 'leaves':
+        this.renderLeaves();
+        break;
+      case 'attendance':
+        this.renderAttendance();
+        break;
+      case 'payroll':
+        this.renderPayroll();
+        break;
+      case 'announcements':
+        this.renderAnnouncements();
+        break;
+    }
+  },
+
+  // ---------------- 1. HR OVERVIEW ----------------
+  async renderOverview() {
+    const container = document.getElementById('hr-tab-overview');
+    if (!container) return;
+
+    let stats = {
+      totalEmployees: this.employees.length,
+      presentToday: this.attendance.filter(a => a.clockIn).length,
+      onLeaveToday: this.employees.filter(e => e.status === 'On Leave').length,
+      pendingLeaves: this.leaves.filter(l => l.status === 'Pending').length,
+      monthlyPayroll: Math.round(this.employees.reduce((acc, c) => acc + (c.salary || 0), 0) / 12)
+    };
+
+    try {
+      stats = await API.get('/stats/hr');
+    } catch (e) {}
+
+    const pendingList = this.leaves.filter(l => l.status === 'Pending').slice(0, 5);
+
+    container.innerHTML = `
+      <!-- Welcome Banner -->
+      <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-violet-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-indigo-600/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-indigo-100 mb-3 border border-white/15">
+            <i class="fa-solid fa-sparkles text-amber-300"></i> Executive People Dashboard
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome, ${Auth.employee?.name || 'Administrator'}</h2>
+          <p class="text-indigo-100 text-sm mt-1 max-w-xl">
+            Here is your live workforce snapshot for today. You have <span class="font-bold underline text-amber-300">${stats.pendingLeaves} leave requests</span> waiting for review.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2.5 shrink-0">
+          <button onclick="UI.openModal('modal-add-employee')" class="px-4 py-2.5 bg-white text-indigo-700 hover:bg-indigo-50 font-semibold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+            <i class="fa-solid fa-user-plus"></i> Add Employee
+          </button>
+          <button onclick="HR.switchTab('leaves')" class="px-4 py-2.5 bg-indigo-900/60 hover:bg-indigo-900 text-white border border-white/20 font-semibold rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check"></i> Review Leaves (${stats.pendingLeaves})
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Metrics Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Headcount</div>
+            <div class="text-2xl font-extrabold text-slate-900">${stats.totalEmployees}</div>
+            <div class="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+              <i class="fa-solid fa-arrow-trend-up"></i> 100% Active Directory
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Present Today</div>
+            <div class="text-2xl font-extrabold text-slate-900">${stats.presentToday}</div>
+            <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+              Clocked in & logged
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Leaves</div>
+            <div class="text-2xl font-extrabold text-amber-600">${stats.pendingLeaves}</div>
+            <div class="text-[11px] text-amber-600 font-medium mt-0.5">
+              Awaiting your approval
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-all">
+          <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div>
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Monthly Payroll</div>
+            <div class="text-2xl font-extrabold text-slate-900">${UI.formatCurrency(stats.monthlyPayroll)}</div>
+            <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+              Across ${this.departments.length} departments
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Main Overview Two-Column Sections -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Pending Leaves & Recent Logs (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+          
+          <!-- Pending Leaves Widget -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                <h3 class="font-bold text-slate-900 text-sm">Action Required: Pending Leave Applications</h3>
+              </div>
+              <button onclick="HR.switchTab('leaves')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                View All (${this.leaves.length}) &rarr;
+              </button>
+            </div>
+
+            <div class="divide-y divide-slate-100">
+              ${pendingList.length === 0 ? `
+                <div class="p-8 text-center text-slate-400 text-sm">
+                  <i class="fa-solid fa-circle-check text-emerald-500 text-3xl mb-2"></i>
+                  <p>All caught up! No pending leave requests at this time.</p>
+                </div>
+              ` : pendingList.map(item => `
+                <div class="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                  <div class="flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                      ${item.employeeName.charAt(0)}
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold text-slate-900 text-sm">${item.employeeName}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-md font-medium bg-slate-100 text-slate-600">${item.department}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-md font-semibold bg-indigo-50 text-indigo-700">${item.leaveType}</span>
+                      </div>
+                      <p class="text-xs text-slate-600 mt-1">
+                        <span class="font-medium text-slate-900">${UI.formatDate(item.startDate)}</span> to <span class="font-medium text-slate-900">${UI.formatDate(item.endDate)}</span> 
+                        <span class="text-indigo-600 font-semibold">(${item.days} ${item.days === 1 ? 'day' : 'days'})</span>
+                      </p>
+                      <p class="text-xs text-slate-500 italic mt-0.5">"${item.reason}"</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    <button onclick="HR.openReviewModal('${item.id}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors">
+                      Review & Decide
+                    </button>
+                    <button onclick="HR.quickApproveLeave('${item.id}')" title="Quick Approve" class="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors">
+                      <i class="fa-solid fa-circle-check text-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Department Headcount & Budget Table -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+              <h3 class="font-bold text-slate-900 text-sm">Department Allocations</h3>
+              <span class="text-xs text-slate-500">${this.departments.length} Units Active</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                  <tr>
+                    <th class="px-5 py-3">Department</th>
+                    <th class="px-5 py-3">Department Head</th>
+                    <th class="px-5 py-3 text-center">Team Size</th>
+                    <th class="px-5 py-3 text-right">Budget</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                  ${this.departments.map(dept => `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                      <td class="px-5 py-3.5 font-semibold text-slate-900">${dept.name}</td>
+                      <td class="px-5 py-3.5 text-slate-600">${dept.head}</td>
+                      <td class="px-5 py-3.5 text-center">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">${dept.count} members</span>
+                      </td>
+                      <td class="px-5 py-3.5 text-right font-mono font-medium text-slate-900">${dept.budget}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Announcements Bulletin & Quick Directory (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+          
+          <!-- Bulletin Board -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bullhorn text-indigo-600 text-sm"></i>
+                <h3 class="font-bold text-slate-900 text-sm">Notice Board</h3>
+              </div>
+              <button onclick="UI.openModal('modal-new-announcement')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                + New
+              </button>
+            </div>
+            <div class="p-4 space-y-3.5">
+              ${this.announcements.map(ann => `
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:border-indigo-200 transition-colors">
+                  <div class="flex items-center justify-between text-[11px] mb-1.5">
+                    <span class="px-2 py-0.5 rounded font-semibold ${ann.priority === 'High' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200 text-slate-700'}">${ann.priority}</span>
+                    <span class="text-slate-400">${UI.formatDate(ann.date)}</span>
+                  </div>
+                  <h4 class="text-xs font-bold text-slate-900 line-clamp-1">${ann.title}</h4>
+                  <p class="text-xs text-slate-600 mt-1 line-clamp-2">${ann.content}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Quick Directory Summary -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-slate-900 text-sm">Quick Directory</h3>
+              <button onclick="HR.switchTab('employees')" class="text-xs text-indigo-600 font-semibold hover:underline">View All</button>
+            </div>
+            <div class="space-y-3">
+              ${this.employees.slice(0, 4).map(e => `
+                <div class="flex items-center gap-3">
+                  <img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover" alt="${e.name}">
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-bold text-slate-900 truncate">${e.name}</div>
+                    <div class="text-[11px] text-slate-500 truncate">${e.jobTitle}</div>
+                  </div>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full ${e.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'} font-semibold">
+                    ${e.status}
+                  </span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  },
+
+  // ---------------- 2. HR EMPLOYEES DIRECTORY ----------------
+  renderEmployees(filteredList = null) {
+    const container = document.getElementById('hr-tab-employees');
+    if (!container) return;
+
+    const list = filteredList || this.employees;
+
+    container.innerHTML = `
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Employee Directory</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Manage workforce profiles, roles, departments, and credentials</p>
+        </div>
+        <button onclick="UI.openModal('modal-add-employee')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-xs"></i>
+          <span>Add Employee</span>
+        </button>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="employee-search-input" oninput="HR.filterEmployees()" placeholder="Search employee by name, title, or email..." 
+                 class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+        </div>
+        <div class="flex gap-2">
+          <select id="employee-dept-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
+            <option value="All">All Departments</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Design">Design</option>
+            <option value="Product">Product</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+          <select id="employee-status-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
+            <option value="All">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Employee List Table -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+              <tr>
+                <th class="px-5 py-3.5">Employee</th>
+                <th class="px-5 py-3.5">Department & Role</th>
+                <th class="px-5 py-3.5">Contact</th>
+                <th class="px-5 py-3.5">Annual Salary</th>
+                <th class="px-5 py-3.5 text-center">Status</th>
+                <th class="px-5 py-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              ${list.length === 0 ? `
+                <tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm">No employees match your search criteria.</td></tr>
+              ` : list.map(emp => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" alt="${emp.name}">
+                      <div>
+                        <div class="font-bold text-slate-900 text-sm">${emp.name}</div>
+                        <div class="text-xs text-slate-500">${emp.jobTitle}</div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">ID: ${emp.id}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-5 py-4">
+                    <div class="font-semibold text-slate-800 text-xs">${emp.department}</div>
+                    <span class="inline-block px-2 py-0.5 text-[10px] font-semibold rounded-md ${emp.role === 'hr' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-600'} mt-1">
+                      ${emp.role === 'hr' ? 'HR Administrator' : 'Staff Member'}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-xs">
+                    <div class="text-slate-800 font-medium">${emp.email}</div>
+                    <div class="text-slate-500 text-[11px] mt-0.5">${emp.phone}</div>
+                    <div class="text-slate-400 text-[11px]">${emp.location}</div>
+                  </td>
+                  <td class="px-5 py-4 font-mono font-semibold text-slate-900 text-xs">
+                    ${UI.formatCurrency(emp.salary)}
+                    <span class="text-[10px] text-slate-400 block font-sans font-normal">Joined ${UI.formatDate(emp.joinDate)}</span>
+                  </td>
+                  <td class="px-5 py-4 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${emp.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+                      ${emp.status}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-right">
+                    <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
+                      <i class="fa-solid fa-receipt mr-1"></i> Payslip
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  filterEmployees() {
+    const q = document.getElementById('employee-search-input')?.value.toLowerCase() || '';
+    const dept = document.getElementById('employee-dept-filter')?.value || 'All';
+    const status = document.getElementById('employee-status-filter')?.value || 'All';
+
+    let filtered = this.employees.filter(emp => {
+      const matchesQ = emp.name.toLowerCase().includes(q) || emp.email.toLowerCase().includes(q) || emp.jobTitle.toLowerCase().includes(q);
+      const matchesDept = dept === 'All' || emp.department.toLowerCase() === dept.toLowerCase();
+      const matchesStatus = status === 'All' || emp.status.toLowerCase() === status.toLowerCase();
+      return matchesQ && matchesDept && matchesStatus;
+    });
+
+    this.renderEmployees(filtered);
+  },
+
+  // ---------------- 3. HR LEAVE MANAGEMENT ----------------
+  renderLeaves(currentFilter = 'All') {
+    const container = document.getElementById('hr-tab-leaves');
+    if (!container) return;
+
+    let filtered = [...this.leaves];
+    if (currentFilter !== 'All') {
+      filtered = filtered.filter(l => l.status === currentFilter);
+    }
+
+    const counts = {
+      all: this.leaves.length,
+      pending: this.leaves.filter(l => l.status === 'Pending').length,
+      approved: this.leaves.filter(l => l.status === 'Approved').length,
+      rejected: this.leaves.filter(l => l.status === 'Rejected').length
+    };
+
+    container.innerHTML = `
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">Leave Requests Management</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Review, approve, or reject employee leave applications</p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+        <button onclick="HR.renderLeaves('All')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'All' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'}">
+          All Requests (${counts.all})
+        </button>
+        <button onclick="HR.renderLeaves('Pending')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white text-amber-700 hover:bg-amber-50'}">
+          Pending Review (${counts.pending})
+        </button>
+        <button onclick="HR.renderLeaves('Approved')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-700 hover:bg-emerald-50'}">
+          Approved (${counts.approved})
+        </button>
+        <button onclick="HR.renderLeaves('Rejected')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Rejected' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-700 hover:bg-rose-50'}">
+          Rejected (${counts.rejected})
+        </button>
+      </div>
+
+      <!-- Leave Requests Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        ${filtered.length === 0 ? `
+          <div class="col-span-2 bg-white rounded-2xl p-12 text-center text-slate-400 border border-slate-200">
+            <i class="fa-regular fa-folder-open text-4xl mb-3"></i>
+            <p>No leave requests found in this category.</p>
+          </div>
+        ` : filtered.map(leave => `
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${leave.leaveType === 'Sick' ? 'bg-rose-50 text-rose-700 border border-rose-200' : (leave.leaveType === 'Annual' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-700 border border-amber-200')}">
+                    ${leave.leaveType} Leave
+                  </span>
+                  <span class="text-xs text-slate-400 font-mono">#${leave.id}</span>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold ${leave.status === 'Pending' ? 'bg-amber-100 text-amber-800' : (leave.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800')}">
+                  ${leave.status}
+                </span>
+              </div>
+
+              <div class="mb-3">
+                <h3 class="text-base font-bold text-slate-900">${leave.employeeName}</h3>
+                <p class="text-xs text-slate-500">${leave.department}</p>
+              </div>
+
+              <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3 space-y-1 text-xs">
+                <div class="flex items-center justify-between text-slate-600">
+                  <span>Duration:</span>
+                  <span class="font-bold text-slate-900">${UI.formatDate(leave.startDate)} &rarr; ${UI.formatDate(leave.endDate)} (${leave.days} ${leave.days === 1 ? 'day' : 'days'})</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-600">
+                  <span>Applied On:</span>
+                  <span class="text-slate-800">${UI.formatDate(leave.appliedOn)}</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-700 mb-4 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                <span class="font-semibold block text-slate-500 text-[10px] uppercase mb-0.5">Reason:</span>
+                "${leave.reason}"
+              </p>
+
+              ${leave.reviewedBy ? `
+                <div class="text-[11px] text-slate-500 border-t border-slate-100 pt-2 mb-3">
+                  <span class="font-semibold">Reviewer:</span> ${leave.reviewedBy} ${leave.reviewComment ? `— "${leave.reviewComment}"` : ''}
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Action buttons for Pending -->
+            ${leave.status === 'Pending' ? `
+              <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+                <button onclick="HR.openReviewModal('${leave.id}')" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-clipboard-check text-xs"></i> Review & Comment
+                </button>
+                <button onclick="HR.quickApproveLeave('${leave.id}')" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-semibold transition-all">
+                  Approve
+                </button>
+              </div>
+            ` : `
+              <div class="pt-3 border-t border-slate-100 text-right">
+                <button onclick="HR.openReviewModal('${leave.id}')" class="text-xs text-slate-500 hover:text-indigo-600 font-medium">
+                  Update Decision
+                </button>
+              </div>
+            `}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  },
+
+  // ---------------- 4. HR ATTENDANCE TRACKER ----------------
+  renderAttendance() {
+    const container = document.getElementById('hr-tab-attendance');
+    if (!container) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    const todayLogs = this.attendance.filter(a => a.date === today);
+
+    container.innerHTML = `
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Daily Attendance Tracker</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Live check-in and working hours log for ${UI.formatDate(today)}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 clock-live-dot"></span> Live Tracking
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+              <tr>
+                <th class="px-5 py-3.5">Employee</th>
+                <th class="px-5 py-3.5">Date</th>
+                <th class="px-5 py-3.5">Clock In</th>
+                <th class="px-5 py-3.5">Clock Out</th>
+                <th class="px-5 py-3.5">Hours Tracked</th>
+                <th class="px-5 py-3.5 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              ${todayLogs.map(att => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                  <td class="px-5 py-3.5 font-bold text-slate-900 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center text-xs font-bold">
+                      ${att.employeeName.charAt(0)}
+                    </div>
+                    <span>${att.employeeName}</span>
+                  </td>
+                  <td class="px-5 py-3.5 text-xs text-slate-500 font-mono">${att.date}</td>
+                  <td class="px-5 py-3.5 text-xs font-mono font-semibold text-emerald-600">
+                    ${att.clockIn ? `<i class="fa-regular fa-clock mr-1"></i> ${att.clockIn}` : '--'}
+                  </td>
+                  <td class="px-5 py-3.5 text-xs font-mono text-slate-500">
+                    ${att.clockOut ? `<i class="fa-regular fa-clock mr-1"></i> ${att.clockOut}` : '<span class="text-amber-500 italic">In Progress</span>'}
+                  </td>
+                  <td class="px-5 py-3.5 text-xs font-semibold text-slate-800">
+                    ${att.totalHours ? `${att.totalHours} hrs` : (att.clockIn ? 'Active' : '--')}
+                  </td>
+                  <td class="px-5 py-3.5 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-bold ${att.status === 'Present' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (att.status === 'Late' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600')}">
+                      ${att.status}
+                    </span>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  // ---------------- 5. HR PAYROLL & COMPENSATION ----------------
+  renderPayroll() {
+    const container = document.getElementById('hr-tab-payroll');
+    if (!container) return;
+
+    const totalAnnual = this.employees.reduce((acc, c) => acc + (c.salary || 0), 0);
+    const avgSalary = Math.round(totalAnnual / (this.employees.length || 1));
+
+    container.innerHTML = `
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Payroll & Compensation Management</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Overview of employee compensation, allowances, deductions, and salary slips</p>
+        </div>
+      </div>
+
+      <!-- Payroll Summary KPI -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Annual Compensation Pool</div>
+          <div class="text-2xl font-extrabold text-slate-900 mt-1">${UI.formatCurrency(totalAnnual)}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Across ${this.employees.length} full-time staff</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Estimated Monthly Outflow</div>
+          <div class="text-2xl font-extrabold text-indigo-600 mt-1">${UI.formatCurrency(Math.round(totalAnnual / 12))}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Next pay cycle: Last business day</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Average Annual Salary</div>
+          <div class="text-2xl font-extrabold text-emerald-600 mt-1">${UI.formatCurrency(avgSalary)}</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Competitive market index: +12%</div>
+        </div>
+      </div>
+
+      <!-- Compensation Table -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+              <tr>
+                <th class="px-5 py-3.5">Employee</th>
+                <th class="px-5 py-3.5">Role</th>
+                <th class="px-5 py-3.5">Base Monthly</th>
+                <th class="px-5 py-3.5">Estimated Deductions</th>
+                <th class="px-5 py-3.5">Net Monthly</th>
+                <th class="px-5 py-3.5 text-right">Statements</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              ${this.employees.map(emp => {
+                const monthly = Math.round(emp.salary / 12);
+                const deductions = Math.round(monthly * 0.22);
+                const net = monthly - deductions;
+                return `
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-5 py-3.5 font-bold text-slate-900">${emp.name}</td>
+                    <td class="px-5 py-3.5 text-xs text-slate-600">${emp.jobTitle}</td>
+                    <td class="px-5 py-3.5 font-mono text-xs text-slate-900">${UI.formatCurrency(monthly)}</td>
+                    <td class="px-5 py-3.5 font-mono text-xs text-rose-600">-${UI.formatCurrency(deductions)}</td>
+                    <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(net)}</td>
+                    <td class="px-5 py-3.5 text-right">
+                      <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors">
+                        View Statement
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  // ---------------- 6. HR ANNOUNCEMENTS ----------------
+  renderAnnouncements() {
+    const container = document.getElementById('hr-tab-announcements');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Company Announcements & Bulletins</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Publish organizational updates, policy changes, and events</p>
+        </div>
+        <button onclick="UI.openModal('modal-new-announcement')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 flex items-center gap-2">
+          <i class="fa-solid fa-plus text-xs"></i>
+          <span>New Announcement</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        ${this.announcements.map(ann => `
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span class="px-2.5 py-1 rounded-md text-xs font-bold ${ann.priority === 'High' ? 'bg-rose-100 text-rose-800' : (ann.priority === 'Important' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700')}">
+                  ${ann.priority} Priority
+                </span>
+                <span class="text-xs text-slate-400">${UI.formatDate(ann.date)}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mb-2">${ann.title}</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-4">${ann.content}</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+              <span>Category: <strong class="text-slate-600">${ann.category}</strong></span>
+              <span>Author: <strong class="text-slate-600">${ann.author}</strong></span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  },
+
+  // ---------------- ACTIONS & MODALS ----------------
+  async submitNewEmployee(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const body = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      jobTitle: formData.get('jobTitle'),
+      department: formData.get('department'),
+      role: formData.get('role'),
+      salary: formData.get('salary'),
+      phone: formData.get('phone'),
+      location: formData.get('location')
+    };
+
+    try {
+      const created = await API.post('/employees', body);
+      UI.toast(`Employee ${created.name} added successfully! Login credentials created.`, 'success');
+      UI.closeModal('modal-add-employee');
+      form.reset();
+      await this.loadAllData();
+      this.renderActiveTab();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to add employee', 'error');
+    }
+  },
+
+  openReviewModal(leaveId) {
+    const leave = this.leaves.find(l => l.id === leaveId);
+    if (!leave) return;
+
+    this.currentReviewLeaveId = leaveId;
+    document.getElementById('review-leave-id').value = leaveId;
+    document.getElementById('review-leave-comment').value = leave.reviewComment || '';
+
+    const detailsEl = document.getElementById('review-leave-details');
+    detailsEl.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="font-bold text-slate-900">${leave.employeeName} (${leave.department})</span>
+        <span class="font-semibold text-indigo-600 text-xs">${leave.leaveType} Leave</span>
+      </div>
+      <div class="text-xs text-slate-600">
+        <strong>Dates:</strong> ${UI.formatDate(leave.startDate)} to ${UI.formatDate(leave.endDate)} (${leave.days} days)
+      </div>
+      <div class="text-xs text-slate-700 bg-white p-2.5 rounded-lg border border-slate-200 mt-2">
+        <strong class="text-slate-500">Reason:</strong> "${leave.reason}"
+      </div>
+    `;
+
+    UI.openModal('modal-review-leave');
+  },
+
+  async handleLeaveDecision(decision) {
+    const leaveId = this.currentReviewLeaveId || document.getElementById('review-leave-id').value;
+    const comment = document.getElementById('review-leave-comment').value;
+
+    try {
+      await API.patch(`/leaves/${leaveId}`, {
+        status: decision,
+        reviewedBy: Auth.employee?.name || 'HR Admin',
+        reviewComment: comment
+      });
+
+      UI.toast(`Leave request marked as ${decision}!`, decision === 'Approved' ? 'success' : 'info');
+      UI.closeModal('modal-review-leave');
+      await this.loadAllData();
+      this.renderActiveTab();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to update leave', 'error');
+    }
+  },
+
+  async quickApproveLeave(leaveId) {
+    try {
+      await API.patch(`/leaves/${leaveId}`, {
+        status: 'Approved',
+        reviewedBy: Auth.employee?.name || 'HR Admin',
+        reviewComment: 'Approved via Quick Action'
+      });
+      UI.toast('Leave approved successfully!', 'success');
+      await this.loadAllData();
+      this.renderActiveTab();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to approve', 'error');
+    }
+  },
+
+  async submitAnnouncement(event) {
+    event.preventDefault();
+    const title = document.getElementById('ann-title').value;
+    const category = document.getElementById('ann-category').value;
+    const priority = document.getElementById('ann-priority').value;
+    const content = document.getElementById('ann-content').value;
+
+    try {
+      await API.post('/announcements', {
+        title,
+        category,
+        priority,
+        content,
+        author: Auth.employee?.name || 'HR Team'
+      });
+      UI.toast('Announcement published to bulletin!', 'success');
+      UI.closeModal('modal-new-announcement');
+      document.getElementById('form-new-announcement').reset();
+      await this.loadAllData();
+      this.renderActiveTab();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to publish announcement', 'error');
+    }
+  },
+
+  async viewPayslipForEmployee(empId) {
+    const emp = this.employees.find(e => e.id === empId);
+    if (!emp) return;
+
+    const monthly = Math.round(emp.salary / 12);
+    const hra = Math.round(monthly * 0.20);
+    const special = Math.round(monthly * 0.12);
+    const conveyance = 400;
+    const gross = monthly + hra + special + conveyance;
+
+    const tax = Math.round(gross * 0.14);
+    const pf = Math.round(monthly * 0.10);
+    const insurance = 250;
+    const totalDeductions = tax + pf + insurance;
+    const net = gross - totalDeductions;
+
+    const payslipContainer = document.getElementById('printable-payslip');
+    payslipContainer.innerHTML = `
+      <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
+        <div>
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-people-roof"></i>
+            </div>
+            <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Inc.</span>
+          </div>
+          <p class="text-xs text-slate-500">100 Market St, Suite 400, San Francisco, CA 94105</p>
+          <p class="text-xs text-slate-500">EIN: 94-8273619 • payroll@nexushr.com</p>
+        </div>
+        <div class="text-right">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">PAID</span>
+          <div class="text-xs text-slate-400 mt-2">Statement Month</div>
+          <div class="text-sm font-bold text-slate-900">October 2026</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 text-xs">
+        <div>
+          <span class="text-slate-400 block">Employee Name</span>
+          <strong class="text-slate-900 text-sm">${emp.name}</strong>
+          <span class="text-slate-500 block mt-1">ID: ${emp.id}</span>
+        </div>
+        <div>
+          <span class="text-slate-400 block">Designation & Department</span>
+          <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
+          <span class="text-slate-500 block mt-1">${emp.department}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 text-xs mb-6">
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings</h4>
+          <div class="space-y-1.5">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Basic Salary</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(monthly)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">House Rent Allowance (HRA)</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(hra)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Special Allowance</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(special)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Conveyance Allowance</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(conveyance)}</span>
+            </div>
+            <div class="flex justify-between py-2 font-bold text-slate-900">
+              <span>Total Gross Earnings</span>
+              <span class="font-mono text-emerald-700">${UI.formatCurrency(gross)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions</h4>
+          <div class="space-y-1.5">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Federal & State Income Tax</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(tax)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Provident / 401(k) Retirement</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(pf)}</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600">Health & Dental Premium</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(insurance)}</span>
+            </div>
+            <div class="flex justify-between py-2 font-bold text-slate-900">
+              <span>Total Deductions</span>
+              <span class="font-mono text-rose-700">-${UI.formatCurrency(totalDeductions)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
+        <div>
+          <span class="text-xs text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
+          <span class="text-xs text-slate-500">Transferred via Direct Deposit</span>
+        </div>
+        <div class="text-2xl font-black text-indigo-900 font-mono">
+          ${UI.formatCurrency(net)}
+        </div>
+      </div>
+    `;
+
+    UI.openModal('modal-view-payslip');
+  }
+};

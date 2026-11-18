@@ -43,6 +43,14 @@
       "password": "password123",
       "role": "employee",
       "employeeId": "EMP-005"
+    },
+    {
+      "id": "USR-FIN-001",
+      "email": "finance@hrms.com",
+      "password": "password123",
+      "role": "finance",
+      "isHrAdmin": false,
+      "employeeId": "EMP-010"
     }
   ],
   "employees": [
@@ -75,7 +83,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-001",
+      "salaryStructureId": "STR-002"
     },
     {
       "id": "EMP-002",
@@ -105,7 +115,9 @@
           "used": 2
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-002",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-003",
@@ -135,7 +147,9 @@
           "used": 0
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-003",
+      "salaryStructureId": "STR-002"
     },
     {
       "id": "EMP-004",
@@ -165,7 +179,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-004",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-005",
@@ -195,7 +211,9 @@
           "used": 2
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-005",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-006",
@@ -225,7 +243,9 @@
           "used": 1
         }
       },
-      "employmentType": "Contract"
+      "employmentType": "Contract",
+      "biometricRef": "BIO-EMP-006",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-007",
@@ -255,7 +275,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-007",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-008",
@@ -285,7 +307,9 @@
           "used": 0
         }
       },
-      "employmentType": "Part-Time"
+      "employmentType": "Part-Time",
+      "biometricRef": "BIO-EMP-008",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-009",
@@ -313,6 +337,41 @@
         },
         "casual": {
           "total": 5,
+          "used": 0
+        }
+      },
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-009",
+      "salaryStructureId": "STR-002"
+    },
+    {
+      "id": "EMP-010",
+      "name": "David Miller",
+      "email": "finance@hrms.com",
+      "jobTitle": "Finance Lead & Controller",
+      "department": "Finance & Accounts",
+      "role": "finance",
+      "isHrAdmin": false,
+      "joinDate": "2022-04-01",
+      "salary": 1750000,
+      "phone": "+91 98765 11223",
+      "location": "Bengaluru (HQ)",
+      "biometricRef": "BIO-EMP-010",
+      "salaryStructureId": "STR-002",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces",
+      "status": "Active",
+      "manager": "Executive Team",
+      "leaveBalances": {
+        "annual": {
+          "total": 22,
+          "used": 3
+        },
+        "sick": {
+          "total": 12,
+          "used": 1
+        },
+        "casual": {
+          "total": 6,
           "used": 0
         }
       },
@@ -420,7 +479,10 @@
       "clockIn": "08:52 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.5
+      "totalHours": 2.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-002",
@@ -430,7 +492,10 @@
       "clockIn": "09:05 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.3
+      "totalHours": 2.3,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-003",
@@ -440,7 +505,10 @@
       "clockIn": "09:25 AM",
       "clockOut": null,
       "status": "Late",
-      "totalHours": 2
+      "totalHours": 2,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-004",
@@ -450,7 +518,10 @@
       "clockIn": "08:30 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.9
+      "totalHours": 2.9,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-005",
@@ -460,7 +531,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "On Leave",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-006",
@@ -470,7 +544,10 @@
       "clockIn": "09:00 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.4
+      "totalHours": 2.4,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-007",
@@ -480,7 +557,10 @@
       "clockIn": "08:45 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.6
+      "totalHours": 2.6,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-008",
@@ -490,7 +570,10 @@
       "clockIn": "09:12 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.2
+      "totalHours": 2.2,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-009",
@@ -500,7 +583,10 @@
       "clockIn": "08:55 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.5
+      "totalHours": 2.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-207",
@@ -510,7 +596,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-206",
@@ -520,7 +609,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-205",
@@ -530,7 +622,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-204",
@@ -540,7 +635,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-203",
@@ -550,7 +648,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "On Leave",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-202",
@@ -560,7 +661,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-201",
@@ -570,7 +674,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-200",
@@ -580,7 +687,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-199",
@@ -590,7 +700,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-198",
@@ -600,7 +713,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-197",
@@ -610,7 +726,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-196",
@@ -620,7 +739,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-195",
@@ -630,7 +752,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-194",
@@ -640,7 +765,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-193",
@@ -650,7 +778,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-192",
@@ -660,7 +791,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-191",
@@ -670,7 +804,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-190",
@@ -680,7 +817,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-189",
@@ -690,7 +830,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-188",
@@ -700,7 +843,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-187",
@@ -710,7 +856,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-186",
@@ -720,7 +869,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-185",
@@ -730,7 +882,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-184",
@@ -740,7 +895,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-183",
@@ -750,7 +908,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-182",
@@ -760,7 +921,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-181",
@@ -770,7 +934,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-180",
@@ -780,7 +947,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-179",
@@ -790,7 +960,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-178",
@@ -800,7 +973,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-177",
@@ -810,7 +986,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-176",
@@ -820,7 +999,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-175",
@@ -830,7 +1012,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-174",
@@ -840,7 +1025,10 @@
       "clockIn": "09:35 AM",
       "clockOut": "06:00 PM",
       "status": "Late",
-      "totalHours": 8
+      "totalHours": 8,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-173",
@@ -850,7 +1038,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-172",
@@ -860,7 +1051,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-171",
@@ -870,7 +1064,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-170",
@@ -880,7 +1077,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-169",
@@ -890,7 +1090,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-168",
@@ -900,7 +1103,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-167",
@@ -910,7 +1116,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-166",
@@ -920,7 +1129,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-165",
@@ -930,7 +1142,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-164",
@@ -940,7 +1155,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-163",
@@ -950,7 +1168,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-162",
@@ -960,7 +1181,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-161",
@@ -970,7 +1194,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-160",
@@ -980,7 +1207,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-159",
@@ -990,7 +1220,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-158",
@@ -1000,7 +1233,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-157",
@@ -1010,7 +1246,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-156",
@@ -1020,7 +1259,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-155",
@@ -1030,7 +1272,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-154",
@@ -1040,7 +1285,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-153",
@@ -1050,7 +1298,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-152",
@@ -1060,7 +1311,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-151",
@@ -1070,7 +1324,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-150",
@@ -1080,7 +1337,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-149",
@@ -1090,7 +1350,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-148",
@@ -1100,7 +1363,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-147",
@@ -1110,7 +1376,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-146",
@@ -1120,7 +1389,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-145",
@@ -1130,7 +1402,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-144",
@@ -1140,7 +1415,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-143",
@@ -1150,7 +1428,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-142",
@@ -1160,7 +1441,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-141",
@@ -1170,7 +1454,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-140",
@@ -1180,7 +1467,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-139",
@@ -1190,7 +1480,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-138",
@@ -1200,7 +1493,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-137",
@@ -1210,7 +1506,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-136",
@@ -1220,7 +1519,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-135",
@@ -1230,7 +1532,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-134",
@@ -1240,7 +1545,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-133",
@@ -1250,7 +1558,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-132",
@@ -1260,7 +1571,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-131",
@@ -1270,7 +1584,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-130",
@@ -1280,7 +1597,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-129",
@@ -1290,7 +1610,10 @@
       "clockIn": "09:20 AM",
       "clockOut": "06:00 PM",
       "status": "Late",
-      "totalHours": 8
+      "totalHours": 8,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-128",
@@ -1300,7 +1623,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-127",
@@ -1310,7 +1636,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-126",
@@ -1320,7 +1649,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-125",
@@ -1330,7 +1662,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-124",
@@ -1340,7 +1675,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-123",
@@ -1350,7 +1688,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-122",
@@ -1360,7 +1701,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-121",
@@ -1370,7 +1714,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-120",
@@ -1380,7 +1727,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-119",
@@ -1390,7 +1740,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-118",
@@ -1400,7 +1753,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-117",
@@ -1410,7 +1766,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-116",
@@ -1420,7 +1779,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-115",
@@ -1430,7 +1792,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-114",
@@ -1440,7 +1805,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-113",
@@ -1450,7 +1818,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-112",
@@ -1460,7 +1831,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-111",
@@ -1470,7 +1844,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-110",
@@ -1480,7 +1857,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-109",
@@ -1490,7 +1870,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-108",
@@ -1500,7 +1883,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-107",
@@ -1510,7 +1896,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-106",
@@ -1520,7 +1909,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-105",
@@ -1530,7 +1922,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-104",
@@ -1540,7 +1935,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-103",
@@ -1550,7 +1948,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-102",
@@ -1560,7 +1961,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-101",
@@ -1570,7 +1974,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-100",
@@ -1580,7 +1987,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     }
   ],
   "payslips": [
@@ -2202,6 +2612,80 @@
       "head": "Rachel Adams",
       "count": 14,
       "budget": "₹1.9 Cr"
+    },
+    {
+      "id": "DEP-07",
+      "name": "Finance & Accounts",
+      "head": "David Miller",
+      "count": 4,
+      "budget": "₹85 L"
+    }
+  ],
+  "salaryStructures": [
+    {
+      "id": "STR-001",
+      "name": "Standard Corporate Structure",
+      "description": "Default structure for full-time engineering, design, and operations staff",
+      "basicPercentage": 50,
+      "hraPercentage": 30,
+      "specialAllowancePercentage": 15,
+      "conveyanceFixed": 1600,
+      "pfPercentage": 12,
+      "taxPercentage": 10,
+      "healthInsuranceFixed": 1200
+    },
+    {
+      "id": "STR-002",
+      "name": "Executive Leadership Structure",
+      "description": "Structure for department heads, leadership, and finance controllers",
+      "basicPercentage": 45,
+      "hraPercentage": 35,
+      "specialAllowancePercentage": 18,
+      "conveyanceFixed": 3200,
+      "pfPercentage": 12,
+      "taxPercentage": 15,
+      "healthInsuranceFixed": 2500
+    },
+    {
+      "id": "STR-003",
+      "name": "Junior & Trainee Structure",
+      "description": "Structure for associates, interns, and contractual specialists",
+      "basicPercentage": 60,
+      "hraPercentage": 25,
+      "specialAllowancePercentage": 10,
+      "conveyanceFixed": 800,
+      "pfPercentage": 12,
+      "taxPercentage": 5,
+      "healthInsuranceFixed": 800
+    }
+  ],
+  "payrollPolicy": {
+    "salaryDivisor": 30,
+    "defaultWorkHours": 8,
+    "latePenaltyThreshold": 3,
+    "latePenaltyDays": 0.5,
+    "requireAttendanceValidation": true
+  },
+  "notifications": [
+    {
+      "id": "NTF-101",
+      "employeeId": "EMP-002",
+      "title": "Leave Policy Update",
+      "message": "Annual leave balances for Q4 have been finalized and credited.",
+      "type": "system",
+      "referenceId": null,
+      "createdAt": "2026-11-15T10:00:00.000Z",
+      "read": true
+    },
+    {
+      "id": "NTF-102",
+      "employeeId": "EMP-002",
+      "title": "October Payslip Released",
+      "message": "Your salary statement for October 2026 has been generated and approved.",
+      "type": "payroll",
+      "referenceId": "PS-2026-10-002",
+      "createdAt": "2026-10-31T17:00:00.000Z",
+      "read": false
     }
   ]
 }

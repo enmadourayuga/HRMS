@@ -19,7 +19,7 @@ const UI = {
       warning: 'fa-solid fa-circle-exclamation'
     };
 
-    toast.className = `${bgColors[type] || bgColors.info} px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium transform transition-all duration-300 pointer-events-auto opacity-0 translate-y-2`;
+    toast.className = `${bgColors[type] || bgColors.info} px-4 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium transform transition-all duration-300 pointer-events-auto opacity-0 translate-y-2 z-[99999] border border-white/20`;
     toast.innerHTML = `
       <i class="${icons[type] || icons.info} text-base shrink-0"></i>
       <span class="flex-1">${message}</span>
@@ -36,12 +36,13 @@ const UI = {
       toast.classList.add('opacity-100', 'translate-y-0');
     });
 
-    // Auto dismiss after 3.5s
+    // Auto dismiss (give errors more reading time)
+    const timeout = (type === 'error' || type === 'warning') ? 5500 : 3500;
     setTimeout(() => {
       toast.classList.remove('opacity-100', 'translate-y-0');
       toast.classList.add('opacity-0', '-translate-y-2');
       setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    }, timeout);
   },
 
   openModal(modalId) {
@@ -49,6 +50,14 @@ const UI = {
     if (modal) {
       modal.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
+      if (modalId === 'modal-request-leave') {
+        const errorAlert = document.getElementById('leave-error-alert');
+        if (errorAlert) errorAlert.classList.add('hidden');
+        const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
+        if (emp && typeof emp.updateLeaveBalanceHelper === 'function') {
+          emp.updateLeaveBalanceHelper();
+        }
+      }
     }
   },
 
@@ -56,6 +65,10 @@ const UI = {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.add('hidden');
+      const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
+      if (modalId === 'modal-request-leave' && emp && typeof emp.resetLeaveModal === 'function') {
+        emp.resetLeaveModal();
+      }
       const anyOpen = document.querySelector('.fixed.z-50:not(.hidden)');
       if (!anyOpen) {
         document.body.classList.remove('overflow-hidden');
@@ -74,6 +87,47 @@ const UI = {
     const menu = document.getElementById('switch-menu');
     if (menu) {
       menu.classList.toggle('hidden');
+    }
+  },
+
+  toggleNotificationsMenu() {
+    const menu = document.getElementById('notifications-menu');
+    if (menu) {
+      menu.classList.toggle('hidden');
+      const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
+      if (!menu.classList.contains('hidden') && emp && typeof emp.loadNotifications === 'function') {
+        emp.loadNotifications();
+      }
+    }
+  },
+
+  async markAllNotificationsRead() {
+    try {
+      const empId = Auth.user?.employeeId;
+      await API.post('/notifications/mark-all-read', { employeeId: empId });
+      const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
+      if (emp && typeof emp.loadNotifications === 'function') {
+        await emp.loadNotifications();
+      }
+      UI.toast('All notifications marked as read', 'success');
+    } catch (e) {
+      UI.toast('Failed to mark notifications read', 'error');
+    }
+  },
+
+  updateNotificationBadge(unreadCount) {
+    const badge = document.getElementById('notification-badge');
+    const countText = document.getElementById('notif-count-text');
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+    if (countText) {
+      countText.textContent = `${unreadCount} unread`;
     }
   },
 
@@ -122,6 +176,12 @@ document.addEventListener('click', (e) => {
   if (switchBtn && switchMenu && !switchBtn.contains(e.target) && !switchMenu.contains(e.target)) {
     switchMenu.classList.add('hidden');
   }
+
+  const notifBtn = document.getElementById('btn-notifications');
+  const notifMenu = document.getElementById('notifications-menu');
+  if (notifBtn && notifMenu && !notifBtn.contains(e.target) && !notifMenu.contains(e.target)) {
+    notifMenu.classList.add('hidden');
+  }
 });
 
 // Close open modals when pressing Escape key
@@ -132,3 +192,7 @@ document.addEventListener('keydown', (e) => {
     document.body.classList.remove('overflow-hidden');
   }
 });
+
+if (typeof window !== 'undefined') {
+  window.UI = UI;
+}

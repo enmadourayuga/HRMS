@@ -34,7 +34,7 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-5 right-5 z-[99999] flex flex-col gap-2 max-w-sm pointer-events-none"></div>
 
   <!-- ============================================================== -->
   <!-- LOGIN VIEW -->
@@ -240,6 +240,27 @@
             </div>
           </div>
 
+          <!-- In-App Notifications Bell (LEV-011) -->
+          <div class="relative">
+            <button id="btn-notifications" onclick="UI.toggleNotificationsMenu()" title="Notifications" class="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors">
+              <i class="fa-regular fa-bell text-base"></i>
+              <span id="notification-badge" class="hidden absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">0</span>
+            </button>
+            <div id="notifications-menu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-bell text-indigo-600 text-xs"></i>
+                  <span class="text-xs font-bold text-slate-800">Notifications</span>
+                  <span id="notif-count-text" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-semibold">0 unread</span>
+                </div>
+                <button onclick="UI.markAllNotificationsRead()" class="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+              </div>
+              <div id="notifications-list" class="max-h-80 overflow-y-auto space-y-2 text-xs divide-y divide-slate-100">
+                <div class="p-4 text-center text-slate-400">Loading notifications...</div>
+              </div>
+            </div>
+          </div>
+
           <!-- User profile pill -->
           <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
             <img id="header-user-avatar" src="" class="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20" alt="Avatar">
@@ -396,6 +417,28 @@
           </div>
         </div>
 
+        <!-- Joining Date & Biometric Reference (EMP-006, EMP-007) -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Joining Date *</label>
+            <input type="date" name="joinDate" id="modal-employee-join-date" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Biometric ID Reference</label>
+            <input type="text" name="biometricRef" placeholder="e.g. BIO-8801" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Salary Structure Assignment (EMP-006, PAY-001) -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Salary Structure Assignment *</label>
+          <select name="salaryStructureId" id="modal-employee-salary-structure" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+            <option value="STR-001">Standard Corporate Structure (Basic 50%, HRA 30%, Special 15%)</option>
+            <option value="STR-002">Executive Leadership Structure (Basic 45%, HRA 35%, Special 18%)</option>
+            <option value="STR-003">Junior & Trainee Structure (Basic 60%, HRA 25%, Special 10%)</option>
+          </select>
+        </div>
+
         <!-- Role permission alert / status banner -->
         <div id="role-access-banner" class="hidden p-3 rounded-xl border text-xs"></div>
 
@@ -415,6 +458,129 @@
           <button id="modal-employee-submit-btn" type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors">Save Employee</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 1b. Edit Employee Modal (EMP-008) -->
+  <div id="modal-edit-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 modal-enter overflow-hidden my-8">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Edit Employee Details</h3>
+            <p class="text-xs text-slate-500" id="edit-employee-subtitle">Update employee profile, compensation and status</p>
+          </div>
+        </div>
+        <button onclick="UI.closeModal('modal-edit-employee')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-employee" onsubmit="HR.submitEditEmployee(event)" class="p-6 space-y-4">
+        <input type="hidden" name="id" id="edit-employee-id">
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+            <input type="text" name="name" id="edit-employee-name" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Work Email *</label>
+            <input type="email" name="email" id="edit-employee-email" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Job Title / Designation *</label>
+            <input type="text" name="jobTitle" id="edit-employee-title" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Department *</label>
+            <select name="department" id="edit-employee-department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Engineering">Engineering</option>
+              <option value="Design & UX">Design & UX</option>
+              <option value="Product Management">Product Management</option>
+              <option value="Infrastructure & Sec">Infrastructure & Sec</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Finance & Accounts">Finance & Accounts</option>
+              <option value="Marketing & Growth">Marketing & Growth</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employment Type *</label>
+            <select name="employmentType" id="edit-employee-employment-type" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Full-Time">Full-Time (Permanent)</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Contract">Contract / Consultant</option>
+              <option value="Intern">Intern / Trainee</option>
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary / CTC (₹) *</label>
+            <input type="number" name="salary" id="edit-employee-salary" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Joining Date *</label>
+            <input type="date" name="joinDate" id="edit-employee-join-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Biometric ID Reference *</label>
+            <input type="text" name="biometricRef" id="edit-employee-biometric-ref" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Salary Structure *</label>
+            <select name="salaryStructureId" id="edit-employee-salary-structure" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="STR-001">Standard Corporate Structure</option>
+              <option value="STR-002">Executive Leadership Structure</option>
+              <option value="STR-003">Junior & Trainee Structure</option>
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employment Status (EMP-010)</label>
+            <select name="status" id="edit-employee-status" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive (Deactivated)</option>
+              <option value="On Leave">On Leave</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+            <input type="text" name="phone" id="edit-employee-phone" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
+            <input type="text" name="location" id="edit-employee-location" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-edit-employee')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors">Update Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1c. View Employee Profile Modal (EMP-009) -->
+  <div id="modal-view-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="view-employee-content">
+      <!-- Injected dynamically by HR.openViewEmployeeModal -->
     </div>
   </div>
 
@@ -438,8 +604,13 @@
 
       <form id="form-request-leave" onsubmit="Employee.submitLeaveRequest(event)" class="p-6 space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Leave Type *</label>
-          <select id="leave-type-select" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700">Leave Type *</label>
+            <span id="available-balance-badge" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 transition-colors">
+              Available: <span id="leave-balance-count">--</span>
+            </span>
+          </div>
+          <select id="leave-type-select" onchange="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
             <option value="Annual">Annual Leave (Vacation)</option>
             <option value="Sick">Sick Leave</option>
             <option value="Casual">Casual / Personal Time Off</option>
@@ -449,12 +620,18 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Start Date *</label>
-            <input type="date" id="leave-start-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="date" id="leave-start-date" onchange="Employee.updateLeaveBalanceHelper()" oninput="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">End Date *</label>
-            <input type="date" id="leave-end-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="date" id="leave-end-date" onchange="Employee.updateLeaveBalanceHelper()" oninput="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
+        </div>
+
+        <!-- Calculated duration indicator (LEV-004) -->
+        <div id="leave-duration-preview" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between transition-colors">
+          <span class="text-slate-600"><i class="fa-solid fa-calculator mr-1.5 text-indigo-500"></i> Calculated Leave Duration:</span>
+          <span id="leave-duration-text" class="font-bold text-slate-900">--</span>
         </div>
 
         <div>
@@ -536,6 +713,13 @@
           <i class="fa-solid fa-xmark"></i> Close
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- 4b. Salary Structures Modal (PAY-001) -->
+  <div id="modal-salary-structures" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="salary-structures-content">
+      <!-- Rendered dynamically by HR.openSalaryStructuresModal -->
     </div>
   </div>
 

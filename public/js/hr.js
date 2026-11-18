@@ -8,6 +8,7 @@ const HR = {
   departments: [],
   payslips: [],
   payrollFilter: 'all',
+  leaveFilter: 'All',
   currentReviewLeaveId: null,
 
   async init() {
@@ -46,8 +47,9 @@ const HR = {
       tabEl.classList.remove('hidden');
     }
     this.renderActiveTab();
-    if (window.App && typeof App.setActiveNav === 'function') {
-      App.setActiveNav(tabName);
+    const app = typeof App !== 'undefined' ? App : window.App;
+    if (app && typeof app.setActiveNav === 'function') {
+      app.setActiveNav(tabName);
     }
   },
 
@@ -60,7 +62,7 @@ const HR = {
         this.renderEmployees();
         break;
       case 'leaves':
-        this.renderLeaves();
+        this.renderLeaves(this.leaveFilter);
         break;
       case 'attendance':
         this.renderAttendance();
@@ -429,14 +431,22 @@ const HR = {
       return `<tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm">No employees match your search criteria.</td></tr>`;
     }
     return list.map(emp => `
-      <tr class="hover:bg-slate-50 transition-colors">
+      <tr class="hover:bg-slate-50 transition-colors ${emp.status === 'Inactive' ? 'bg-slate-50/60 opacity-80' : ''}">
         <td class="px-5 py-4">
           <div class="flex items-center gap-3">
             <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" alt="${emp.name}">
             <div>
-              <div class="font-bold text-slate-900 text-sm">${emp.name}</div>
+              <div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <span>${emp.name}</span>
+                ${emp.status === 'Inactive' ? '<span class="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-semibold uppercase">Deactivated</span>' : ''}
+              </div>
               <div class="text-xs text-slate-500">${emp.jobTitle}</div>
-              <div class="text-[10px] text-slate-400 font-mono mt-0.5">ID: ${emp.id}</div>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="text-[10px] text-slate-400 font-mono">ID: ${emp.id}</span>
+                <span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded font-mono border border-indigo-100 flex items-center gap-1">
+                  <i class="fa-solid fa-fingerprint text-[9px]"></i> ${emp.biometricRef || ('BIO-' + emp.id)}
+                </span>
+              </div>
             </div>
           </div>
         </td>
@@ -457,22 +467,33 @@ const HR = {
         </td>
         <td class="px-5 py-4 text-xs">
           <div class="text-slate-800 font-medium">${emp.email}</div>
-          <div class="text-slate-500 text-[11px] mt-0.5">${emp.phone}</div>
-          <div class="text-slate-400 text-[11px]">${emp.location}</div>
+          <div class="text-slate-500 text-[11px] mt-0.5">${emp.phone || '--'}</div>
+          <div class="text-slate-400 text-[11px]">${emp.location || '--'}</div>
         </td>
         <td class="px-5 py-4 font-mono font-semibold text-slate-900 text-xs">
           ${UI.formatCurrency(emp.salary)}
           <span class="text-[10px] text-slate-400 block font-sans font-normal">Joined ${UI.formatDate(emp.joinDate)}</span>
         </td>
         <td class="px-5 py-4 text-center">
-          <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${emp.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-            ${emp.status}
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${emp.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (emp.status === 'Inactive' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200')}">
+            ${emp.status || 'Active'}
           </span>
         </td>
         <td class="px-5 py-4 text-right">
-          <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
-            <i class="fa-solid fa-receipt mr-1"></i> Payslip
-          </button>
+          <div class="inline-flex items-center gap-1.5">
+            <button onclick="HR.openViewEmployeeModal('${emp.id}')" title="View Full Profile (EMP-009)" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-user-circle text-[11px]"></i> Profile
+            </button>
+            <button onclick="HR.openEditEmployeeModal('${emp.id}')" title="Edit Employee (EMP-008)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-pen text-[11px]"></i> Edit
+            </button>
+            <button onclick="HR.toggleEmployeeStatus('${emp.id}')" title="${emp.status === 'Inactive' ? 'Activate Employee' : 'Deactivate Employee'} (EMP-010)" class="px-2.5 py-1.5 ${emp.status === 'Inactive' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'} text-xs font-semibold rounded-lg transition-colors flex items-center gap-1">
+              <i class="fa-solid ${emp.status === 'Inactive' ? 'fa-user-check' : 'fa-user-slash'} text-[11px]"></i> ${emp.status === 'Inactive' ? 'Activate' : 'Deactivate'}
+            </button>
+            <button onclick="HR.viewPayslipForEmployee('${emp.id}')" title="View Latest Payslip" class="px-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
+              <i class="fa-solid fa-receipt text-[11px]"></i>
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
@@ -504,14 +525,20 @@ const HR = {
     }
   },
 
+  setLeaveFilter(filter) {
+    this.leaveFilter = filter;
+    this.renderLeaves(this.leaveFilter);
+  },
+
   // ---------------- 3. HR LEAVE MANAGEMENT ----------------
-  renderLeaves(currentFilter = 'All') {
+  renderLeaves(currentFilter = this.leaveFilter || 'All') {
+    this.leaveFilter = currentFilter;
     const container = document.getElementById('hr-tab-leaves');
     if (!container) return;
 
     let filtered = [...this.leaves];
-    if (currentFilter !== 'All') {
-      filtered = filtered.filter(l => l.status === currentFilter);
+    if (this.leaveFilter !== 'All') {
+      filtered = filtered.filter(l => l.status === this.leaveFilter);
     }
 
     const counts = {
@@ -529,16 +556,16 @@ const HR = {
 
       <!-- Filter Tabs -->
       <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
-        <button onclick="HR.renderLeaves('All')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'All' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'}">
+        <button onclick="HR.renderLeaves('All')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${this.leaveFilter === 'All' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-100'}">
           All Requests (${counts.all})
         </button>
-        <button onclick="HR.renderLeaves('Pending')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white text-amber-700 hover:bg-amber-50'}">
+        <button onclick="HR.renderLeaves('Pending')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${this.leaveFilter === 'Pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-white text-amber-700 hover:bg-amber-50'}">
           Pending Review (${counts.pending})
         </button>
-        <button onclick="HR.renderLeaves('Approved')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-700 hover:bg-emerald-50'}">
+        <button onclick="HR.renderLeaves('Approved')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${this.leaveFilter === 'Approved' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-emerald-700 hover:bg-emerald-50'}">
           Approved (${counts.approved})
         </button>
-        <button onclick="HR.renderLeaves('Rejected')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${currentFilter === 'Rejected' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-700 hover:bg-rose-50'}">
+        <button onclick="HR.renderLeaves('Rejected')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${this.leaveFilter === 'Rejected' ? 'bg-rose-600 text-white shadow-sm' : 'bg-white text-rose-700 hover:bg-rose-50'}">
           Rejected (${counts.rejected})
         </button>
       </div>
@@ -713,15 +740,23 @@ const HR = {
           <h2 class="text-xl font-bold text-slate-900">Payroll & Salary Slips Review</h2>
           <p class="text-xs text-slate-500 mt-0.5">Review monthly compensation, verified attendance deductions (LOP), and release statements to employees</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="HR.openSalaryStructuresModal()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl text-xs sm:text-sm border border-slate-300 shadow-xs flex items-center gap-2 transition-colors">
+            <i class="fa-solid fa-layer-group text-xs text-indigo-600"></i>
+            <span>Salary Structures (PAY-001)</span>
+          </button>
           <button onclick="HR.recalculateAttendancePayroll()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl text-xs sm:text-sm border border-indigo-200 shadow-xs flex items-center gap-2 transition-colors">
             <i class="fa-solid fa-arrows-rotate text-xs"></i>
             <span>Recalculate with Attendance</span>
           </button>
+          <button onclick="HR.finalizePayrollCycle('November', 2026)" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-md shadow-purple-600/20 flex items-center gap-2 transition-colors">
+            <i class="fa-solid fa-lock text-xs"></i>
+            <span>Finalize Cycle (PAY-010)</span>
+          </button>
           ${pendingSlips.length > 0 ? `
             <button onclick="HR.approveAllPending()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-xs sm:text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-colors">
               <i class="fa-solid fa-check-double text-xs"></i>
-              <span>Approve All Pending (${pendingSlips.length})</span>
+              <span>Approve All (${pendingSlips.length})</span>
             </button>
           ` : `
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -797,17 +832,21 @@ const HR = {
               ` : displayedSlips.map(slip => {
                 const emp = this.employees.find(e => e.id === slip.employeeId) || { name: slip.employeeName || slip.employeeId, jobTitle: 'Staff' };
                 const isPending = slip.status === 'Pending Approval';
+                const isFinalized = slip.status === 'Finalized';
                 const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0;
                 const lopDays = slip.attendanceSummary?.lopDays || (lopAmount > 0 ? 1 : 0);
+                const payableDays = slip.attendanceSummary?.payableDays;
                 return `
-                  <tr class="hover:bg-slate-50/80 transition-colors ${isPending ? 'bg-amber-50/20' : ''}">
+                  <tr class="hover:bg-slate-50/80 transition-colors ${isPending ? 'bg-amber-50/20' : (isFinalized ? 'bg-purple-50/10' : '')}">
                     <td class="px-5 py-3.5">
                       <div class="font-bold text-slate-900">${emp.name}</div>
                       <div class="text-[11px] text-slate-500">${emp.jobTitle} • ${slip.employeeId}</div>
+                      ${slip.salaryStructureName ? `<div class="mt-0.5"><span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded font-semibold border border-indigo-100">${slip.salaryStructureName}</span></div>` : ''}
                     </td>
                     <td class="px-5 py-3.5">
                       <div class="font-semibold text-slate-800 text-xs">${slip.month} ${slip.year}</div>
                       <div class="text-[10px] text-slate-400">Pay Date: ${UI.formatDate(slip.payDate)}</div>
+                      ${payableDays !== undefined ? `<div class="text-[10px] text-emerald-600 font-medium mt-0.5">${payableDays} Payable Days</div>` : ''}
                     </td>
                     <td class="px-5 py-3.5 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
                     <td class="px-5 py-3.5">
@@ -824,7 +863,12 @@ const HR = {
                     </td>
                     <td class="px-5 py-3.5 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
                     <td class="px-5 py-3.5 text-center">
-                      ${isPending ? `
+                      ${isFinalized ? `
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
+                          <i class="fa-solid fa-lock text-[10px]"></i> Finalized & Locked
+                        </span>
+                        <div class="text-[10px] text-purple-700/80 mt-0.5">${slip.finalizedBy || 'Finance/HR'}</div>
+                      ` : isPending ? `
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                           <i class="fa-solid fa-clock text-[10px]"></i> Pending Approval
                         </span>
@@ -1032,6 +1076,9 @@ const HR = {
       role: formData.get('role'),
       employmentType: formData.get('employmentType') || 'Full-Time',
       salary: formData.get('salary'),
+      joinDate: formData.get('joinDate') || new Date().toISOString().split('T')[0],
+      biometricRef: formData.get('biometricRef') || '',
+      salaryStructureId: formData.get('salaryStructureId') || 'STR-001',
       phone: formData.get('phone'),
       location: formData.get('location')
     };
@@ -1046,6 +1093,268 @@ const HR = {
       this.renderActiveTab();
     } catch (err) {
       UI.toast(err.message || 'Failed to add employee', 'error');
+    }
+  },
+
+  // EMP-009: View detailed employee profile modal
+  async openViewEmployeeModal(empId) {
+    try {
+      const emp = await API.get(`/employees/${empId}`);
+      const content = document.getElementById('view-employee-content');
+      if (!content) return;
+
+      const struct = emp.salaryStructure || {
+        name: 'Standard Corporate Structure',
+        basicPercentage: 50,
+        hraPercentage: 30,
+        specialAllowancePercentage: 15,
+        conveyanceFixed: 1600,
+        pfPercentage: 12,
+        taxPercentage: 10,
+        healthInsuranceFixed: 1200
+      };
+
+      const monthly = Math.round((emp.salary || 0) / 12);
+      const basic = Math.round(monthly * (struct.basicPercentage / 100));
+      const hra = Math.round(monthly * (struct.hraPercentage / 100));
+      const special = Math.round(monthly * (struct.specialAllowancePercentage / 100));
+      const conveyance = struct.conveyanceFixed || 1600;
+
+      const balances = emp.leaveBalances || {
+        annual: { total: 20, used: 0 },
+        sick: { total: 10, used: 0 },
+        casual: { total: 5, used: 0 }
+      };
+
+      const isInactive = emp.status === 'Inactive';
+
+      content.innerHTML = `
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <img src="${emp.avatar}" class="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-500/20" alt="${emp.name}">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-slate-900 text-lg">${emp.name}</h3>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${isInactive ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}">
+                  ${emp.status || 'Active'}
+                </span>
+              </div>
+              <p class="text-xs text-slate-500">${emp.jobTitle} • ${emp.department}</p>
+            </div>
+          </div>
+          <button onclick="UI.closeModal('modal-view-employee')" class="text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+          <!-- Identifiers Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div>
+              <div class="text-[11px] font-semibold text-slate-400 uppercase">Employee ID</div>
+              <div class="font-mono font-bold text-slate-800 text-sm mt-0.5">${emp.id}</div>
+            </div>
+            <div>
+              <div class="text-[11px] font-semibold text-slate-400 uppercase">Biometric Ref</div>
+              <div class="font-mono font-bold text-indigo-700 text-sm mt-0.5 flex items-center gap-1">
+                <i class="fa-solid fa-fingerprint text-xs"></i>
+                <span>${emp.biometricRef || ('BIO-' + emp.id)}</span>
+              </div>
+            </div>
+            <div>
+              <div class="text-[11px] font-semibold text-slate-400 uppercase">Joining Date</div>
+              <div class="font-semibold text-slate-800 text-sm mt-0.5">${UI.formatDate(emp.joinDate)}</div>
+            </div>
+            <div>
+              <div class="text-[11px] font-semibold text-slate-400 uppercase">Employment Type</div>
+              <div class="font-semibold text-slate-800 text-sm mt-0.5">${emp.employmentType || 'Full-Time'}</div>
+            </div>
+          </div>
+
+          <!-- Contact Details -->
+          <div>
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Contact & Location</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="p-3 bg-white rounded-xl border border-slate-200">
+                <div class="text-[11px] text-slate-500">Work Email</div>
+                <div class="font-semibold text-slate-900 text-xs mt-0.5 truncate">${emp.email}</div>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-slate-200">
+                <div class="text-[11px] text-slate-500">Phone Number</div>
+                <div class="font-semibold text-slate-900 text-xs mt-0.5">${emp.phone || '--'}</div>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-slate-200">
+                <div class="text-[11px] text-slate-500">Location</div>
+                <div class="font-semibold text-slate-900 text-xs mt-0.5">${emp.location || '--'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compensation & Structure -->
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Compensation & Structure</h4>
+              <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                ${struct.name}
+              </span>
+            </div>
+            <div class="p-4 bg-white rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-xs text-slate-500 font-medium">Annual Base / CTC:</span>
+                <span class="text-sm font-extrabold text-slate-900 font-mono">${UI.formatCurrency(emp.salary)}</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">Basic (${struct.basicPercentage}%)</div>
+                  <div class="font-mono font-semibold text-slate-800">${UI.formatCurrency(basic)}/mo</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">HRA (${struct.hraPercentage}%)</div>
+                  <div class="font-mono font-semibold text-slate-800">${UI.formatCurrency(hra)}/mo</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">Special Allow (${struct.specialAllowancePercentage}%)</div>
+                  <div class="font-mono font-semibold text-slate-800">${UI.formatCurrency(special)}/mo</div>
+                </div>
+                <div class="bg-slate-50 p-2 rounded-lg">
+                  <div class="text-[10px] text-slate-400">Conveyance</div>
+                  <div class="font-mono font-semibold text-slate-800">${UI.formatCurrency(conveyance)}/mo</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leave Balances -->
+          <div>
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Leave Balances</h4>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-center">
+                <div class="text-[11px] font-bold text-indigo-700">Annual Leave</div>
+                <div class="text-lg font-bold text-slate-900 mt-1">${(balances.annual?.total || 20) - (balances.annual?.used || 0)}</div>
+                <div class="text-[10px] text-slate-400">of ${balances.annual?.total || 20} available</div>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-center">
+                <div class="text-[11px] font-bold text-rose-700">Sick Leave</div>
+                <div class="text-lg font-bold text-slate-900 mt-1">${(balances.sick?.total || 10) - (balances.sick?.used || 0)}</div>
+                <div class="text-[10px] text-slate-400">of ${balances.sick?.total || 10} available</div>
+              </div>
+              <div class="p-3 bg-white rounded-xl border border-slate-200 text-center">
+                <div class="text-[11px] font-bold text-amber-700">Casual Leave</div>
+                <div class="text-lg font-bold text-slate-900 mt-1">${(balances.casual?.total || 5) - (balances.casual?.used || 0)}</div>
+                <div class="text-[10px] text-slate-400">of ${balances.casual?.total || 5} available</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button onclick="UI.closeModal('modal-view-employee'); HR.openEditEmployeeModal('${emp.id}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1.5 transition-colors">
+              <i class="fa-solid fa-user-pen"></i> Edit Profile
+            </button>
+            <button onclick="HR.toggleEmployeeStatus('${emp.id}')" class="px-4 py-2 ${isInactive ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'} rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <i class="fa-solid ${isInactive ? 'fa-user-check' : 'fa-user-slash'}"></i> ${isInactive ? 'Activate Account' : 'Deactivate Employee'}
+            </button>
+          </div>
+          <button onclick="UI.closeModal('modal-view-employee')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+            Close
+          </button>
+        </div>
+      `;
+
+      UI.openModal('modal-view-employee');
+    } catch (err) {
+      UI.toast(err.message || 'Could not load employee profile', 'error');
+    }
+  },
+
+  // EMP-008: Open edit employee modal
+  async openEditEmployeeModal(empId) {
+    let emp = this.employees.find(e => e.id === empId);
+    if (!emp) {
+      try {
+        emp = await API.get(`/employees/${empId}`);
+      } catch (e) {
+        UI.toast('Could not find employee', 'error');
+        return;
+      }
+    }
+
+    document.getElementById('edit-employee-id').value = emp.id;
+    document.getElementById('edit-employee-name').value = emp.name || '';
+    document.getElementById('edit-employee-email').value = emp.email || '';
+    document.getElementById('edit-employee-title').value = emp.jobTitle || '';
+    document.getElementById('edit-employee-department').value = emp.department || 'Engineering';
+    document.getElementById('edit-employee-employment-type').value = emp.employmentType || 'Full-Time';
+    document.getElementById('edit-employee-salary').value = emp.salary || '';
+    document.getElementById('edit-employee-join-date').value = emp.joinDate || new Date().toISOString().split('T')[0];
+    document.getElementById('edit-employee-biometric-ref').value = emp.biometricRef || `BIO-${emp.id}`;
+    document.getElementById('edit-employee-salary-structure').value = emp.salaryStructureId || 'STR-001';
+    document.getElementById('edit-employee-status').value = emp.status || 'Active';
+    document.getElementById('edit-employee-phone').value = emp.phone || '';
+    document.getElementById('edit-employee-location').value = emp.location || '';
+
+    document.getElementById('edit-employee-subtitle').textContent = `Editing ${emp.name} (${emp.id})`;
+
+    UI.openModal('modal-edit-employee');
+  },
+
+  // EMP-008: Submit employee edits
+  async submitEditEmployee(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const empId = document.getElementById('edit-employee-id').value;
+
+    const body = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      jobTitle: formData.get('jobTitle'),
+      department: formData.get('department'),
+      employmentType: formData.get('employmentType'),
+      salary: Number(formData.get('salary')),
+      joinDate: formData.get('joinDate'),
+      biometricRef: formData.get('biometricRef'),
+      salaryStructureId: formData.get('salaryStructureId'),
+      status: formData.get('status'),
+      phone: formData.get('phone'),
+      location: formData.get('location')
+    };
+
+    try {
+      const updated = await API.put(`/employees/${empId}`, body);
+      UI.toast(`Employee details for ${updated.name} updated successfully!`, 'success');
+      UI.closeModal('modal-edit-employee');
+      await this.loadAllData();
+      this.renderActiveTab();
+      const viewModal = document.getElementById('modal-view-employee');
+      if (viewModal && !viewModal.classList.contains('hidden')) {
+        this.openViewEmployeeModal(empId);
+      }
+    } catch (err) {
+      UI.toast(err.message || 'Failed to update employee details', 'error');
+    }
+  },
+
+  // EMP-010: Toggle employee active/deactivated status
+  async toggleEmployeeStatus(empId) {
+    const emp = this.employees.find(e => e.id === empId);
+    if (!emp) return;
+
+    const targetStatus = emp.status === 'Inactive' ? 'Active' : 'Inactive';
+    const actionWord = targetStatus === 'Inactive' ? 'deactivate' : 'activate';
+    if (!confirm(`Are you sure you want to ${actionWord} ${emp.name} (${emp.id})?`)) {
+      return;
+    }
+
+    try {
+      const res = await API.patch(`/employees/${empId}/status`, { status: targetStatus });
+      UI.toast(res.message || `Employee ${emp.name} status updated to ${targetStatus}`, 'success');
+      UI.closeModal('modal-view-employee');
+      await this.loadAllData();
+      this.renderActiveTab();
+    } catch (err) {
+      UI.toast(err.message || `Failed to update status`, 'error');
     }
   },
 
@@ -1153,15 +1462,18 @@ const HR = {
     };
 
     const isPending = slip.status === 'Pending Approval';
+    const isFinalized = slip.status === 'Finalized';
     const payslipContainer = document.getElementById('printable-payslip');
     const attSummary = slip.attendanceSummary || {
-      totalWorkingDays: 22,
-      presentDays: 22,
+      salaryDivisor: 30,
+      totalWorkingDays: 30,
+      presentDays: 30,
       paidLeaveDays: 0,
+      payableDays: 30,
       absentDays: 0,
       lateDays: 0,
       lopDays: 0,
-      perDayRate: Math.round((slip.baseSalary || 0) / 22),
+      perDayRate: Math.round((slip.baseSalary || 0) / 30),
       attendanceDeduction: slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0
     };
     const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || attSummary.attendanceDeduction || 0;
@@ -1181,6 +1493,17 @@ const HR = {
           <button onclick="HR.approvePayslip('${slip.id}', true)" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors shrink-0 text-xs">
             <i class="fa-solid fa-check"></i> Approve & Release
           </button>
+        </div>
+      ` : isFinalized ? `
+        <div class="bg-purple-50 border border-purple-200 rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs text-purple-900 no-print">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-lock text-purple-600 text-sm"></i>
+            <div>
+              <span class="font-bold text-xs">Finalized & Locked Cycle</span>
+              <span class="text-slate-500 text-[11px] ml-1">• Finalized by ${slip.finalizedBy || 'Finance Lead'} on ${slip.finalizedAt || slip.approvedAt || UI.formatDate(slip.payDate)}</span>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-bold rounded-full text-[10px]">LOCKED</span>
         </div>
       ` : `
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs text-emerald-800 no-print">
@@ -1207,8 +1530,8 @@ const HR = {
           <p class="text-[11px] text-slate-500 leading-tight">PAN: AABCN8192F • payroll@nexushr.in</p>
         </div>
         <div class="text-right">
-          <span class="px-2.5 py-0.5 ${isPending ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} text-[10px] font-bold rounded-full">
-            ${isPending ? 'PENDING APPROVAL' : 'APPROVED / PAID'}
+          <span class="px-2.5 py-0.5 ${isPending ? 'bg-amber-100 text-amber-800' : (isFinalized ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800')} text-[10px] font-bold rounded-full">
+            ${isPending ? 'PENDING APPROVAL' : (isFinalized ? 'FINALIZED & LOCKED' : 'APPROVED / PAID')}
           </span>
           <div class="text-[10px] text-slate-400 mt-1.5">Statement Month</div>
           <div class="text-xs font-bold text-slate-900">${slip.month} ${slip.year}</div>
@@ -1235,17 +1558,17 @@ const HR = {
             <i class="fa-solid fa-calendar-check text-indigo-600"></i>
             <span>Monthly Attendance & Leave Summary</span>
           </span>
-          <span class="text-[10px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
+          <span class="text-[10px] text-indigo-700 font-semibold">${slip.salaryStructureName || 'Standard Corporate'} • ${attSummary.salaryDivisor || 30}-Day Divisor (BR-PAY-02)</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
           <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Working Days</span>
-            <strong class="text-slate-900 text-xs font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
-            <span class="text-[10px] text-slate-500 block">Cycle Calendar</span>
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Cycle Calendar</span>
+            <strong class="text-slate-900 text-xs font-mono">${attSummary.salaryDivisor || attSummary.totalWorkingDays || 30} Days</strong>
+            <span class="text-[10px] text-slate-500 block">Monthly Divisor</span>
           </div>
           <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Days Present / Paid</span>
-            <strong class="text-emerald-700 text-xs font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Payable Days (PAY-004)</span>
+            <strong class="text-emerald-700 text-xs font-mono">${attSummary.payableDays !== undefined ? attSummary.payableDays : ((attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0))} Days</strong>
             <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Lv</span>
           </div>
           <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
@@ -1255,8 +1578,8 @@ const HR = {
           </div>
           <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
             <span class="text-slate-400 block text-[9px] uppercase font-semibold">Daily Salary Rate</span>
-            <strong class="text-slate-900 text-xs font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
-            <span class="text-[10px] text-slate-500 block">Basic / 22</span>
+            <strong class="text-slate-900 text-xs font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.monthlyCTC || slip.baseSalary || 0) / (attSummary.salaryDivisor || 30)))}</strong>
+            <span class="text-[10px] text-slate-500 block">Base / ${attSummary.salaryDivisor || 30}</span>
           </div>
         </div>
       </div>
@@ -1405,5 +1728,110 @@ const HR = {
       console.error('Failed to bulk approve payslips:', err);
       UI.toast('Could not approve pending payslips', 'error');
     }
+  },
+
+  // PAY-001: Open salary structures configuration modal
+  async openSalaryStructuresModal() {
+    try {
+      const structures = await API.get('/salary-structures');
+      const content = document.getElementById('salary-structures-content');
+      if (!content) return;
+
+      content.innerHTML = `
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-base">Configured Salary Structures</h3>
+              <p class="text-xs text-slate-500">Component percentages & statutory deduction rules (PAY-001)</p>
+            </div>
+          </div>
+          <button onclick="UI.closeModal('modal-salary-structures')" class="text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+          <div class="grid grid-cols-1 gap-4">
+            ${structures.map(s => `
+              <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-xs space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-bold text-slate-900 text-sm">${s.name}</h4>
+                    <span class="text-xs text-slate-400 font-mono">ID: ${s.id}</span>
+                  </div>
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    ${s.isDefault ? 'Default Structure' : 'Custom Structure'}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-500">${s.description || ''}</p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">Basic Pay</span>
+                    <strong class="text-slate-800">${s.basicPercentage}%</strong>
+                  </div>
+                  <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">HRA</span>
+                    <strong class="text-slate-800">${s.hraPercentage}%</strong>
+                  </div>
+                  <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">Special Allow.</span>
+                    <strong class="text-slate-800">${s.specialAllowancePercentage}%</strong>
+                  </div>
+                  <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                    <span class="text-slate-400 block text-[10px] uppercase font-semibold">Conveyance</span>
+                    <strong class="text-slate-800">${UI.formatCurrency(s.conveyanceFixed)}</strong>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <span>PF: <strong class="text-slate-700 font-mono">${s.pfPercentage}%</strong></span>
+                  <span>Tax TDS: <strong class="text-slate-700 font-mono">${s.taxPercentage}%</strong></span>
+                  <span>Health Insurance: <strong class="text-slate-700 font-mono">${UI.formatCurrency(s.healthInsuranceFixed)}</strong></span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+          <button onclick="UI.closeModal('modal-salary-structures')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold">
+            Close
+          </button>
+        </div>
+      `;
+
+      UI.openModal('modal-salary-structures');
+    } catch (err) {
+      UI.toast(err.message || 'Could not load salary structures', 'error');
+    }
+  },
+
+  // PAY-010: Finalize payroll cycle (restricted to Finance / HR Admin)
+  async finalizePayrollCycle(month = 'November', year = 2026) {
+    if (!confirm(`Are you sure you want to finalize and lock the payroll cycle for ${month} ${year}? Once finalized, all statements are frozen and locked.`)) {
+      return;
+    }
+
+    try {
+      const res = await API.post('/payslips/finalize', {
+        month,
+        year,
+        finalizedBy: Auth.employee?.name || Auth.user?.email || 'HR Administrator'
+      });
+
+      UI.toast(res.message || `Payroll cycle for ${month} ${year} finalized successfully!`, 'success');
+      this.payslips = await API.get('/payslips');
+      this.renderPayroll();
+    } catch (err) {
+      UI.toast(err.message || 'Failed to finalize payroll cycle', 'error');
+    }
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.HR = HR;
+}

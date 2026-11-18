@@ -7,11 +7,15 @@ const Employee = {
   myPayslips: [],
   announcements: [],
   colleagues: [],
+  notifications: [],
   workTimerInterval: null,
 
   async init() {
+    this.updateLeaveBalanceHelper();
     await this.loadData();
+    await this.loadNotifications();
     this.renderActiveTab();
+    this.updateLeaveBalanceHelper();
   },
 
   async loadData() {
@@ -38,6 +42,8 @@ const Employee = {
       // Update stored employee profile
       Auth.employee = emp;
       localStorage.setItem('nexus_employee', JSON.stringify(emp));
+      await this.loadNotifications();
+      this.updateLeaveBalanceHelper();
     } catch (err) {
       console.error('Failed to load employee data:', err);
       UI.toast('Could not refresh employee data', 'error');
@@ -52,8 +58,9 @@ const Employee = {
       tabEl.classList.remove('hidden');
     }
     this.renderActiveTab();
-    if (window.App && typeof App.setActiveNav === 'function') {
-      App.setActiveNav(tabName);
+    const app = typeof App !== 'undefined' ? App : window.App;
+    if (app && typeof app.setActiveNav === 'function') {
+      app.setActiveNav(tabName);
     }
   },
 
@@ -91,7 +98,30 @@ const Employee = {
       casual: { total: 5, used: 0 }
     };
 
+    const unreadLeaveNotifs = (this.notifications || []).filter(n => !n.read && n.type && n.type.startsWith('leave_'));
+
     container.innerHTML = `
+      ${unreadLeaveNotifs.length > 0 ? `
+        <!-- Unread Leave Notification Alert (LEV-011) -->
+        <div class="bg-indigo-50 border border-indigo-200/90 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl ${unreadLeaveNotifs[0].type === 'leave_approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'} flex items-center justify-center shrink-0">
+              <i class="fa-solid ${unreadLeaveNotifs[0].type === 'leave_approved' ? 'fa-circle-check' : 'fa-circle-xmark'} text-base"></i>
+            </div>
+            <div>
+              <div class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-2">
+                <span>${unreadLeaveNotifs[0].title}</span>
+                <span class="text-[10px] font-medium text-slate-400 font-mono">${UI.formatDate(unreadLeaveNotifs[0].createdAt)}</span>
+              </div>
+              <div class="text-xs text-slate-600 mt-0.5 leading-snug">${unreadLeaveNotifs[0].message}</div>
+            </div>
+          </div>
+          <button onclick="Employee.markNotificationRead('${unreadLeaveNotifs[0].id}')" class="px-3.5 py-1.5 bg-white text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-semibold border border-indigo-200 transition-colors shrink-0">
+            Acknowledge
+          </button>
+        </div>
+      ` : ''}
+
       <!-- Greeting Banner -->
       <div class="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-800 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-700/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
@@ -104,7 +134,7 @@ const Employee = {
           </p>
         </div>
         <div class="flex flex-wrap gap-2.5 shrink-0">
-          <button onclick="UI.openModal('modal-request-leave')" class="px-4 py-2.5 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+          <button onclick="Employee.openLeaveModal()" class="px-4 py-2.5 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
             <i class="fa-solid fa-calendar-plus text-xs"></i> Request Leave
           </button>
           <button onclick="Employee.switchTab('attendance')" class="px-4 py-2.5 bg-emerald-950/50 hover:bg-emerald-950 text-white border border-white/20 font-semibold rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2">
@@ -165,7 +195,7 @@ const Employee = {
                 <i class="fa-solid fa-calendar-check text-emerald-600 text-lg"></i>
                 <h3 class="font-bold text-slate-900 text-sm">Time Off Balances</h3>
               </div>
-              <button onclick="UI.openModal('modal-request-leave')" class="text-xs text-emerald-700 hover:underline font-semibold">
+              <button onclick="Employee.openLeaveModal()" class="text-xs text-emerald-700 hover:underline font-semibold">
                 + Apply Leave
               </button>
             </div>
@@ -380,7 +410,7 @@ const Employee = {
           <h2 class="text-xl font-bold text-slate-900">Leave Applications & Entitlements</h2>
           <p class="text-xs text-slate-500 mt-0.5">Submit new time-off requests and monitor approval status</p>
         </div>
-        <button onclick="UI.openModal('modal-request-leave')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2">
+        <button onclick="Employee.openLeaveModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-emerald-600/20 flex items-center gap-2">
           <i class="fa-solid fa-calendar-plus text-xs"></i>
           <span>Request Time Off</span>
         </button>
@@ -457,8 +487,8 @@ const Employee = {
     if (!container) return;
 
     const emp = this.employeeData || Auth.employee || {};
-    // ONLY display payslips that HR has approved / paid!
-    const approvedSlips = (this.myPayslips || []).filter(p => p.status === 'Approved' || p.status === 'Paid');
+    // ONLY display payslips that HR/Finance has approved, finalized or paid!
+    const approvedSlips = (this.myPayslips || []).filter(p => p.status === 'Approved' || p.status === 'Paid' || p.status === 'Finalized');
 
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -544,7 +574,7 @@ const Employee = {
     }
 
     // Safety check: employee should NEVER view unapproved slips
-    if (slip.status !== 'Approved' && slip.status !== 'Paid') {
+    if (slip.status !== 'Approved' && slip.status !== 'Paid' && slip.status !== 'Finalized') {
       UI.toast('This payslip has not been approved by HR yet', 'warning');
       return;
     }
@@ -552,27 +582,30 @@ const Employee = {
     const emp = this.employeeData || Auth.employee || {};
     const payslipContainer = document.getElementById('printable-payslip');
     const attSummary = slip.attendanceSummary || {
-      totalWorkingDays: 22,
-      presentDays: 22,
+      salaryDivisor: 30,
+      totalWorkingDays: 30,
+      presentDays: 30,
       paidLeaveDays: 0,
+      payableDays: 30,
       absentDays: 0,
       lateDays: 0,
       lopDays: 0,
-      perDayRate: Math.round((slip.baseSalary || 0) / 22),
+      perDayRate: Math.round((slip.baseSalary || 0) / 30),
       attendanceDeduction: slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0
     };
     const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || attSummary.attendanceDeduction || 0;
+    const isFinalized = slip.status === 'Finalized';
 
     payslipContainer.innerHTML = `
-      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs text-emerald-800 no-print">
+      <div class="${isFinalized ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-emerald-50 border-emerald-200 text-emerald-800'} border rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs no-print">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+          <i class="fa-solid ${isFinalized ? 'fa-lock text-purple-600' : 'fa-circle-check text-emerald-600'} text-base"></i>
           <div>
-            <span class="font-bold">Official Approved Statement</span>
-            <span class="text-slate-500 text-[11px] ml-1.5">• Approved by HR on ${slip.approvedAt || UI.formatDate(slip.payDate)}</span>
+            <span class="font-bold">${isFinalized ? 'Official Finalized Statement' : 'Official Approved Statement'}</span>
+            <span class="text-slate-500 text-[11px] ml-1.5">• Verified on ${slip.finalizedAt || slip.approvedAt || UI.formatDate(slip.payDate)}</span>
           </div>
         </div>
-        <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">VERIFIED</span>
+        <span class="px-2.5 py-0.5 ${isFinalized ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'} font-bold rounded-full text-[10px]">VERIFIED</span>
       </div>
 
       <div class="border-b border-slate-200 pb-3 mb-3.5 flex justify-between items-start">
@@ -587,7 +620,7 @@ const Employee = {
           <p class="text-xs text-slate-500">PAN: AABCN8192F • payroll@nexushr.in</p>
         </div>
         <div class="text-right">
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">APPROVED / PAID</span>
+          <span class="px-3 py-1 ${isFinalized ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'} text-xs font-bold rounded-full">${isFinalized ? 'FINALIZED / PAID' : 'APPROVED / PAID'}</span>
           <div class="text-xs text-slate-400 mt-2">Statement Month</div>
           <div class="text-sm font-bold text-slate-900">${slip.month} ${slip.year}</div>
         </div>
@@ -613,17 +646,17 @@ const Employee = {
             <i class="fa-solid fa-calendar-check text-indigo-600"></i>
             <span>Monthly Attendance & Leave Summary</span>
           </span>
-          <span class="text-[11px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
+          <span class="text-[11px] text-indigo-700 font-semibold">${slip.salaryStructureName || 'Standard Corporate'} • ${attSummary.salaryDivisor || 30}-Day Divisor (BR-PAY-02)</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Working Days</span>
-            <strong class="text-slate-900 text-sm font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
+            <strong class="text-slate-900 text-sm font-mono">${attSummary.salaryDivisor || attSummary.totalWorkingDays || 30} Days</strong>
             <span class="text-[10px] text-slate-500 block">Standard Shift Calendar</span>
           </div>
           <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Days Present / Paid</span>
-            <strong class="text-emerald-700 text-sm font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
+            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Payable Days (PAY-004)</span>
+            <strong class="text-emerald-700 text-sm font-mono">${attSummary.payableDays !== undefined ? attSummary.payableDays : ((attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0))} Days</strong>
             <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Paid Lv</span>
           </div>
           <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
@@ -633,8 +666,8 @@ const Employee = {
           </div>
           <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
             <span class="text-slate-400 block text-[10px] uppercase font-semibold">Per-Day Salary Rate</span>
-            <strong class="text-slate-900 text-sm font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
-            <span class="text-[10px] text-slate-500 block">Based on Basic Salary</span>
+            <strong class="text-slate-900 text-sm font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.monthlyCTC || slip.baseSalary || 0) / (attSummary.salaryDivisor || 30)))}</strong>
+            <span class="text-[10px] text-slate-500 block">Base / ${attSummary.salaryDivisor || 30}</span>
           </div>
         </div>
       </div>
@@ -782,22 +815,162 @@ const Employee = {
     }
   },
 
+  openLeaveModal() {
+    this.resetLeaveModal();
+    UI.openModal('modal-request-leave');
+    this.updateLeaveBalanceHelper();
+  },
+
+  resetLeaveModal() {
+    const badgeContainer = document.getElementById('available-balance-badge');
+    if (badgeContainer) {
+      badgeContainer.className = 'text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 transition-colors';
+    }
+    const durContainer = document.getElementById('leave-duration-preview');
+    if (durContainer) {
+      durContainer.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between transition-colors';
+      durContainer.classList.remove('animate-shake');
+    }
+    const durText = document.getElementById('leave-duration-text');
+    if (durText) {
+      durText.className = 'font-bold text-slate-900';
+      durText.textContent = '--';
+    }
+    const form = document.getElementById('form-request-leave');
+    if (form) form.reset();
+    this.updateLeaveBalanceHelper();
+  },
+
+  updateLeaveBalanceHelper() {
+    const typeSelect = document.getElementById('leave-type-select');
+    const startInput = document.getElementById('leave-start-date');
+    const endInput = document.getElementById('leave-end-date');
+    const badgeEl = document.getElementById('leave-balance-count');
+    const badgeContainer = document.getElementById('available-balance-badge');
+    const durContainer = document.getElementById('leave-duration-preview');
+    const durText = document.getElementById('leave-duration-text');
+
+    if (!typeSelect) return;
+    const typeKey = (typeSelect.value || 'annual').toLowerCase();
+    const typeLabel = typeSelect.options[typeSelect.selectedIndex]?.text || typeSelect.value || 'Leave';
+    const emp = this.employeeData || (typeof Auth !== 'undefined' && Auth.employee) || {};
+    const defaultBalances = {
+      annual: { total: 20, used: 0 },
+      sick: { total: 10, used: 0 },
+      casual: { total: 5, used: 0 }
+    };
+    const balances = emp.leaveBalances || defaultBalances;
+    const balanceInfo = balances[typeKey] || defaultBalances[typeKey] || { total: 0, used: 0 };
+    const remaining = Math.max(0, (balanceInfo.total || 0) - (balanceInfo.used || 0));
+
+    if (badgeEl) {
+      badgeEl.textContent = `${remaining} day(s) left`;
+    }
+
+    let calculatedDays = 0;
+    let hasDates = Boolean(startInput && endInput && startInput.value && endInput.value);
+    let isDateInvalid = false;
+
+    if (hasDates && durText) {
+      const start = new Date(startInput.value);
+      const end = new Date(endInput.value);
+      if (end >= start) {
+        calculatedDays = Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1);
+        durText.textContent = `${calculatedDays} day${calculatedDays > 1 ? 's' : ''}`;
+      } else {
+        isDateInvalid = true;
+      }
+    }
+
+    // Validation checks
+    if (isDateInvalid) {
+      if (durContainer) {
+        durContainer.className = 'p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs flex items-center justify-between transition-colors';
+      }
+      if (durText) {
+        durText.innerHTML = `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Invalid date range</span>`;
+      }
+    } else if (hasDates && calculatedDays > remaining) {
+      const deficit = calculatedDays - remaining;
+      if (badgeContainer) {
+        badgeContainer.className = 'text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-300 transition-colors';
+      }
+      if (durContainer) {
+        durContainer.className = 'p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs flex items-center justify-between transition-colors';
+      }
+      if (durText) {
+        durText.innerHTML = `<span class="text-rose-700 font-extrabold">${calculatedDays} day${calculatedDays > 1 ? 's' : ''}</span> <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-md border border-rose-200"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Exceeds limit by ${deficit}d</span>`;
+      }
+    } else {
+      if (badgeContainer) {
+        badgeContainer.className = 'text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 transition-colors';
+      }
+      if (durContainer) {
+        durContainer.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between transition-colors';
+      }
+      if (durText) {
+        durText.className = 'font-bold text-slate-900';
+        if (hasDates) {
+          durText.textContent = `${calculatedDays} day${calculatedDays > 1 ? 's' : ''}`;
+        } else {
+          durText.textContent = '--';
+        }
+      }
+    }
+  },
+
   async submitLeaveRequest(event) {
     event.preventDefault();
     const empId = Auth.user?.employeeId;
-    const leaveType = document.getElementById('leave-type-select').value;
+    const typeSelect = document.getElementById('leave-type-select');
+    const leaveType = typeSelect.value;
+    const typeLabel = typeSelect.options[typeSelect.selectedIndex]?.text || leaveType;
     const startDate = document.getElementById('leave-start-date').value;
     const endDate = document.getElementById('leave-end-date').value;
     const reason = document.getElementById('leave-reason').value;
+    const durContainer = document.getElementById('leave-duration-preview');
+
+    const showInlineError = (toastMsg) => {
+      if (durContainer) {
+        durContainer.classList.remove('animate-shake');
+        void durContainer.offsetWidth; // trigger reflow for animation restart
+        durContainer.classList.add('animate-shake');
+      }
+      UI.toast(toastMsg, 'error');
+    };
 
     if (!startDate || !endDate || !reason) {
-      UI.toast('Please fill all required leave fields', 'error');
+      showInlineError('Please fill all required leave fields before submitting.');
       return;
     }
 
     if (new Date(endDate) < new Date(startDate)) {
-      UI.toast('End date cannot be earlier than start date', 'error');
+      showInlineError('End date cannot be earlier than start date.');
       return;
+    }
+
+    // LEV-004: Calculate requested leave duration
+    const calculatedDays = Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1);
+
+    // LEV-005: System shall check available leave balance
+    const typeKey = (leaveType || 'annual').toLowerCase();
+    const emp = this.employeeData || (typeof Auth !== 'undefined' && Auth.employee) || {};
+    const defaultBalances = {
+      annual: { total: 20, used: 0 },
+      sick: { total: 10, used: 0 },
+      casual: { total: 5, used: 0 }
+    };
+    const balances = emp.leaveBalances || defaultBalances;
+    const balanceInfo = balances[typeKey] || defaultBalances[typeKey];
+    if (balanceInfo) {
+      const remaining = Math.max(0, (balanceInfo.total || 0) - (balanceInfo.used || 0));
+      if (calculatedDays > remaining) {
+        const deficit = calculatedDays - remaining;
+        showInlineError(
+          `Insufficient leave balance: You requested ${calculatedDays} day(s), but only ${remaining} day(s) remain for ${typeLabel} (exceeds by ${deficit}d).`
+        );
+        return;
+      }
     }
 
     try {
@@ -806,16 +979,70 @@ const Employee = {
         leaveType,
         startDate,
         endDate,
+        days: calculatedDays,
         reason
       });
 
+      this.resetLeaveModal();
       UI.toast('Leave application submitted for HR review!', 'success');
       UI.closeModal('modal-request-leave');
-      document.getElementById('form-request-leave').reset();
       await this.loadData();
       this.renderActiveTab();
+      this.updateLeaveBalanceHelper();
     } catch (err) {
-      UI.toast(err.message || 'Failed to submit leave', 'error');
+      showInlineError(err.message || 'Failed to submit leave application');
+    }
+  },
+
+  // LEV-011: Notification handlers
+  async loadNotifications() {
+    try {
+      const empId = Auth.user?.employeeId;
+      if (!empId) return;
+      const notifs = await API.get(`/notifications?employeeId=${empId}`);
+      this.notifications = notifs || [];
+      const unreadCount = this.notifications.filter(n => !n.read).length;
+      UI.updateNotificationBadge(unreadCount);
+      this.renderNotificationsList();
+    } catch (e) {
+      console.warn('Could not load notifications:', e);
+    }
+  },
+
+  renderNotificationsList() {
+    const listEl = document.getElementById('notifications-list');
+    if (!listEl) return;
+    if (!this.notifications || this.notifications.length === 0) {
+      listEl.innerHTML = `<div class="p-4 text-center text-slate-400">No notifications at this time.</div>`;
+      return;
+    }
+    listEl.innerHTML = this.notifications.map(n => `
+      <div class="p-2.5 ${n.read ? 'bg-white opacity-70' : 'bg-indigo-50/70 border border-indigo-100'} rounded-xl transition-all">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-900">${n.title}</span>
+          <span class="text-[10px] text-slate-400 font-mono">${UI.formatDate(n.createdAt)}</span>
+        </div>
+        <p class="text-slate-600 text-xs mt-1 leading-snug">${n.message}</p>
+        ${!n.read ? `
+          <button onclick="Employee.markNotificationRead('${n.id}')" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold mt-1 inline-flex items-center gap-1">
+            <i class="fa-solid fa-check text-[9px]"></i> Mark as read
+          </button>
+        ` : ''}
+      </div>
+    `).join('');
+  },
+
+  async markNotificationRead(id) {
+    try {
+      await API.patch(`/notifications/${id}/read`);
+      await this.loadNotifications();
+      this.renderActiveTab();
+    } catch (e) {
+      console.error('Failed to mark notification read:', e);
     }
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.Employee = Employee;
+}

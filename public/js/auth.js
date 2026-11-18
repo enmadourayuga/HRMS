@@ -91,7 +91,8 @@ const Auth = {
     // Update Header
     const avatar = this.employee?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces';
     const name = this.employee?.name || this.user.email;
-    const isHR = this.user.role === 'hr' || this.user.role === 'hr_admin';
+    const isFinance = this.user.role === 'finance';
+    const isHR = this.user.role === 'hr' || this.user.role === 'hr_admin' || isFinance;
     const isHrAdmin = Boolean(
       this.user.isHrAdmin === true ||
       this.user.role === 'hr_admin' ||
@@ -99,8 +100,13 @@ const Auth = {
       this.user.email?.toLowerCase() === 'hr@hrms.com'
     );
     this.isHrAdmin = isHrAdmin;
+    this.isFinance = isFinance;
 
-    const defaultTitle = isHrAdmin ? 'HR Administrator' : (isHR ? 'HR Specialist' : 'Staff Member');
+    let defaultTitle = 'Staff Member';
+    if (isHrAdmin) defaultTitle = 'HR Administrator';
+    else if (isFinance) defaultTitle = 'Finance Lead & Controller';
+    else if (isHR) defaultTitle = 'HR Specialist';
+
     const title = this.employee?.jobTitle || defaultTitle;
 
     document.getElementById('header-user-avatar').src = avatar;
@@ -111,6 +117,9 @@ const Auth = {
     if (isHrAdmin) {
       badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200';
       badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-purple-500"></span> 👑 HR Administrator`;
+    } else if (isFinance) {
+      badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200';
+      badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span> 💰 Finance Lead`;
     } else if (isHR) {
       badge.className = 'hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200';
       badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> 🛡️ HR Staff`;
@@ -121,5 +130,15 @@ const Auth = {
 
     // Initialize Role Navigation and Views
     App.setupRoleNavigation(this.user.role);
+
+    // Initial check for notifications
+    const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
+    if (emp && typeof emp.loadNotifications === 'function') {
+      emp.loadNotifications();
+    }
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.Auth = Auth;
+}

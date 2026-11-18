@@ -43,6 +43,14 @@
       "password": "password123",
       "role": "employee",
       "employeeId": "EMP-005"
+    },
+    {
+      "id": "USR-FIN-001",
+      "email": "finance@hrms.com",
+      "password": "password123",
+      "role": "finance",
+      "isHrAdmin": false,
+      "employeeId": "EMP-010"
     }
   ],
   "employees": [
@@ -75,7 +83,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-001",
+      "salaryStructureId": "STR-002"
     },
     {
       "id": "EMP-002",
@@ -94,7 +104,7 @@
       "leaveBalances": {
         "annual": {
           "total": 20,
-          "used": 6
+          "used": 9
         },
         "sick": {
           "total": 10,
@@ -105,7 +115,9 @@
           "used": 2
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-002",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-003",
@@ -135,7 +147,9 @@
           "used": 0
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-003",
+      "salaryStructureId": "STR-002"
     },
     {
       "id": "EMP-004",
@@ -165,7 +179,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-004",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-005",
@@ -195,7 +211,9 @@
           "used": 2
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-005",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-006",
@@ -225,7 +243,9 @@
           "used": 1
         }
       },
-      "employmentType": "Contract"
+      "employmentType": "Contract",
+      "biometricRef": "BIO-EMP-006",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-007",
@@ -255,7 +275,9 @@
           "used": 1
         }
       },
-      "employmentType": "Full-Time"
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-007",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-008",
@@ -285,7 +307,9 @@
           "used": 0
         }
       },
-      "employmentType": "Part-Time"
+      "employmentType": "Part-Time",
+      "biometricRef": "BIO-EMP-008",
+      "salaryStructureId": "STR-001"
     },
     {
       "id": "EMP-009",
@@ -316,10 +340,75 @@
           "used": 0
         }
       },
+      "employmentType": "Full-Time",
+      "biometricRef": "BIO-EMP-009",
+      "salaryStructureId": "STR-002"
+    },
+    {
+      "id": "EMP-010",
+      "name": "David Miller",
+      "email": "finance@hrms.com",
+      "jobTitle": "Finance Lead & Controller",
+      "department": "Finance & Accounts",
+      "role": "finance",
+      "isHrAdmin": false,
+      "joinDate": "2022-04-01",
+      "salary": 1750000,
+      "phone": "+91 98765 11223",
+      "location": "Bengaluru (HQ)",
+      "biometricRef": "BIO-EMP-010",
+      "salaryStructureId": "STR-002",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces",
+      "status": "Active",
+      "manager": "Executive Team",
+      "leaveBalances": {
+        "annual": {
+          "total": 22,
+          "used": 3
+        },
+        "sick": {
+          "total": 12,
+          "used": 1
+        },
+        "casual": {
+          "total": 6,
+          "used": 0
+        }
+      },
       "employmentType": "Full-Time"
     }
   ],
   "leaves": [
+    {
+      "id": "LV-485",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "department": "Engineering",
+      "leaveType": "Sick",
+      "startDate": "2026-12-10",
+      "endDate": "2026-12-11",
+      "days": 2,
+      "reason": "Mild fever checkup",
+      "status": "Rejected",
+      "appliedOn": "2026-11-18",
+      "reviewedBy": "Elena Rostova (HR)",
+      "reviewComment": "Critical sprint release dates. Please reschedule if possible."
+    },
+    {
+      "id": "LV-574",
+      "employeeId": "EMP-002",
+      "employeeName": "Alex Morgan",
+      "department": "Engineering",
+      "leaveType": "Annual",
+      "startDate": "2026-12-01",
+      "endDate": "2026-12-03",
+      "days": 3,
+      "reason": "Year-end personal vacation",
+      "status": "Approved",
+      "appliedOn": "2026-11-18",
+      "reviewedBy": "Elena Rostova (HR)",
+      "reviewComment": "Approved. Enjoy your time off!"
+    },
     {
       "id": "LV-101",
       "employeeId": "EMP-002",
@@ -420,7 +509,10 @@
       "clockIn": "08:52 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.5
+      "totalHours": 2.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-002",
@@ -430,7 +522,10 @@
       "clockIn": "09:05 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.3
+      "totalHours": 2.3,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-003",
@@ -440,7 +535,10 @@
       "clockIn": "09:25 AM",
       "clockOut": null,
       "status": "Late",
-      "totalHours": 2
+      "totalHours": 2,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-004",
@@ -450,7 +548,10 @@
       "clockIn": "08:30 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.9
+      "totalHours": 2.9,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-005",
@@ -460,7 +561,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "On Leave",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-006",
@@ -470,7 +574,10 @@
       "clockIn": "09:00 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.4
+      "totalHours": 2.4,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-007",
@@ -480,7 +587,10 @@
       "clockIn": "08:45 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.6
+      "totalHours": 2.6,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-008",
@@ -490,7 +600,10 @@
       "clockIn": "09:12 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.2
+      "totalHours": 2.2,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-009",
@@ -500,7 +613,10 @@
       "clockIn": "08:55 AM",
       "clockOut": null,
       "status": "Present",
-      "totalHours": 2.5
+      "totalHours": 2.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-207",
@@ -510,7 +626,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-206",
@@ -520,7 +639,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-205",
@@ -530,7 +652,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-204",
@@ -540,7 +665,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-203",
@@ -550,7 +678,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "On Leave",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-202",
@@ -560,7 +691,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-201",
@@ -570,7 +704,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-200",
@@ -580,7 +717,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-199",
@@ -590,7 +730,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-198",
@@ -600,7 +743,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-197",
@@ -610,7 +756,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-196",
@@ -620,7 +769,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-195",
@@ -630,7 +782,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-194",
@@ -640,7 +795,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-193",
@@ -650,7 +808,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-192",
@@ -660,7 +821,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-191",
@@ -670,7 +834,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-190",
@@ -680,7 +847,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-189",
@@ -690,7 +860,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-188",
@@ -700,7 +873,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-187",
@@ -710,7 +886,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-186",
@@ -720,7 +899,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-185",
@@ -730,7 +912,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-184",
@@ -740,7 +925,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-183",
@@ -750,7 +938,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-182",
@@ -760,7 +951,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-181",
@@ -770,7 +964,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-180",
@@ -780,7 +977,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-179",
@@ -790,7 +990,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-178",
@@ -800,7 +1003,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-177",
@@ -810,7 +1016,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-176",
@@ -820,7 +1029,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-175",
@@ -830,7 +1042,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-174",
@@ -840,7 +1055,10 @@
       "clockIn": "09:35 AM",
       "clockOut": "06:00 PM",
       "status": "Late",
-      "totalHours": 8
+      "totalHours": 8,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-173",
@@ -850,7 +1068,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-172",
@@ -860,7 +1081,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-171",
@@ -870,7 +1094,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-170",
@@ -880,7 +1107,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-169",
@@ -890,7 +1120,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-168",
@@ -900,7 +1133,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-167",
@@ -910,7 +1146,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-166",
@@ -920,7 +1159,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-165",
@@ -930,7 +1172,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-164",
@@ -940,7 +1185,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-163",
@@ -950,7 +1198,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-162",
@@ -960,7 +1211,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-161",
@@ -970,7 +1224,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-160",
@@ -980,7 +1237,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-159",
@@ -990,7 +1250,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-158",
@@ -1000,7 +1263,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-157",
@@ -1010,7 +1276,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-156",
@@ -1020,7 +1289,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-155",
@@ -1030,7 +1302,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-154",
@@ -1040,7 +1315,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-153",
@@ -1050,7 +1328,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-152",
@@ -1060,7 +1341,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-151",
@@ -1070,7 +1354,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-150",
@@ -1080,7 +1367,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-149",
@@ -1090,7 +1380,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-148",
@@ -1100,7 +1393,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-147",
@@ -1110,7 +1406,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-146",
@@ -1120,7 +1419,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-145",
@@ -1130,7 +1432,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-144",
@@ -1140,7 +1445,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-143",
@@ -1150,7 +1458,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-142",
@@ -1160,7 +1471,10 @@
       "clockIn": null,
       "clockOut": null,
       "status": "Absent",
-      "totalHours": 0
+      "totalHours": 0,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-141",
@@ -1170,7 +1484,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-140",
@@ -1180,7 +1497,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-139",
@@ -1190,7 +1510,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-138",
@@ -1200,7 +1523,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-137",
@@ -1210,7 +1536,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-136",
@@ -1220,7 +1549,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-135",
@@ -1230,7 +1562,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-134",
@@ -1240,7 +1575,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-133",
@@ -1250,7 +1588,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-132",
@@ -1260,7 +1601,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-131",
@@ -1270,7 +1614,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-130",
@@ -1280,7 +1627,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-129",
@@ -1290,7 +1640,10 @@
       "clockIn": "09:20 AM",
       "clockOut": "06:00 PM",
       "status": "Late",
-      "totalHours": 8
+      "totalHours": 8,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-128",
@@ -1300,7 +1653,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-127",
@@ -1310,7 +1666,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-126",
@@ -1320,7 +1679,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-125",
@@ -1330,7 +1692,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-124",
@@ -1340,7 +1705,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-123",
@@ -1350,7 +1718,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-122",
@@ -1360,7 +1731,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-121",
@@ -1370,7 +1744,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-120",
@@ -1380,7 +1757,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-119",
@@ -1390,7 +1770,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-118",
@@ -1400,7 +1783,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-117",
@@ -1410,7 +1796,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-116",
@@ -1420,7 +1809,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-115",
@@ -1430,7 +1822,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-114",
@@ -1440,7 +1835,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-113",
@@ -1450,7 +1848,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-112",
@@ -1460,7 +1861,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-111",
@@ -1470,7 +1874,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-110",
@@ -1480,7 +1887,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-109",
@@ -1490,7 +1900,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-108",
@@ -1500,7 +1913,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-107",
@@ -1510,7 +1926,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-106",
@@ -1520,7 +1939,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-105",
@@ -1530,7 +1952,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-104",
@@ -1540,7 +1965,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-103",
@@ -1550,7 +1978,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-102",
@@ -1560,7 +1991,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-101",
@@ -1570,7 +2004,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     },
     {
       "id": "ATT-100",
@@ -1580,7 +2017,10 @@
       "clockIn": "09:00 AM",
       "clockOut": "05:30 PM",
       "status": "Present",
-      "totalHours": 8.5
+      "totalHours": 8.5,
+      "isValidated": true,
+      "validatedBy": "hr@hrms.com",
+      "validatedAt": "2026-11-18"
     }
   ],
   "payslips": [
@@ -1591,37 +2031,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 183333,
+      "baseSalary": 91667,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
+        "hra": 55000,
+        "specialAllowance": 27500,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
+        "incomeTax": 17577,
+        "providentFund": 11000,
         "healthInsurance": 1200,
-        "attendanceDeduction": 8333,
-        "lossOfPay": 8333
+        "attendanceDeduction": 109998,
+        "lossOfPay": 109998
       },
-      "grossPay": 294932,
-      "totalDeductions": 61026,
-      "netPay": 233906,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "grossPay": 175767,
+      "totalDeductions": 139775,
+      "netPay": 35992,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 12,
         "paidLeaveDays": 0,
+        "payableDays": 12,
         "absentDays": 1,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 1,
-        "perDayRate": 8333,
-        "attendanceDeduction": 8333
-      }
+        "latePenaltyDays": 0,
+        "lopDays": 18,
+        "perDayRate": 6111,
+        "attendanceDeduction": 109998,
+        "lossOfPay": 109998
+      },
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 183333,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-003",
@@ -1630,37 +2078,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 162500,
+      "baseSalary": 73125,
       "allowances": {
-        "hra": 65000,
-        "specialAllowance": 32500,
-        "conveyance": 1600
+        "hra": 56875,
+        "specialAllowance": 29250,
+        "conveyance": 3200
       },
       "deductions": {
-        "incomeTax": 26160,
-        "providentFund": 19500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 3693,
-        "lossOfPay": 3693
+        "incomeTax": 24368,
+        "providentFund": 8775,
+        "healthInsurance": 2500,
+        "attendanceDeduction": 94798,
+        "lossOfPay": 94798
       },
-      "grossPay": 261600,
-      "totalDeductions": 50553,
-      "netPay": 211047,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "grossPay": 162450,
+      "totalDeductions": 130441,
+      "netPay": 32009,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21.5,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 13,
         "paidLeaveDays": 0,
+        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 3,
-        "latePenaltyDays": 0.5,
         "unpaidLeaveDays": 0,
-        "lopDays": 0.5,
-        "perDayRate": 7386,
-        "attendanceDeduction": 3693
-      }
+        "latePenaltyDays": 0.5,
+        "lopDays": 17.5,
+        "perDayRate": 5417,
+        "attendanceDeduction": 94798,
+        "lossOfPay": 94798
+      },
+      "salaryStructureId": "STR-002",
+      "salaryStructureName": "Executive Leadership Structure",
+      "monthlyCTC": 162500,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-004",
@@ -1669,37 +2125,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 116667,
+      "baseSalary": 100000,
       "allowances": {
-        "hra": 46667,
-        "specialAllowance": 23333,
+        "hra": 60000,
+        "specialAllowance": 30000,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 18827,
-        "providentFund": 14000,
+        "incomeTax": 19160,
+        "providentFund": 12000,
         "healthInsurance": 1200,
-        "attendanceDeduction": 0,
-        "lossOfPay": 0
+        "attendanceDeduction": 113339,
+        "lossOfPay": 113339
       },
-      "grossPay": 188267,
-      "totalDeductions": 34027,
-      "netPay": 154240,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "grossPay": 191600,
+      "totalDeductions": 145699,
+      "netPay": 45901,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 13,
         "paidLeaveDays": 0,
+        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 0,
-        "perDayRate": 5303,
-        "attendanceDeduction": 0
-      }
+        "latePenaltyDays": 0,
+        "lopDays": 17,
+        "perDayRate": 6667,
+        "attendanceDeduction": 113339,
+        "lossOfPay": 113339
+      },
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 200000,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-005",
@@ -1708,37 +2172,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 133333,
+      "baseSalary": 60417,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
+        "hra": 36250,
+        "specialAllowance": 18125,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
+        "incomeTax": 11639,
+        "providentFund": 7250,
         "healthInsurance": 1200,
-        "attendanceDeduction": 0,
-        "lossOfPay": 0
+        "attendanceDeduction": 64448,
+        "lossOfPay": 64448
       },
-      "grossPay": 214933,
-      "totalDeductions": 38693,
-      "netPay": 176240,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "grossPay": 116392,
+      "totalDeductions": 84537,
+      "netPay": 31855,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 19,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 11,
         "paidLeaveDays": 3,
+        "payableDays": 14,
         "absentDays": 0,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 0,
-        "perDayRate": 6061,
-        "attendanceDeduction": 0
-      }
+        "latePenaltyDays": 0,
+        "lopDays": 16,
+        "perDayRate": 4028,
+        "attendanceDeduction": 64448,
+        "lossOfPay": 64448
+      },
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 120833,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-001",
@@ -1747,37 +2219,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 154167,
+      "baseSalary": 69375,
       "allowances": {
-        "hra": 61667,
-        "specialAllowance": 30833,
-        "conveyance": 1600
+        "hra": 53958,
+        "specialAllowance": 27750,
+        "conveyance": 3200
       },
       "deductions": {
-        "incomeTax": 24827,
-        "providentFund": 18500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 0,
-        "lossOfPay": 0
+        "incomeTax": 23142,
+        "providentFund": 8325,
+        "healthInsurance": 2500,
+        "attendanceDeduction": 87363,
+        "lossOfPay": 87363
       },
-      "grossPay": 248267,
-      "totalDeductions": 44527,
-      "netPay": 203740,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "grossPay": 154283,
+      "totalDeductions": 121330,
+      "netPay": 32953,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 13,
         "paidLeaveDays": 0,
+        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 0,
-        "perDayRate": 7008,
-        "attendanceDeduction": 0
-      }
+        "latePenaltyDays": 0,
+        "lopDays": 17,
+        "perDayRate": 5139,
+        "attendanceDeduction": 87363,
+        "lossOfPay": 87363
+      },
+      "salaryStructureId": "STR-002",
+      "salaryStructureName": "Executive Leadership Structure",
+      "monthlyCTC": 154167,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-10-002",
@@ -1981,37 +2461,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 133333,
+      "baseSalary": 66667,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
+        "hra": 40000,
+        "specialAllowance": 20000,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
+        "incomeTax": 12827,
+        "providentFund": 8000,
         "healthInsurance": 1200,
-        "attendanceDeduction": 12122,
-        "lossOfPay": 12122
+        "attendanceDeduction": 84436,
+        "lossOfPay": 84436
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 20,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 11,
         "paidLeaveDays": 0,
+        "payableDays": 11,
         "absentDays": 2,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 2,
-        "perDayRate": 6061,
-        "attendanceDeduction": 12122
+        "latePenaltyDays": 0,
+        "lopDays": 19,
+        "perDayRate": 4444,
+        "attendanceDeduction": 84436,
+        "lossOfPay": 84436
       },
-      "grossPay": 214933,
-      "totalDeductions": 50815,
-      "netPay": 164118,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null
+      "grossPay": 128267,
+      "totalDeductions": 106463,
+      "netPay": 21804,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 133333,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-007",
@@ -2020,37 +2508,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 175000,
+      "baseSalary": 87500,
       "allowances": {
-        "hra": 70000,
-        "specialAllowance": 35000,
+        "hra": 52500,
+        "specialAllowance": 26250,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 28160,
-        "providentFund": 21000,
+        "incomeTax": 16785,
+        "providentFund": 10500,
         "healthInsurance": 1200,
-        "attendanceDeduction": 7955,
-        "lossOfPay": 7955
+        "attendanceDeduction": 104994,
+        "lossOfPay": 104994
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 12,
         "paidLeaveDays": 0,
+        "payableDays": 12,
         "absentDays": 1,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 1,
-        "perDayRate": 7955,
-        "attendanceDeduction": 7955
+        "latePenaltyDays": 0,
+        "lopDays": 18,
+        "perDayRate": 5833,
+        "attendanceDeduction": 104994,
+        "lossOfPay": 104994
       },
-      "grossPay": 281600,
-      "totalDeductions": 58315,
-      "netPay": 223285,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null
+      "grossPay": 167850,
+      "totalDeductions": 133479,
+      "netPay": 34371,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 175000,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-008",
@@ -2059,37 +2555,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 158333,
+      "baseSalary": 79167,
       "allowances": {
-        "hra": 63333,
-        "specialAllowance": 31667,
+        "hra": 47500,
+        "specialAllowance": 23750,
         "conveyance": 1600
       },
       "deductions": {
-        "incomeTax": 25493,
-        "providentFund": 19000,
+        "incomeTax": 15202,
+        "providentFund": 9500,
         "healthInsurance": 1200,
-        "attendanceDeduction": 0,
-        "lossOfPay": 0
+        "attendanceDeduction": 89726,
+        "lossOfPay": 89726
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 13,
         "paidLeaveDays": 0,
+        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 0,
-        "perDayRate": 7197,
-        "attendanceDeduction": 0
+        "latePenaltyDays": 0,
+        "lopDays": 17,
+        "perDayRate": 5278,
+        "attendanceDeduction": 89726,
+        "lossOfPay": 89726
       },
-      "grossPay": 254933,
-      "totalDeductions": 45693,
-      "netPay": 209240,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null
+      "grossPay": 152017,
+      "totalDeductions": 115628,
+      "netPay": 36389,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
+      "salaryStructureId": "STR-001",
+      "salaryStructureName": "Standard Corporate Structure",
+      "monthlyCTC": 158333,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     },
     {
       "id": "PS-2026-11-009",
@@ -2098,37 +2602,45 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 95833,
+      "baseSalary": 43125,
       "allowances": {
-        "hra": 38333,
-        "specialAllowance": 19167,
-        "conveyance": 1600
+        "hra": 33542,
+        "specialAllowance": 17250,
+        "conveyance": 3200
       },
       "deductions": {
-        "incomeTax": 15493,
-        "providentFund": 11500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 0,
-        "lossOfPay": 0
+        "incomeTax": 14568,
+        "providentFund": 5175,
+        "healthInsurance": 2500,
+        "attendanceDeduction": 54298,
+        "lossOfPay": 54298
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "salaryDivisor": 30,
+        "totalWorkingDays": 30,
+        "presentDays": 13,
         "paidLeaveDays": 0,
+        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
-        "lopDays": 0,
-        "perDayRate": 4356,
-        "attendanceDeduction": 0
+        "latePenaltyDays": 0,
+        "lopDays": 17,
+        "perDayRate": 3194,
+        "attendanceDeduction": 54298,
+        "lossOfPay": 54298
       },
-      "grossPay": 154933,
-      "totalDeductions": 28193,
-      "netPay": 126740,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null
+      "grossPay": 97117,
+      "totalDeductions": 76541,
+      "netPay": 20576,
+      "status": "Finalized",
+      "reviewedBy": "David Miller (Finance Lead)",
+      "approvedAt": "2026-11-18",
+      "salaryStructureId": "STR-002",
+      "salaryStructureName": "Executive Leadership Structure",
+      "monthlyCTC": 95833,
+      "finalizedBy": "David Miller (Finance Lead)",
+      "finalizedAt": "2026-11-18"
     }
   ],
   "announcements": [
@@ -2202,6 +2714,112 @@
       "head": "Rachel Adams",
       "count": 14,
       "budget": "₹1.9 Cr"
+    },
+    {
+      "id": "DEP-07",
+      "name": "Finance & Accounts",
+      "head": "David Miller",
+      "count": 4,
+      "budget": "₹85 L"
+    }
+  ],
+  "salaryStructures": [
+    {
+      "id": "STR-001",
+      "name": "Standard Corporate Structure",
+      "description": "Default structure for full-time engineering, design, and operations staff",
+      "basicPercentage": 50,
+      "hraPercentage": 30,
+      "specialAllowancePercentage": 15,
+      "conveyanceFixed": 1600,
+      "pfPercentage": 12,
+      "taxPercentage": 10,
+      "healthInsuranceFixed": 1200
+    },
+    {
+      "id": "STR-002",
+      "name": "Executive Leadership Structure",
+      "description": "Structure for department heads, leadership, and finance controllers",
+      "basicPercentage": 45,
+      "hraPercentage": 35,
+      "specialAllowancePercentage": 18,
+      "conveyanceFixed": 3200,
+      "pfPercentage": 12,
+      "taxPercentage": 15,
+      "healthInsuranceFixed": 2500
+    },
+    {
+      "id": "STR-003",
+      "name": "Junior & Trainee Structure",
+      "description": "Structure for associates, interns, and contractual specialists",
+      "basicPercentage": 60,
+      "hraPercentage": 25,
+      "specialAllowancePercentage": 10,
+      "conveyanceFixed": 800,
+      "pfPercentage": 12,
+      "taxPercentage": 5,
+      "healthInsuranceFixed": 800
+    },
+    {
+      "id": "STR-004",
+      "name": "Contract Specialist Structure",
+      "description": "Custom structure for contractors",
+      "basicPercentage": 60,
+      "hraPercentage": 25,
+      "specialAllowancePercentage": 10,
+      "conveyanceFixed": 2500,
+      "pfPercentage": 12,
+      "taxPercentage": 10,
+      "healthInsuranceFixed": 1500
+    }
+  ],
+  "payrollPolicy": {
+    "salaryDivisor": 30,
+    "defaultWorkHours": 8,
+    "latePenaltyThreshold": 3,
+    "latePenaltyDays": 0.5,
+    "requireAttendanceValidation": true
+  },
+  "notifications": [
+    {
+      "id": "NTF-1794995728671-280",
+      "employeeId": "EMP-002",
+      "title": "Leave Request Rejected",
+      "message": "Your Sick leave application for 2026-12-10 to 2026-12-11 (2 day(s)) has been rejected by Elena Rostova (HR). Note: Critical sprint release dates. Please reschedule if possible.",
+      "type": "leave_rejected",
+      "referenceId": "LV-485",
+      "createdAt": "2026-11-18T09:55:28.671Z",
+      "read": false
+    },
+    {
+      "id": "NTF-1794995728665-419",
+      "employeeId": "EMP-002",
+      "title": "Leave Request Approved",
+      "message": "Your Annual leave application for 2026-12-01 to 2026-12-03 (3 day(s)) has been approved by Elena Rostova (HR). Note: Approved. Enjoy your time off!",
+      "type": "leave_approved",
+      "referenceId": "LV-574",
+      "createdAt": "2026-11-18T09:55:28.665Z",
+      "read": true
+    },
+    {
+      "id": "NTF-101",
+      "employeeId": "EMP-002",
+      "title": "Leave Policy Update",
+      "message": "Annual leave balances for Q4 have been finalized and credited.",
+      "type": "system",
+      "referenceId": null,
+      "createdAt": "2026-11-15T10:00:00.000Z",
+      "read": true
+    },
+    {
+      "id": "NTF-102",
+      "employeeId": "EMP-002",
+      "title": "October Payslip Released",
+      "message": "Your salary statement for October 2026 has been generated and approved.",
+      "type": "payroll",
+      "referenceId": "PS-2026-10-002",
+      "createdAt": "2026-10-31T17:00:00.000Z",
+      "read": false
     }
   ]
 }

@@ -60,3 +60,7 @@ const API = {
     });
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.API = API;
+}

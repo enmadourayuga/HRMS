@@ -1,9 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: #f8fafc;
   color: #0f172a;
+}
+
+/* Ensure view-app is strictly bound to viewport with fixed layout */
+#view-app {
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Sidebar and Main separated viewport heights */
+#app-sidebar {
+  max-height: calc(100vh - 4rem);
+  max-height: calc(100dvh - 4rem);
 }
 
 /* Custom Scrollbar */
@@ -60,6 +78,22 @@ body {
 
 .clock-live-dot {
   animation: pulseDot 2s infinite ease-in-out;
+}
+
+/* Toast container stacking above all modals and backdrops */
+#toast-container {
+  z-index: 99999 !important;
+}
+
+/* Shake animation for validation errors */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: errorShake 0.4s ease-in-out;
 }
 
 /* Print styling for Payslip */

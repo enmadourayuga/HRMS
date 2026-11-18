@@ -5,6 +5,7 @@
       "email": "admin@hrms.com",
       "password": "password123",
       "role": "hr",
+      "isHrAdmin": true,
       "employeeId": "EMP-001"
     }
   ],
@@ -16,30 +17,110 @@
       "jobTitle": "Head of People & Culture",
       "department": "Human Resources",
       "role": "hr",
+      "isHrAdmin": true,
       "joinDate": "2026-11-18",
       "salary": 120000,
+      "salaryStructureId": "STRUC-01",
+      "biometricRef": "BIO-EMP-001",
       "phone": "+1 (555) 000-0001",
       "location": "Headquarters",
       "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
       "status": "Active",
       "manager": "Executive Board",
       "leaveBalances": {
-        "annual": { "total": 24, "used": 0 },
-        "sick": { "total": 12, "used": 0 },
-        "casual": { "total": 6, "used": 0 }
+        "annual": {
+          "total": 24,
+          "used": 0
+        },
+        "sick": {
+          "total": 12,
+          "used": 0
+        },
+        "casual": {
+          "total": 6,
+          "used": 0
+        }
       }
+    }
+  ],
+  "salaryStructures": [
+    {
+      "id": "STRUC-01",
+      "name": "Standard Tech & Leadership",
+      "description": "Standard corporate compensation package with statutory PF and tax deductions",
+      "basicPercent": 50,
+      "hraPercent": 25,
+      "specialAllowancePercent": 15,
+      "conveyancePercent": 10,
+      "pfRate": 12,
+      "taxRate": 10,
+      "insuranceFixed": 2500,
+      "isDefault": true
+    },
+    {
+      "id": "STRUC-02",
+      "name": "Operations & Support (Grade B)",
+      "description": "Operations and frontline support package with standard allowances",
+      "basicPercent": 55,
+      "hraPercent": 20,
+      "specialAllowancePercent": 15,
+      "conveyancePercent": 10,
+      "pfRate": 12,
+      "taxRate": 5,
+      "insuranceFixed": 1500,
+      "isDefault": false
     }
   ],
   "leaves": [],
   "attendance": [],
   "payslips": [],
+  "biometricPunches": [],
+  "biometricSyncFailures": [],
+  "attendanceCorrectionRequests": [],
+  "notifications": [],
   "announcements": [],
   "departments": [
-    { "id": "DEP-01", "name": "Human Resources", "head": "HR Administrator", "count": 1, "budget": "$750K" },
-    { "id": "DEP-02", "name": "Engineering", "head": "Unassigned", "count": 0, "budget": "$0" },
-    { "id": "DEP-03", "name": "Design & UX", "head": "Unassigned", "count": 0, "budget": "$0" },
-    { "id": "DEP-04", "name": "Product Management", "head": "Unassigned", "count": 0, "budget": "$0" },
-    { "id": "DEP-05", "name": "Marketing & Sales", "head": "Unassigned", "count": 0, "budget": "$0" },
-    { "id": "DEP-06", "name": "Finance & Operations", "head": "Unassigned", "count": 0, "budget": "$0" }
+    {
+      "id": "DEP-01",
+      "name": "Human Resources",
+      "head": "HR Administrator",
+      "count": 1,
+      "budget": "₹7,50,000"
+    },
+    {
+      "id": "DEP-02",
+      "name": "Engineering",
+      "head": "Unassigned",
+      "count": 0,
+      "budget": "₹0"
+    },
+    {
+      "id": "DEP-03",
+      "name": "Design & UX",
+      "head": "Unassigned",
+      "count": 0,
+      "budget": "₹0"
+    },
+    {
+      "id": "DEP-04",
+      "name": "Product Management",
+      "head": "Unassigned",
+      "count": 0,
+      "budget": "₹0"
+    },
+    {
+      "id": "DEP-05",
+      "name": "Marketing & Sales",
+      "head": "Unassigned",
+      "count": 0,
+      "budget": "₹0"
+    },
+    {
+      "id": "DEP-06",
+      "name": "Finance & Operations",
+      "head": "Unassigned",
+      "count": 0,
+      "budget": "₹0"
+    }
   ]
 }

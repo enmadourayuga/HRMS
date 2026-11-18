@@ -9,13 +9,19 @@ const App = {
 
   setupRoleNavigation(role) {
     this.currentRole = role;
+    const isFinance = role === 'finance';
+    const isHR = role === 'hr' || role === 'hr_admin' || isFinance;
     const sidebarLabel = document.getElementById('sidebar-role-label');
     const navContainer = document.getElementById('sidebar-nav-links');
     const hrContainer = document.getElementById('hr-view-container');
     const empContainer = document.getElementById('emp-view-container');
 
-    if (role === 'hr') {
-      sidebarLabel.textContent = 'HR Administration';
+    if (isHR) {
+      if (isFinance) {
+        sidebarLabel.textContent = 'Finance & Payroll Portal';
+      } else {
+        sidebarLabel.textContent = Auth.isHrAdmin ? 'HR Administration (Admin)' : 'HR Operations Portal';
+      }
       hrContainer.classList.remove('hidden');
       empContainer.classList.add('hidden');
 
@@ -38,7 +44,7 @@ const App = {
         </button>
         <button onclick="App.navigateTo('payroll')" id="nav-payroll" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-money-check-dollar w-5 text-center text-slate-400"></i>
-          <span>Payroll & Slips</span>
+          <span>Payroll & Compensation</span>
         </button>
         <button onclick="App.navigateTo('announcements')" id="nav-announcements" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-bullhorn w-5 text-center text-slate-400"></i>
@@ -47,7 +53,11 @@ const App = {
       `;
 
       HR.init();
-      this.setActiveNav('overview');
+      if (isFinance) {
+        this.navigateTo('payroll');
+      } else {
+        this.setActiveNav('overview');
+      }
     } else {
       sidebarLabel.textContent = 'Employee Self-Service';
       empContainer.classList.remove('hidden');
@@ -82,7 +92,7 @@ const App = {
   },
 
   navigateTo(tab) {
-    if (this.currentRole === 'hr') {
+    if (this.currentRole === 'hr' || this.currentRole === 'hr_admin' || this.currentRole === 'finance') {
       HR.switchTab(tab);
     } else {
       Employee.switchTab(tab);
@@ -92,6 +102,7 @@ const App = {
     // On mobile, auto-collapse sidebar on link click
     if (window.innerWidth < 768) {
       document.getElementById('app-sidebar')?.classList.add('hidden');
+      document.getElementById('sidebar-backdrop')?.classList.add('hidden');
     }
   },
 
@@ -99,19 +110,38 @@ const App = {
     document.querySelectorAll('#sidebar-nav-links button').forEach(btn => {
       btn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors';
       const icon = btn.querySelector('i');
-      if (icon) icon.className = icon.className.replace('text-indigo-600 text-emerald-600', 'text-slate-400');
+      if (icon) {
+        icon.classList.remove('text-indigo-600', 'text-emerald-600', 'text-blue-600');
+        icon.classList.add('text-slate-400');
+      }
     });
 
     const activeBtn = document.getElementById(`nav-${tab}`);
     if (activeBtn) {
-      if (this.currentRole === 'hr') {
+      const isFin = this.currentRole === 'finance';
+      const isHR = this.currentRole === 'hr' || this.currentRole === 'hr_admin';
+
+      if (isFin) {
+        activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-blue-50 text-blue-700 shadow-sm border border-blue-100/80 transition-colors';
+        const icon = activeBtn.querySelector('i');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-blue-600');
+        }
+      } else if (isHR) {
         activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100/80 transition-colors';
         const icon = activeBtn.querySelector('i');
-        if (icon) icon.className = icon.className.replace('text-slate-400', 'text-indigo-600');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-indigo-600');
+        }
       } else {
         activeBtn.className = 'w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-3 bg-emerald-50 text-emerald-700 shadow-sm border border-emerald-100/80 transition-colors';
         const icon = activeBtn.querySelector('i');
-        if (icon) icon.className = icon.className.replace('text-slate-400', 'text-emerald-600');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-emerald-600');
+        }
       }
     }
   }
@@ -120,3 +150,7 @@ const App = {
 window.addEventListener('DOMContentLoaded', () => {
   App.init();
 });
+
+if (typeof window !== 'undefined') {
+  window.App = App;
+}

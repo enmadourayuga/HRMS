@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexusHR | Human Resource Management System</title>
+  <title>NexusHR | Modern Human Resource Management</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -34,7 +34,7 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+  <div id="toast-container" class="fixed top-5 right-5 z-[99999] flex flex-col gap-2 max-w-sm pointer-events-none"></div>
 
   <!-- ============================================================== -->
   <!-- LOGIN VIEW -->
@@ -71,40 +71,40 @@
               <div class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-calendar-check text-xs"></i>
               </div>
-              <span>Real-Time Leave Approvals & Balance Tracking</span>
+              <span>Real-Time Leave Approvals &amp; Balance Tracking</span>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-clock text-xs"></i>
               </div>
-              <span>Daily Attendance Clock-In & Logging</span>
+              <span>Daily Attendance Clock-In &amp; Logging</span>
             </div>
           </div>
         </div>
 
         <div class="pt-8 border-t border-slate-800/80 text-[11px] text-slate-500 flex items-center justify-between">
-          <span>NexusHR v1.0 • Live Environment</span>
+          <span>NexusHR v1.0 &bull; Live Environment</span>
           <span class="flex items-center gap-1.5 text-emerald-400">
             <span class="w-2 h-2 rounded-full bg-emerald-400 clock-live-dot"></span> Online
           </span>
         </div>
       </div>
 
-      <!-- Right side: Corporate Login Form -->
+      <!-- Right side: Standard Corporate Login Form -->
       <div class="md:col-span-7 p-8 md:p-12 flex flex-col justify-center bg-slate-900/60">
         <div class="max-w-md mx-auto w-full">
           <div class="mb-8">
-            <h3 class="text-2xl font-bold text-white mb-2">Corporate Sign In</h3>
+            <h3 class="text-xl font-bold text-white mb-1">Corporate Sign In</h3>
             <p class="text-sm text-slate-400">Enter your credentials to access your portal</p>
           </div>
 
           <form id="form-login" onsubmit="Auth.handleLogin(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Email Address</label>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">Corporate Email</label>
               <div class="relative">
                 <i class="fa-regular fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input id="login-email" type="email" required placeholder="admin@hrms.com" 
-                       class="w-full pl-11 pr-4 py-3.5 bg-slate-800/90 text-white rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm placeholder-slate-500 transition-all">
+                       class="w-full pl-11 pr-4 py-3 bg-slate-800/90 text-white rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm placeholder-slate-500 transition-all">
               </div>
             </div>
 
@@ -115,24 +115,24 @@
               <div class="relative">
                 <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input id="login-password" type="password" required placeholder="••••••••" 
-                       class="w-full pl-11 pr-11 py-3.5 bg-slate-800/90 text-white rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm placeholder-slate-500 transition-all">
+                       class="w-full pl-11 pr-11 py-3 bg-slate-800/90 text-white rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm placeholder-slate-500 transition-all">
                 <button type="button" onclick="UI.togglePasswordVisibility('login-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-sm">
                   <i class="fa-regular fa-eye"></i>
                 </button>
               </div>
             </div>
 
-            <div class="pt-3">
-              <button type="submit" id="btn-login-submit" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 text-sm">
-                <span>Sign In to System</span>
+            <div class="pt-2">
+              <button type="submit" id="btn-login-submit" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 text-sm">
+                <span>Sign In to Dashboard</span>
                 <i class="fa-solid fa-arrow-right text-xs"></i>
               </button>
             </div>
           </form>
 
           <div class="mt-8 pt-6 border-t border-slate-800 text-center">
-            <p class="text-xs text-slate-500">
-              NexusHR Enterprise Protection • Authorized corporate users only
+            <p class="text-xs text-slate-400">
+              Need assistance? Contact your system admin at <span class="text-indigo-400">admin@hrms.com</span>
             </p>
           </div>
         </div>
@@ -143,10 +143,10 @@
   <!-- ============================================================== -->
   <!-- MAIN APP VIEW (Shown after authentication) -->
   <!-- ============================================================== -->
-  <div id="view-app" class="hidden min-h-screen flex flex-col bg-slate-100">
+  <div id="view-app" class="hidden fixed inset-0 flex flex-col bg-slate-100 overflow-hidden">
     
     <!-- Top Header Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <header class="bg-white border-b border-slate-200 z-30 shadow-sm shrink-0">
       <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <!-- Brand & Portal Tag -->
@@ -171,15 +171,38 @@
 
         <!-- Top Right Actions -->
         <div class="flex items-center gap-3">
+          
+
+
+          <!-- In-App Notifications Bell (LEV-011) -->
+          <div class="relative">
+            <button id="btn-notifications" onclick="UI.toggleNotificationsMenu()" title="Notifications" class="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-colors">
+              <i class="fa-regular fa-bell text-base"></i>
+              <span id="notification-badge" class="hidden absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">0</span>
+            </button>
+            <div id="notifications-menu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-bell text-indigo-600 text-xs"></i>
+                  <span class="text-xs font-bold text-slate-800">Notifications</span>
+                  <span id="notif-count-text" class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-semibold">0 unread</span>
+                </div>
+                <button onclick="UI.markAllNotificationsRead()" class="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+              </div>
+              <div id="notifications-list" class="max-h-80 overflow-y-auto space-y-2 text-xs divide-y divide-slate-100">
+                <div class="p-4 text-center text-slate-400">Loading notifications...</div>
+              </div>
+            </div>
+          </div>
 
           <!-- User profile pill -->
-          <div class="flex items-center gap-3 pl-3">
+          <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
             <img id="header-user-avatar" src="" class="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20" alt="Avatar">
             <div class="hidden md:block text-left">
               <div id="header-user-name" class="text-xs font-bold text-slate-900 leading-tight"></div>
               <div id="header-user-title" class="text-[11px] text-slate-500 leading-tight"></div>
             </div>
-            <button onclick="Auth.logout()" title="Sign Out" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors ml-2">
+            <button onclick="Auth.logout()" title="Sign Out" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors ml-1">
               <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
             </button>
           </div>
@@ -188,13 +211,13 @@
       </div>
     </header>
 
-    <!-- App Body: Sidebar + Main Content -->
-    <div class="flex-1 flex overflow-hidden">
+    <!-- App Body: Sidebar + Main Content (Separated Layout) -->
+    <div class="flex-1 flex overflow-hidden relative">
       
-      <!-- Left Sidebar Navigation -->
-      <aside id="app-sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden md:flex shrink-0">
-        <div class="p-4 space-y-6">
-          
+      <!-- Left Sidebar Navigation (Fixed height, independent scroll, fixed footer) -->
+      <aside id="app-sidebar" class="fixed md:static inset-y-0 left-0 top-16 md:top-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col justify-between hidden md:flex shrink-0 h-[calc(100vh-4rem)] md:h-full shadow-2xl md:shadow-none">
+        <!-- Navigation Links Scroll Area -->
+        <div class="p-4 space-y-6 flex-1 overflow-y-auto">
           <!-- Dynamic Navigation Links (Populated by role) -->
           <div>
             <div id="sidebar-role-label" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">
@@ -204,23 +227,25 @@
               <!-- Injected by role -->
             </nav>
           </div>
-
         </div>
 
-        <!-- Sidebar Footer Status -->
-        <div class="p-4 border-t border-slate-200 bg-slate-50/50">
+        <!-- Sidebar Footer Status - Fixed at bottom left corner -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50/80 shrink-0">
           <div class="flex items-center justify-between text-xs text-slate-500">
-            <span class="flex items-center gap-1.5">
+            <span class="flex items-center gap-1.5 font-medium text-slate-600">
               <span class="w-2 h-2 rounded-full bg-emerald-500 clock-live-dot"></span>
-              <span>Live System</span>
+              <span>System Online</span>
             </span>
-            <span id="current-clock-display" class="font-mono text-slate-600 font-semibold">--:--</span>
+            <span id="current-clock-display" class="font-mono text-slate-700 font-semibold bg-white px-2 py-0.5 rounded border border-slate-200 shadow-xs">--:--</span>
           </div>
         </div>
       </aside>
 
-      <!-- Main Content Container -->
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70">
+      <!-- Mobile Sidebar Backdrop -->
+      <div id="sidebar-backdrop" onclick="UI.toggleMobileSidebar()" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-30 md:hidden top-16"></div>
+
+      <!-- Main Content Container (Separated scrollable area) -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50/70 h-full">
         <div class="max-w-7xl mx-auto">
           
           <!-- Dynamic Views for HR -->
@@ -263,17 +288,17 @@
   <!-- MODALS -->
   <!-- ============================================================== -->
 
-  <!-- 1. Add Employee Modal (HR) -->
+  <!-- 1. Add Employee / HR Modal -->
   <div id="modal-add-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 modal-enter overflow-hidden my-8">
       <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+          <div id="modal-employee-icon" class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
             <i class="fa-solid fa-user-plus"></i>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-base">Add New Employee</h3>
-            <p class="text-xs text-slate-500">Employee profile and login credentials will be created</p>
+            <h3 id="modal-employee-title" class="font-bold text-slate-900 text-base">Add New Employee</h3>
+            <p id="modal-employee-subtitle" class="text-xs text-slate-500">Employee profile and login credentials will be created</p>
           </div>
         </div>
         <button onclick="UI.closeModal('modal-add-employee')" class="text-slate-400 hover:text-slate-600">
@@ -296,34 +321,62 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Job Title *</label>
-            <input type="text" name="jobTitle" required placeholder="e.g. Software Engineer" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="text" name="jobTitle" required placeholder="e.g. Backend Engineer" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Department</label>
-            <select name="department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
-              <option value="Human Resources">Human Resources</option>
+            <select name="department" id="modal-employee-department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
               <option value="Engineering">Engineering</option>
-              <option value="Design & UX">Design & UX</option>
-              <option value="Product Management">Product Management</option>
-              <option value="Marketing & Sales">Marketing & Sales</option>
-              <option value="Finance & Operations">Finance & Operations</option>
+              <option value="Design">Design</option>
+              <option value="Product">Product</option>
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Human Resources" id="dept-option-hr">Human Resources</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Role / Access Level</label>
-            <select name="role" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
-              <option value="employee">Employee</option>
-              <option value="hr">HR Administrator</option>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employment Type *</label>
+            <input type="hidden" name="role" id="modal-employee-role" value="employee">
+            <select name="employmentType" id="modal-employee-employment-type" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Full-Time" selected>Full-Time (Permanent)</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Contract">Contract / Consultant</option>
+              <option value="Intern">Intern / Trainee</option>
             </select>
           </div>
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary ($)</label>
-            <input type="number" name="salary" placeholder="105000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary (₹ / INR)</label>
+            <input type="number" name="salary" placeholder="1200000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
+
+        <!-- Joining Date & Biometric Reference (EMP-006, EMP-007) -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Joining Date *</label>
+            <input type="date" name="joinDate" id="modal-employee-join-date" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Biometric ID Reference</label>
+            <input type="text" name="biometricRef" placeholder="e.g. BIO-8801" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Salary Structure Assignment (EMP-006, PAY-001) -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Salary Structure Assignment *</label>
+          <select name="salaryStructureId" id="modal-employee-salary-structure" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+            <option value="STR-001">Standard Corporate Structure (Basic 50%, HRA 30%, Special 15%)</option>
+            <option value="STR-002">Executive Leadership Structure (Basic 45%, HRA 35%, Special 18%)</option>
+            <option value="STR-003">Junior & Trainee Structure (Basic 60%, HRA 25%, Special 10%)</option>
+          </select>
+        </div>
+
+        <!-- Role permission alert / status banner -->
+        <div id="role-access-banner" class="hidden p-3 rounded-xl border text-xs"></div>
 
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
@@ -332,15 +385,138 @@
           </div>
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
-            <input type="text" name="location" placeholder="Headquarters / Remote" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="text" name="location" placeholder="San Francisco, CA / Remote" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
 
         <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
           <button type="button" onclick="UI.closeModal('modal-add-employee')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
-          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20">Save Employee</button>
+          <button id="modal-employee-submit-btn" type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors">Save Employee</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 1b. Edit Employee Modal (EMP-008) -->
+  <div id="modal-edit-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full border border-slate-200 modal-enter overflow-hidden my-8">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Edit Employee Details</h3>
+            <p class="text-xs text-slate-500" id="edit-employee-subtitle">Update employee profile, compensation and status</p>
+          </div>
+        </div>
+        <button onclick="UI.closeModal('modal-edit-employee')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-employee" onsubmit="HR.submitEditEmployee(event)" class="p-6 space-y-4">
+        <input type="hidden" name="id" id="edit-employee-id">
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+            <input type="text" name="name" id="edit-employee-name" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Work Email *</label>
+            <input type="email" name="email" id="edit-employee-email" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Job Title / Designation *</label>
+            <input type="text" name="jobTitle" id="edit-employee-title" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Department *</label>
+            <select name="department" id="edit-employee-department" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Engineering">Engineering</option>
+              <option value="Design & UX">Design & UX</option>
+              <option value="Product Management">Product Management</option>
+              <option value="Infrastructure & Sec">Infrastructure & Sec</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Finance & Accounts">Finance & Accounts</option>
+              <option value="Marketing & Growth">Marketing & Growth</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employment Type *</label>
+            <select name="employmentType" id="edit-employee-employment-type" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Full-Time">Full-Time (Permanent)</option>
+              <option value="Part-Time">Part-Time</option>
+              <option value="Contract">Contract / Consultant</option>
+              <option value="Intern">Intern / Trainee</option>
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary / CTC (₹) *</label>
+            <input type="number" name="salary" id="edit-employee-salary" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Joining Date *</label>
+            <input type="date" name="joinDate" id="edit-employee-join-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Biometric ID Reference *</label>
+            <input type="text" name="biometricRef" id="edit-employee-biometric-ref" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Salary Structure *</label>
+            <select name="salaryStructureId" id="edit-employee-salary-structure" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="STR-001">Standard Corporate Structure</option>
+              <option value="STR-002">Executive Leadership Structure</option>
+              <option value="STR-003">Junior & Trainee Structure</option>
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Employment Status (EMP-010)</label>
+            <select name="status" id="edit-employee-status" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive (Deactivated)</option>
+              <option value="On Leave">On Leave</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+            <input type="text" name="phone" id="edit-employee-phone" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
+            <input type="text" name="location" id="edit-employee-location" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-edit-employee')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20 transition-colors">Update Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1c. View Employee Profile Modal (EMP-009) -->
+  <div id="modal-view-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="view-employee-content">
+      <!-- Injected dynamically by HR.openViewEmployeeModal -->
     </div>
   </div>
 
@@ -364,8 +540,13 @@
 
       <form id="form-request-leave" onsubmit="Employee.submitLeaveRequest(event)" class="p-6 space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Leave Type *</label>
-          <select id="leave-type-select" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700">Leave Type *</label>
+            <span id="available-balance-badge" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 transition-colors">
+              Available: <span id="leave-balance-count">--</span>
+            </span>
+          </div>
+          <select id="leave-type-select" onchange="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
             <option value="Annual">Annual Leave (Vacation)</option>
             <option value="Sick">Sick Leave</option>
             <option value="Casual">Casual / Personal Time Off</option>
@@ -375,12 +556,18 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Start Date *</label>
-            <input type="date" id="leave-start-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="date" id="leave-start-date" onchange="Employee.updateLeaveBalanceHelper()" oninput="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">End Date *</label>
-            <input type="date" id="leave-end-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+            <input type="date" id="leave-end-date" onchange="Employee.updateLeaveBalanceHelper()" oninput="Employee.updateLeaveBalanceHelper()" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
+        </div>
+
+        <!-- Calculated duration indicator (LEV-004) -->
+        <div id="leave-duration-preview" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between transition-colors">
+          <span class="text-slate-600"><i class="fa-solid fa-calculator mr-1.5 text-indigo-500"></i> Calculated Leave Duration:</span>
+          <span id="leave-duration-text" class="font-bold text-slate-900">--</span>
         </div>
 
         <div>
@@ -430,26 +617,172 @@
   </div>
 
   <!-- 4. View Payslip Modal -->
-  <div id="modal-view-payslip" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-6">
-      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between no-print">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-receipt text-indigo-600"></i>
-          <h3 class="font-bold text-slate-900 text-base">Salary Statement</h3>
+  <div id="modal-view-payslip" onclick="if(event.target === this) UI.closeModal('modal-view-payslip')" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter flex flex-col max-h-[92vh] overflow-hidden my-auto" onclick="event.stopPropagation()">
+      <div class="px-5 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between shrink-0 no-print sticky top-0 z-10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-file-invoice"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm leading-tight">Salary Statement</h3>
+            <p class="text-[11px] text-slate-500 leading-tight">Monthly compensation & attendance breakdown</p>
+          </div>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="window.print()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+          <button onclick="window.print()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors">
             <i class="fa-solid fa-print"></i> Print
           </button>
-          <button onclick="UI.closeModal('modal-view-payslip')" class="text-slate-400 hover:text-slate-600 ml-2">
-            <i class="fa-solid fa-xmark text-lg"></i>
+          <button onclick="UI.closeModal('modal-view-payslip')" title="Close statement (Esc)" class="w-8 h-8 rounded-lg bg-slate-200/80 hover:bg-rose-100 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-colors">
+            <i class="fa-solid fa-xmark text-base"></i>
           </button>
         </div>
       </div>
 
-      <div id="printable-payslip" class="p-8">
+      <div id="printable-payslip" class="p-4 sm:p-5 overflow-y-auto flex-1">
         <!-- Rendered dynamically -->
       </div>
+
+      <div class="px-5 py-2.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0 no-print">
+        <span class="text-[11px] text-slate-400">Click outside or press <kbd class="px-1 py-0.5 rounded bg-slate-200 font-mono text-[10px] text-slate-600 font-semibold">Esc</kbd> to close</span>
+        <button onclick="UI.closeModal('modal-view-payslip')" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-xl text-xs transition-colors shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-xmark"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4b. Salary Structures Modal (PAY-001) -->
+  <div id="modal-salary-structures" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="salary-structures-content">
+      <!-- Rendered dynamically by HR.openSalaryStructuresModal -->
+    </div>
+  </div>
+
+  <!-- 4c. Correct Attendance Discrepancy Modal (ATT-010, BR-ATT-03) -->
+  <div id="modal-correct-attendance" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full border border-slate-200 modal-enter overflow-hidden my-8">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Correct Attendance Discrepancy</h3>
+            <p class="text-xs text-slate-500">Manual adjustments require mandatory reason and audit trail (ATT-010)</p>
+          </div>
+        </div>
+        <button onclick="UI.closeModal('modal-correct-attendance')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-correct-attendance" onsubmit="HR.submitAttendanceCorrection(event)" class="p-6 space-y-4">
+        <input type="hidden" id="correct-att-id">
+        
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-1.5" id="correct-att-info">
+          <!-- Filled dynamically -->
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-in Time *</label>
+            <input type="text" id="correct-att-in" required placeholder="e.g. 09:00 AM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-out Time *</label>
+            <input type="text" id="correct-att-out" required placeholder="e.g. 05:30 PM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Status Classification *</label>
+          <select id="correct-att-status" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+            <option value="Present">Present (Full Day)</option>
+            <option value="Late">Late Arrival</option>
+            <option value="Half Day">Half Day</option>
+            <option value="Absent">Absent / Loss of Pay</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-700">Correction Reason * (Mandatory - BR-ATT-03)</label>
+            <span class="text-[10px] text-rose-500 font-semibold">Audit Recorded</span>
+          </div>
+          <textarea id="correct-att-reason" rows="3" required placeholder="Provide an official business reason (e.g. Employee visited on-site client; biometric reader failed to log checkout; approved by manager)..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"></textarea>
+        </div>
+
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5"></i>
+          <div>
+            <strong>Original Biometric Preservation (BR-ATT-02):</strong> The raw machine punches will remain permanently preserved and cannot be overwritten or deleted.
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-correct-attendance')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-semibold">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-amber-600/20 transition-colors">
+            Save Correction & Validate
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4d. Biometric Raw Punches & Device Stream Modal (ATT-011, BR-ATT-06) -->
+  <div id="modal-biometric-stream" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="biometric-stream-content">
+      <!-- Rendered dynamically by HR.openBiometricStreamModal -->
+    </div>
+  </div>
+
+  <!-- 4e. Attendance Correction Requests Modal (HR) -->
+  <div id="modal-attendance-correction-requests" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="attendance-correction-requests-content">
+      <!-- Rendered dynamically by HR.openCorrectionRequestsModal -->
+    </div>
+  </div>
+
+  <!-- 4f. Request Attendance Correction Modal (Employee Self-Service) -->
+  <div id="modal-request-attendance-correction" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 modal-enter overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="font-bold text-slate-900 text-base">Request Attendance Correction</h3>
+        <button onclick="UI.closeModal('modal-request-attendance-correction')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="form-request-attendance-correction" onsubmit="Employee.submitAttendanceCorrectionRequest(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Date *</label>
+          <input type="date" id="req-corr-date" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-in Time *</label>
+            <input type="text" id="req-corr-in" required placeholder="09:00 AM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Check-out Time *</label>
+            <input type="text" id="req-corr-out" required placeholder="05:30 PM" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Reason for Adjustment *</label>
+          <textarea id="req-corr-reason" rows="3" required placeholder="e.g. Biometric device failed to record punch on exit; official off-site client meeting..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm"></textarea>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="UI.closeModal('modal-request-attendance-correction')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-medium">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm shadow-md shadow-indigo-600/20">Submit Request</button>
+        </div>
+      </form>
     </div>
   </div>
 

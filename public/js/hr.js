@@ -325,11 +325,18 @@ const HR = {
   },
 
   // ---------------- 2. HR EMPLOYEES DIRECTORY ----------------
-  renderEmployees(filteredList = null) {
+  renderEmployees() {
     const container = document.getElementById('hr-tab-employees');
     if (!container) return;
 
-    const list = filteredList || this.employees;
+    const existingQ = document.getElementById('employee-search-input')?.value || '';
+    const existingDept = document.getElementById('employee-dept-filter')?.value || 'All';
+    const existingType = document.getElementById('employee-type-filter')?.value || 'All';
+    const existingStatus = document.getElementById('employee-status-filter')?.value || 'All';
+
+    const defaultDepts = ['Engineering', 'Design', 'Product', 'Infrastructure', 'Human Resources', 'Marketing'];
+    const empDepts = (this.employees || []).map(e => e.department).filter(Boolean);
+    const allDepts = Array.from(new Set([...defaultDepts, ...empDepts]));
 
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -355,23 +362,25 @@ const HR = {
       <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-          <input type="text" id="employee-search-input" oninput="HR.filterEmployees()" placeholder="Search employee by name, title, or email..." 
+          <input type="text" id="employee-search-input" oninput="HR.filterEmployees()" value="${existingQ}" placeholder="Search employee by name, title, or email..." 
                  class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
           <select id="employee-dept-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
-            <option value="All">All Departments</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Design">Design</option>
-            <option value="Product">Product</option>
-            <option value="Infrastructure">Infrastructure</option>
-            <option value="Human Resources">Human Resources</option>
-            <option value="Marketing">Marketing</option>
+            <option value="All" ${existingDept === 'All' ? 'selected' : ''}>All Departments</option>
+            ${allDepts.map(d => `<option value="${d}" ${existingDept.toLowerCase() === d.toLowerCase() ? 'selected' : ''}>${d}</option>`).join('')}
+          </select>
+          <select id="employee-type-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
+            <option value="All" ${existingType === 'All' ? 'selected' : ''}>All Types</option>
+            <option value="Full-Time" ${existingType === 'Full-Time' ? 'selected' : ''}>Full-Time</option>
+            <option value="Part-Time" ${existingType === 'Part-Time' ? 'selected' : ''}>Part-Time</option>
+            <option value="Contract" ${existingType === 'Contract' ? 'selected' : ''}>Contract</option>
+            <option value="Intern" ${existingType === 'Intern' ? 'selected' : ''}>Intern</option>
           </select>
           <select id="employee-status-filter" onchange="HR.filterEmployees()" class="px-3 py-2 border border-slate-200 rounded-xl text-xs sm:text-sm bg-white focus:outline-none focus:border-indigo-500">
-            <option value="All">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="On Leave">On Leave</option>
+            <option value="All" ${existingStatus === 'All' ? 'selected' : ''}>All Statuses</option>
+            <option value="Active" ${existingStatus === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="On Leave" ${existingStatus === 'On Leave' ? 'selected' : ''}>On Leave</option>
           </select>
         </div>
       </div>
@@ -383,85 +392,116 @@ const HR = {
             <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
               <tr>
                 <th class="px-5 py-3.5">Employee</th>
-                <th class="px-5 py-3.5">Department & Role</th>
+                <th class="px-5 py-3.5">Department & Type</th>
                 <th class="px-5 py-3.5">Contact</th>
                 <th class="px-5 py-3.5">Annual Salary</th>
                 <th class="px-5 py-3.5 text-center">Status</th>
                 <th class="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 text-slate-700">
-              ${list.length === 0 ? `
-                <tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm">No employees match your search criteria.</td></tr>
-              ` : list.map(emp => `
-                <tr class="hover:bg-slate-50 transition-colors">
-                  <td class="px-5 py-4">
-                    <div class="flex items-center gap-3">
-                      <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" alt="${emp.name}">
-                      <div>
-                        <div class="font-bold text-slate-900 text-sm">${emp.name}</div>
-                        <div class="text-xs text-slate-500">${emp.jobTitle}</div>
-                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">ID: ${emp.id}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-5 py-4">
-                    <div class="font-semibold text-slate-800 text-xs">${emp.department}</div>
-                    ${(emp.isHrAdmin || emp.role === 'hr_admin' || (emp.role === 'hr' && (emp.id === 'EMP-001' || emp.email === 'hr@hrms.com'))) ? `
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-50 text-purple-700 border border-purple-200 mt-1">
-                        👑 HR Administrator
-                      </span>
-                    ` : (emp.role === 'hr' ? `
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 mt-1">
-                        🛡️ HR Staff
-                      </span>
-                    ` : `
-                      <span class="inline-block px-2 py-0.5 text-[10px] font-semibold rounded-md bg-slate-100 text-slate-600 mt-1">
-                        Staff Member
-                      </span>
-                    `)}
-                  </td>
-                  <td class="px-5 py-4 text-xs">
-                    <div class="text-slate-800 font-medium">${emp.email}</div>
-                    <div class="text-slate-500 text-[11px] mt-0.5">${emp.phone}</div>
-                    <div class="text-slate-400 text-[11px]">${emp.location}</div>
-                  </td>
-                  <td class="px-5 py-4 font-mono font-semibold text-slate-900 text-xs">
-                    ${UI.formatCurrency(emp.salary)}
-                    <span class="text-[10px] text-slate-400 block font-sans font-normal">Joined ${UI.formatDate(emp.joinDate)}</span>
-                  </td>
-                  <td class="px-5 py-4 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${emp.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-                      ${emp.status}
-                    </span>
-                  </td>
-                  <td class="px-5 py-4 text-right">
-                    <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
-                      <i class="fa-solid fa-receipt mr-1"></i> Payslip
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
+            <tbody id="employee-table-body" class="divide-y divide-slate-100 text-slate-700">
             </tbody>
           </table>
         </div>
       </div>
     `;
+
+    this.filterEmployees();
+  },
+
+  getEmploymentTypeBadge(type) {
+    const val = type || 'Full-Time';
+    switch (val.toLowerCase()) {
+      case 'part-time':
+        return `<span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-md bg-amber-50 text-amber-700 border border-amber-200">Part-Time</span>`;
+      case 'contract':
+        return `<span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-md bg-purple-50 text-purple-700 border border-purple-200">Contract</span>`;
+      case 'intern':
+        return `<span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">Intern</span>`;
+      case 'full-time':
+      default:
+        return `<span class="inline-flex items-center px-2 py-0.5 text-[10px] font-semibold rounded-md bg-blue-50 text-blue-700 border border-blue-200">Full-Time</span>`;
+    }
+  },
+
+  renderEmployeeRows(list) {
+    if (!list || list.length === 0) {
+      return `<tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm">No employees match your search criteria.</td></tr>`;
+    }
+    return list.map(emp => `
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="px-5 py-4">
+          <div class="flex items-center gap-3">
+            <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" alt="${emp.name}">
+            <div>
+              <div class="font-bold text-slate-900 text-sm">${emp.name}</div>
+              <div class="text-xs text-slate-500">${emp.jobTitle}</div>
+              <div class="text-[10px] text-slate-400 font-mono mt-0.5">ID: ${emp.id}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-5 py-4">
+          <div class="font-semibold text-slate-800 text-xs">${emp.department}</div>
+          <div class="flex flex-wrap items-center gap-1 mt-1">
+            ${this.getEmploymentTypeBadge(emp.employmentType)}
+            ${(emp.isHrAdmin || emp.role === 'hr_admin' || (emp.role === 'hr' && (emp.id === 'EMP-001' || emp.email === 'hr@hrms.com'))) ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-50 text-purple-700 border border-purple-200">
+                👑 HR Administrator
+              </span>
+            ` : (emp.role === 'hr' ? `
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                🛡️ HR Staff
+              </span>
+            ` : '')}
+          </div>
+        </td>
+        <td class="px-5 py-4 text-xs">
+          <div class="text-slate-800 font-medium">${emp.email}</div>
+          <div class="text-slate-500 text-[11px] mt-0.5">${emp.phone}</div>
+          <div class="text-slate-400 text-[11px]">${emp.location}</div>
+        </td>
+        <td class="px-5 py-4 font-mono font-semibold text-slate-900 text-xs">
+          ${UI.formatCurrency(emp.salary)}
+          <span class="text-[10px] text-slate-400 block font-sans font-normal">Joined ${UI.formatDate(emp.joinDate)}</span>
+        </td>
+        <td class="px-5 py-4 text-center">
+          <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${emp.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+            ${emp.status}
+          </span>
+        </td>
+        <td class="px-5 py-4 text-right">
+          <button onclick="HR.viewPayslipForEmployee('${emp.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
+            <i class="fa-solid fa-receipt mr-1"></i> Payslip
+          </button>
+        </td>
+      </tr>
+    `).join('');
   },
 
   filterEmployees() {
-    const q = document.getElementById('employee-search-input')?.value.toLowerCase() || '';
+    const q = (document.getElementById('employee-search-input')?.value || '').toLowerCase().trim();
     const dept = document.getElementById('employee-dept-filter')?.value || 'All';
+    const type = document.getElementById('employee-type-filter')?.value || 'All';
     const status = document.getElementById('employee-status-filter')?.value || 'All';
 
-    let filtered = this.employees.filter(emp => {
-      const matchesQ = emp.name.toLowerCase().includes(q) || emp.email.toLowerCase().includes(q) || emp.jobTitle.toLowerCase().includes(q);
-      const matchesDept = dept === 'All' || emp.department.toLowerCase() === dept.toLowerCase();
-      const matchesStatus = status === 'All' || emp.status.toLowerCase() === status.toLowerCase();
-      return matchesQ && matchesDept && matchesStatus;
+    let filtered = (this.employees || []).filter(emp => {
+      const matchesQ = !q || 
+        (emp.name && emp.name.toLowerCase().includes(q)) || 
+        (emp.email && emp.email.toLowerCase().includes(q)) || 
+        (emp.jobTitle && emp.jobTitle.toLowerCase().includes(q)) ||
+        (emp.id && emp.id.toLowerCase().includes(q));
+      const matchesDept = dept === 'All' || (emp.department && emp.department.toLowerCase() === dept.toLowerCase());
+      const matchesType = type === 'All' || ((emp.employmentType || 'Full-Time').toLowerCase() === type.toLowerCase());
+      const matchesStatus = status === 'All' || (emp.status && emp.status.toLowerCase() === status.toLowerCase());
+      return matchesQ && matchesDept && matchesType && matchesStatus;
     });
 
-    this.renderEmployees(filtered);
+    const tbody = document.getElementById('employee-table-body');
+    if (tbody) {
+      tbody.innerHTML = this.renderEmployeeRows(filtered);
+    } else {
+      this.renderEmployees();
+    }
   },
 
   // ---------------- 3. HR LEAVE MANAGEMENT ----------------
@@ -867,16 +907,9 @@ const HR = {
     const roleInput = document.getElementById('modal-employee-role');
     if (roleInput) roleInput.value = 'employee';
 
-    // 2. Fixed visual display for Standard Employee
-    const typeDisplay = document.getElementById('modal-employee-type-display');
-    const typeText = document.getElementById('modal-employee-type-text');
-    const typeBadge = document.getElementById('modal-employee-type-badge');
-    if (typeDisplay && typeText && typeBadge) {
-      typeDisplay.className = 'px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between text-sm font-medium';
-      typeText.innerHTML = `<span class="text-slate-700 flex items-center gap-2"><i class="fa-solid fa-user text-slate-500"></i> Standard Employee</span>`;
-      typeBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700';
-      typeBadge.textContent = 'Staff Member';
-    }
+    // 2. Default employment type to Full-Time
+    const typeSelect = document.getElementById('modal-employee-employment-type');
+    if (typeSelect) typeSelect.value = 'Full-Time';
 
     // 3. Department: Hide Human Resources department for standard employee
     const deptHrOption = document.getElementById('dept-option-hr');
@@ -931,16 +964,9 @@ const HR = {
     const roleInput = document.getElementById('modal-employee-role');
     if (roleInput) roleInput.value = 'hr';
 
-    // 2. Fixed visual display for HR category
-    const typeDisplay = document.getElementById('modal-employee-type-display');
-    const typeText = document.getElementById('modal-employee-type-text');
-    const typeBadge = document.getElementById('modal-employee-type-badge');
-    if (typeDisplay && typeText && typeBadge) {
-      typeDisplay.className = 'px-3.5 py-2.5 rounded-xl border border-purple-200 bg-purple-50 flex items-center justify-between text-sm font-semibold';
-      typeText.innerHTML = `<span class="text-purple-900 flex items-center gap-2"><i class="fa-solid fa-user-shield text-purple-600"></i> HR Account (Fixed)</span>`;
-      typeBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-purple-200 text-purple-800';
-      typeBadge.textContent = 'HR Access';
-    }
+    // 2. Default employment type to Full-Time
+    const typeSelect = document.getElementById('modal-employee-employment-type');
+    if (typeSelect) typeSelect.value = 'Full-Time';
 
     // 3. Department: Enable and select Human Resources
     const deptHrOption = document.getElementById('dept-option-hr');
@@ -978,7 +1004,7 @@ const HR = {
         <i class="fa-solid fa-shield-halved text-purple-600 text-base mt-0.5 shrink-0"></i>
         <div>
           <div class="font-bold text-purple-900">Provisioning HR Account (HR Admin Authorized)</div>
-          <div class="text-purple-700 text-[11px] mt-0.5">This user will be created with fixed HR privileges to review attendance, leaves, payroll, and publish announcements. Employee type is locked to HR.</div>
+          <div class="text-purple-700 text-[11px] mt-0.5">This user will be created with fixed HR privileges to review attendance, leaves, payroll, and publish announcements.</div>
         </div>
       `;
     }
@@ -1004,6 +1030,7 @@ const HR = {
       jobTitle: formData.get('jobTitle'),
       department: formData.get('department'),
       role: formData.get('role'),
+      employmentType: formData.get('employmentType') || 'Full-Time',
       salary: formData.get('salary'),
       phone: formData.get('phone'),
       location: formData.get('location')
@@ -1141,159 +1168,159 @@ const HR = {
 
     payslipContainer.innerHTML = `
       ${isPending ? `
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs no-print">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shrink-0">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs no-print">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">
               <i class="fa-solid fa-clock"></i>
             </div>
             <div>
-              <span class="font-bold text-amber-900 text-sm block">Awaiting HR Approval</span>
-              <p class="text-amber-700 text-[11px] mt-0.5">This statement is currently hidden from ${emp.name}. Inspect the details below and click approve to release it to the employee portal.</p>
+              <span class="font-bold text-amber-900 text-xs block">Awaiting HR Approval</span>
+              <p class="text-amber-700 text-[11px] leading-tight">Review details below and approve to release to ${emp.name}'s portal.</p>
             </div>
           </div>
-          <button onclick="HR.approvePayslip('${slip.id}', true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors shrink-0">
-            <i class="fa-solid fa-check"></i> Approve & Release to Employee
+          <button onclick="HR.approvePayslip('${slip.id}', true)" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-colors shrink-0 text-xs">
+            <i class="fa-solid fa-check"></i> Approve & Release
           </button>
         </div>
       ` : `
-        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-emerald-800 no-print">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs text-emerald-800 no-print">
           <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+            <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
             <div>
-              <span class="font-bold">Approved & Published</span>
-              <span class="text-slate-500 text-[11px] ml-1.5">• Released to employee on ${slip.approvedAt || UI.formatDate(slip.payDate)}</span>
+              <span class="font-bold text-xs">Approved & Published</span>
+              <span class="text-slate-500 text-[11px] ml-1">• Released on ${slip.approvedAt || UI.formatDate(slip.payDate)}</span>
             </div>
           </div>
-          <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">ACTIVE IN PORTAL</span>
+          <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">ACTIVE IN PORTAL</span>
         </div>
       `}
 
-      <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
+      <div class="border-b border-slate-200 pb-3 mb-3.5 flex justify-between items-start">
         <div>
-          <div class="flex items-center gap-2.5 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-6 h-6 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
               <i class="fa-solid fa-people-roof"></i>
             </div>
-            <span class="text-xl font-extrabold text-slate-900">NexusHR Technologies Pvt. Ltd.</span>
+            <span class="text-base font-extrabold text-slate-900">NexusHR Technologies Pvt. Ltd.</span>
           </div>
-          <p class="text-xs text-slate-500">Outer Ring Road, Bengaluru, Karnataka 560103</p>
-          <p class="text-xs text-slate-500">PAN: AABCN8192F • payroll@nexushr.in</p>
+          <p class="text-[11px] text-slate-500 leading-tight">Outer Ring Road, Bengaluru, Karnataka 560103</p>
+          <p class="text-[11px] text-slate-500 leading-tight">PAN: AABCN8192F • payroll@nexushr.in</p>
         </div>
         <div class="text-right">
-          <span class="px-3 py-1 ${isPending ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} text-xs font-bold rounded-full">
+          <span class="px-2.5 py-0.5 ${isPending ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} text-[10px] font-bold rounded-full">
             ${isPending ? 'PENDING APPROVAL' : 'APPROVED / PAID'}
           </span>
-          <div class="text-xs text-slate-400 mt-2">Statement Month</div>
-          <div class="text-sm font-bold text-slate-900">${slip.month} ${slip.year}</div>
+          <div class="text-[10px] text-slate-400 mt-1.5">Statement Month</div>
+          <div class="text-xs font-bold text-slate-900">${slip.month} ${slip.year}</div>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 text-xs">
+      <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3.5 text-xs">
         <div>
-          <span class="text-slate-400 block">Employee Name</span>
-          <strong class="text-slate-900 text-sm">${emp.name}</strong>
-          <span class="text-slate-500 block mt-1">ID: ${emp.id}</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-semibold">Employee Name</span>
+          <strong class="text-slate-900 text-xs">${emp.name}</strong>
+          <span class="text-slate-500 block text-[11px] mt-0.5">ID: ${emp.id}</span>
         </div>
         <div>
-          <span class="text-slate-400 block">Designation & Department</span>
-          <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
-          <span class="text-slate-500 block mt-1">${emp.department || 'General'}</span>
+          <span class="text-slate-400 block text-[10px] uppercase font-semibold">Designation & Department</span>
+          <strong class="text-slate-900 text-xs">${emp.jobTitle}</strong>
+          <span class="text-slate-500 block text-[11px] mt-0.5">${emp.department || 'General'} • ${emp.employmentType || 'Full-Time'}</span>
         </div>
       </div>
 
       <!-- Attendance & Working Days Summary Card -->
-      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-6">
-        <div class="flex items-center justify-between mb-2.5">
-          <span class="text-xs font-bold text-indigo-900 uppercase tracking-wide flex items-center gap-1.5">
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3 mb-3.5">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-bold text-indigo-900 uppercase tracking-wide flex items-center gap-1.5">
             <i class="fa-solid fa-calendar-check text-indigo-600"></i>
             <span>Monthly Attendance & Leave Summary</span>
           </span>
-          <span class="text-[11px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
+          <span class="text-[10px] text-indigo-700 font-semibold">${attSummary.totalWorkingDays || 22} Standard Cycle Days</span>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Total Working Days</span>
-            <strong class="text-slate-900 text-sm font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
-            <span class="text-[10px] text-slate-500 block">Standard Shift Calendar</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Working Days</span>
+            <strong class="text-slate-900 text-xs font-mono">${attSummary.totalWorkingDays || 22} Days</strong>
+            <span class="text-[10px] text-slate-500 block">Cycle Calendar</span>
           </div>
-          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Days Present / Paid</span>
-            <strong class="text-emerald-700 text-sm font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
-            <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Paid Lv</span>
+          <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Days Present / Paid</span>
+            <strong class="text-emerald-700 text-xs font-mono">${(attSummary.presentDays || 0) + (attSummary.paidLeaveDays || 0)} Days</strong>
+            <span class="text-[10px] text-slate-500 block">${attSummary.presentDays || 0} Pres + ${attSummary.paidLeaveDays || 0} Lv</span>
           </div>
-          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Loss of Pay (LOP) Days</span>
-            <strong class="${(attSummary.lopDays || 0) > 0 ? 'text-rose-600' : 'text-slate-900'} text-sm font-mono">${attSummary.lopDays || 0} Day(s)</strong>
+          <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Loss of Pay (LOP)</span>
+            <strong class="${(attSummary.lopDays || 0) > 0 ? 'text-rose-600' : 'text-slate-900'} text-xs font-mono">${attSummary.lopDays || 0} Day(s)</strong>
             <span class="text-[10px] text-slate-500 block">${attSummary.absentDays || 0} Absent • ${attSummary.lateDays || 0} Late</span>
           </div>
-          <div class="bg-white p-2.5 rounded-lg border border-indigo-100 shadow-xs">
-            <span class="text-slate-400 block text-[10px] uppercase font-semibold">Daily Salary Rate</span>
-            <strong class="text-slate-900 text-sm font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
-            <span class="text-[10px] text-slate-500 block">Based on Basic Salary</span>
+          <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-xs">
+            <span class="text-slate-400 block text-[9px] uppercase font-semibold">Daily Salary Rate</span>
+            <strong class="text-slate-900 text-xs font-mono">${UI.formatCurrency(attSummary.perDayRate || Math.round((slip.baseSalary || 0) / 22))}</strong>
+            <span class="text-[10px] text-slate-500 block">Basic / 22</span>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-6 text-xs mb-6">
+      <div class="grid grid-cols-2 gap-4 text-xs mb-3.5">
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
-          <div class="space-y-1.5">
-            <div class="flex justify-between py-1 border-b border-slate-100">
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] mb-1.5 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
+          <div class="space-y-1">
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
               <span class="text-slate-600">Basic Salary</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.baseSalary)}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
               <span class="text-slate-600">House Rent Allowance (HRA)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.hra || Math.round(slip.baseSalary * 0.40))}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
               <span class="text-slate-600">Special Allowance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.specialAllowance || Math.round(slip.baseSalary * 0.20))}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
               <span class="text-slate-600">Conveyance Allowance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.conveyance || 1600)}</span>
             </div>
-            <div class="flex justify-between py-2 font-bold text-slate-900">
-              <span>Total Gross Earnings</span>
+            <div class="flex justify-between py-1.5 font-bold text-slate-900">
+              <span>Gross Earnings</span>
               <span class="font-mono text-emerald-700">${UI.formatCurrency(slip.grossPay)}</span>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions (INR)</h4>
-          <div class="space-y-1.5">
-            <div class="flex justify-between py-1 border-b border-slate-100">
+          <h4 class="font-bold text-slate-900 uppercase text-[10px] mb-1.5 pb-1 border-b border-slate-200 text-rose-700">Deductions (INR)</h4>
+          <div class="space-y-1">
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
               <span class="text-slate-600">Income Tax (TDS)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.incomeTax || Math.round(slip.grossPay * 0.10))}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Employees' Provident Fund (EPF)</span>
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
+              <span class="text-slate-600">Provident Fund (EPF)</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.providentFund || Math.round(slip.baseSalary * 0.12))}</span>
             </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Health & Group Insurance</span>
+            <div class="flex justify-between py-0.5 border-b border-slate-100">
+              <span class="text-slate-600">Health Insurance</span>
               <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
             </div>
             ${lopAmount > 0 ? `
-              <div class="flex justify-between py-1.5 border-b border-rose-100 bg-rose-50/70 px-2 rounded -mx-2">
+              <div class="flex justify-between py-1 border-b border-rose-100 bg-rose-50/70 px-1.5 rounded -mx-1">
                 <div>
-                  <span class="text-rose-800 font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-user-clock text-rose-500 text-[10px]"></i>
-                    Attendance / Loss of Pay (LOP)
+                  <span class="text-rose-800 font-bold flex items-center gap-1 text-[11px]">
+                    <i class="fa-solid fa-user-clock text-rose-500 text-[9px]"></i>
+                    Attendance / LOP
                   </span>
-                  <span class="text-[10px] text-rose-600 block mt-0.5">${attSummary.lopDays} day(s) deduction (${attSummary.absentDays} absent${attSummary.lateDays > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
+                  <span class="text-[9px] text-rose-600 block">${attSummary.lopDays}d LOP (${attSummary.absentDays} abs${attSummary.lateDays > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
                 </div>
                 <span class="font-mono font-bold text-rose-700">-${UI.formatCurrency(lopAmount)}</span>
               </div>
             ` : `
-              <div class="flex justify-between py-1 border-b border-slate-100">
-                <span class="text-slate-600">Attendance / LOP Deduction</span>
+              <div class="flex justify-between py-0.5 border-b border-slate-100">
+                <span class="text-slate-600">Attendance / LOP</span>
                 <span class="font-mono text-emerald-600 font-medium">₹0 (100% Present)</span>
               </div>
             `}
-            <div class="flex justify-between py-2 font-bold text-slate-900">
+            <div class="flex justify-between py-1.5 font-bold text-slate-900">
               <span>Total Deductions</span>
               <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>
             </div>
@@ -1301,12 +1328,12 @@ const HR = {
         </div>
       </div>
 
-      <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
+      <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-xl flex items-center justify-between">
         <div>
-          <span class="text-xs text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
-          <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
+          <span class="text-[10px] text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
+          <span class="text-[11px] text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
         </div>
-        <div class="text-2xl font-black text-indigo-900 font-mono">
+        <div class="text-xl font-black text-indigo-900 font-mono">
           ${UI.formatCurrency(slip.netPay)}
         </div>
       </div>

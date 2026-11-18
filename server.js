@@ -138,7 +138,7 @@ app.get('/api/stats/employee/:id', (req, res) => {
 
 // ----------------- EMPLOYEES ROUTES -----------------
 app.get('/api/employees', (req, res) => {
-  const { search, department, status } = req.query;
+  const { search, department, status, employmentType } = req.query;
   let results = [...db.employees];
 
   if (search) {
@@ -158,6 +158,10 @@ app.get('/api/employees', (req, res) => {
     results = results.filter(e => e.status.toLowerCase() === status.toLowerCase());
   }
 
+  if (employmentType && employmentType !== 'All') {
+    results = results.filter(e => (e.employmentType || 'Full-Time').toLowerCase() === employmentType.toLowerCase());
+  }
+
   res.json(results);
 });
 
@@ -169,7 +173,7 @@ app.get('/api/employees/:id', (req, res) => {
 
 app.post('/api/employees', (req, res) => {
   const authUser = getAuthUser(req);
-  const { name, email, jobTitle, department, role = 'employee', salary, phone, location, manager, isHrAdmin } = req.body;
+  const { name, email, jobTitle, department, role = 'employee', salary, phone, location, manager, isHrAdmin, employmentType = 'Full-Time' } = req.body;
 
   if (!name || !email || !jobTitle) {
     return res.status(400).json({ error: 'Name, email, and job title are required' });
@@ -209,6 +213,7 @@ app.post('/api/employees', (req, res) => {
     jobTitle,
     department: department || (isCreatingHrAccount ? 'Human Resources' : 'Engineering'),
     role: assignedRole,
+    employmentType: employmentType || 'Full-Time',
     isHrAdmin: assignedIsHrAdmin,
     joinDate: new Date().toISOString().split('T')[0],
     salary: Number(salary) || (isCreatingHrAccount ? 1500000 : 900000),

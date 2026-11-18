@@ -96,7 +96,7 @@ const Employee = {
       <div class="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-800 rounded-2xl p-6 sm:p-8 text-white shadow-xl shadow-emerald-700/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-emerald-100 mb-3 border border-white/15">
-            <i class="fa-solid fa-id-card-clip text-emerald-200"></i> ${emp.department || 'Employee'} • ${emp.jobTitle || 'Staff'}
+            <i class="fa-solid fa-id-card-clip text-emerald-200"></i> ${emp.department || 'Employee'} • ${emp.jobTitle || 'Staff'} • <span class="bg-white/20 px-2 py-0.5 rounded text-[11px] font-semibold">${emp.employmentType || 'Full-Time'}</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Welcome, ${emp.name || 'Team Member'}</h2>
           <p class="text-emerald-100 text-sm mt-1 max-w-xl">
@@ -564,7 +564,7 @@ const Employee = {
     const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || attSummary.attendanceDeduction || 0;
 
     payslipContainer.innerHTML = `
-      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-6 flex items-center justify-between text-xs text-emerald-800 no-print">
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 mb-3.5 flex items-center justify-between text-xs text-emerald-800 no-print">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
           <div>
@@ -575,7 +575,7 @@ const Employee = {
         <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-full text-[10px]">VERIFIED</span>
       </div>
 
-      <div class="border-b border-slate-200 pb-6 mb-6 flex justify-between items-start">
+      <div class="border-b border-slate-200 pb-3 mb-3.5 flex justify-between items-start">
         <div>
           <div class="flex items-center gap-2.5 mb-2">
             <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
@@ -593,7 +593,7 @@ const Employee = {
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 text-xs">
+      <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3.5 text-xs">
         <div>
           <span class="text-slate-400 block">Employee Name</span>
           <strong class="text-slate-900 text-sm">${emp.name || slip.employeeName}</strong>
@@ -602,12 +602,12 @@ const Employee = {
         <div>
           <span class="text-slate-400 block">Designation & Department</span>
           <strong class="text-slate-900 text-sm">${emp.jobTitle}</strong>
-          <span class="text-slate-500 block mt-1">${emp.department}</span>
+          <span class="text-slate-500 block mt-1">${emp.department} • ${emp.employmentType || 'Full-Time'}</span>
         </div>
       </div>
 
       <!-- Attendance & Working Days Summary Card -->
-      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 mb-6">
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3 mb-3.5">
         <div class="flex items-center justify-between mb-2.5">
           <span class="text-xs font-bold text-indigo-900 uppercase tracking-wide flex items-center gap-1.5">
             <i class="fa-solid fa-calendar-check text-indigo-600"></i>
@@ -639,7 +639,7 @@ const Employee = {
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-6 text-xs mb-6">
+      <div class="grid grid-cols-2 gap-4 text-xs mb-3.5">
         <div>
           <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-emerald-700">Earnings (INR)</h4>
           <div class="space-y-1.5">
@@ -706,7 +706,7 @@ const Employee = {
         </div>
       </div>
 
-      <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex items-center justify-between">
+      <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-xl flex items-center justify-between">
         <div>
           <span class="text-xs text-indigo-700 uppercase font-semibold block">Net Disbursed Take-Home</span>
           <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
@@ -738,9 +738,14 @@ const Employee = {
             <div class="min-w-0 flex-1">
               <h4 class="font-bold text-slate-900 text-sm truncate">${col.name}</h4>
               <p class="text-xs text-indigo-600 font-medium truncate">${col.jobTitle}</p>
-              <span class="inline-block px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 rounded font-semibold mt-1">
-                ${col.department}
-              </span>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="inline-block px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 rounded font-semibold">
+                  ${col.department}
+                </span>
+                <span class="inline-block px-2 py-0.5 text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200 rounded font-semibold">
+                  ${col.employmentType || 'Full-Time'}
+                </span>
+              </div>
               <div class="text-[11px] text-slate-500 mt-2 space-y-0.5 truncate">
                 <div><i class="fa-regular fa-envelope text-slate-400 mr-1"></i> ${col.email}</div>
                 <div><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> ${col.location}</div>

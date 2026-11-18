@@ -48,6 +48,7 @@ const UI = {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
     }
   },
 
@@ -55,6 +56,10 @@ const UI = {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.classList.add('hidden');
+      const anyOpen = document.querySelector('.fixed.z-50:not(.hidden)');
+      if (!anyOpen) {
+        document.body.classList.remove('overflow-hidden');
+      }
     }
   },
 
@@ -116,5 +121,14 @@ document.addEventListener('click', (e) => {
   const switchMenu = document.getElementById('switch-menu');
   if (switchBtn && switchMenu && !switchBtn.contains(e.target) && !switchMenu.contains(e.target)) {
     switchMenu.classList.add('hidden');
+  }
+});
+
+// Close open modals when pressing Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const openModals = document.querySelectorAll('.fixed.z-50:not(.hidden)');
+    openModals.forEach(m => m.classList.add('hidden'));
+    document.body.classList.remove('overflow-hidden');
   }
 });

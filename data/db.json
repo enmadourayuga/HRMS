@@ -74,7 +74,8 @@
           "total": 6,
           "used": 1
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-002",
@@ -103,7 +104,8 @@
           "total": 5,
           "used": 2
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-003",
@@ -132,7 +134,8 @@
           "total": 5,
           "used": 0
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-004",
@@ -161,7 +164,8 @@
           "total": 5,
           "used": 1
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-005",
@@ -190,7 +194,8 @@
           "total": 5,
           "used": 2
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-006",
@@ -219,7 +224,8 @@
           "total": 5,
           "used": 1
         }
-      }
+      },
+      "employmentType": "Contract"
     },
     {
       "id": "EMP-007",
@@ -248,7 +254,8 @@
           "total": 5,
           "used": 1
         }
-      }
+      },
+      "employmentType": "Full-Time"
     },
     {
       "id": "EMP-008",
@@ -277,7 +284,8 @@
           "total": 5,
           "used": 0
         }
-      }
+      },
+      "employmentType": "Part-Time"
     },
     {
       "id": "EMP-009",
@@ -307,7 +315,8 @@
           "total": 5,
           "used": 0
         }
-      }
+      },
+      "employmentType": "Full-Time"
     }
   ],
   "leaves": [

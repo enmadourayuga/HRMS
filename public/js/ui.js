@@ -139,8 +139,11 @@ const UI = {
       <div class="space-y-3.5">
         <!-- Header User Card -->
         <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-          <div class="relative shrink-0">
-            <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces'}" class="w-12 h-12 rounded-xl object-cover ring-2 ring-indigo-500/20" alt="${emp.name || 'User'}">
+          <div class="relative shrink-0 group cursor-pointer" onclick="UI.openChangeAvatarModal('${emp.id || user.employeeId}'); const m = document.getElementById('profile-menu'); if(m) m.classList.add('hidden');" title="Click to change profile picture">
+            <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces'}" class="w-12 h-12 rounded-xl object-cover ring-2 ring-indigo-500/20 group-hover:opacity-85 transition-all" alt="${emp.name || 'User'}">
+            <div class="absolute inset-0 bg-slate-900/40 rounded-xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+              <i class="fa-solid fa-camera text-white text-xs"></i>
+            </div>
             <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full ${isInactive ? 'bg-rose-500' : 'bg-emerald-500'} ring-2 ring-white"></span>
           </div>
           <div class="flex-1 min-w-0">
@@ -179,11 +182,16 @@ const UI = {
         </div>
 
         <!-- Action Links -->
-        <div class="pt-1 flex items-center gap-2">
-          <button onclick="UI.openFullProfile()" class="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm shadow-indigo-600/20 transition-all">
-            <i class="fa-solid fa-id-card"></i> View Full Profile
-          </button>
-          <button onclick="Auth.logout()" class="py-2 px-3 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+        <div class="pt-1 space-y-2">
+          <div class="flex items-center gap-2">
+            <button onclick="UI.openFullProfile()" class="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm shadow-indigo-600/20 transition-all">
+              <i class="fa-solid fa-id-card"></i> View Full Profile
+            </button>
+            <button onclick="UI.openChangeAvatarModal('${emp.id || user.employeeId}'); const m = document.getElementById('profile-menu'); if(m) m.classList.add('hidden');" class="py-2 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors" title="Change Photo">
+              <i class="fa-solid fa-camera"></i> Change Photo
+            </button>
+          </div>
+          <button onclick="Auth.logout()" class="w-full py-2 px-3 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
           </button>
         </div>
@@ -273,6 +281,275 @@ const UI = {
     }
     update();
     setInterval(update, 1000);
+  },
+
+  // ---------------- PROFILE IMAGE / AVATAR HELPERS ----------------
+  avatarPresets: [
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces',
+    'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces'
+  ],
+
+  defaultAvatars: {
+    employee: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces',
+    hr: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces'
+  },
+
+  async compressAndResizeImage(file, maxWidth = 300, maxHeight = 300, quality = 0.85) {
+    if (!file || !file.type.startsWith('image/')) {
+      throw new Error('Please select a valid image file (PNG, JPG, WebP, etc.).');
+    }
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Failed to read selected image file.'));
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Failed to parse image data.'));
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
+  async handleAvatarFileSelect(event, context) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await this.compressAndResizeImage(file);
+      this.setAvatarValue(context, dataUrl);
+      this.toast('Photo loaded and compressed successfully!', 'success');
+    } catch (err) {
+      this.toast(err.message || 'Error processing image', 'error');
+    }
+  },
+
+  handleAvatarUrlInput(context, url) {
+    const trimmed = (url || '').trim();
+    if (!trimmed) return;
+    this.setAvatarValue(context, trimmed, false);
+  },
+
+  toggleAvatarUrlInput(context) {
+    const wrapper = document.getElementById(`${context}-avatar-url-wrapper`);
+    if (wrapper) {
+      wrapper.classList.toggle('hidden');
+      if (!wrapper.classList.contains('hidden')) {
+        const input = document.getElementById(`${context}-avatar-url-input`);
+        if (input) input.focus();
+      }
+    }
+  },
+
+  clearAvatarUrlInput(context) {
+    const input = document.getElementById(`${context}-avatar-url-input`);
+    if (input) input.value = '';
+    const wrapper = document.getElementById(`${context}-avatar-url-wrapper`);
+    if (wrapper) wrapper.classList.add('hidden');
+  },
+
+  setAvatarValue(context, value, updateUrlInput = true) {
+    // 1. Update Preview Image
+    const preview = document.getElementById(`${context}-avatar-preview`);
+    if (preview) {
+      preview.src = value;
+    }
+    // 2. Update Hidden input or storage
+    if (context === 'change-modal') {
+      const targetVal = document.getElementById('change-avatar-value');
+      if (targetVal) targetVal.value = value;
+      if (updateUrlInput) {
+        const urlInput = document.getElementById('change-avatar-url-input');
+        if (urlInput) urlInput.value = value.startsWith('data:') ? '' : value;
+      }
+    } else {
+      const hidden = document.getElementById(`${context}-avatar`);
+      if (hidden) hidden.value = value;
+      if (updateUrlInput) {
+        const urlInput = document.getElementById(`${context}-avatar-url-input`);
+        if (urlInput) urlInput.value = value.startsWith('data:') ? '' : value;
+      }
+    }
+  },
+
+  setAvatarPreset(context, url) {
+    this.setAvatarValue(context, url, true);
+  },
+
+  cyclePresetAvatar(context) {
+    const rand = this.avatarPresets[Math.floor(Math.random() * this.avatarPresets.length)];
+    this.setAvatarValue(context, rand, true);
+  },
+
+  resetAvatarInput(context, defaultUrl = null) {
+    const fallback = defaultUrl || this.defaultAvatars.employee;
+    this.setAvatarValue(context, fallback, true);
+    this.clearAvatarUrlInput(context);
+    const fileInput = document.getElementById(`${context}-avatar-file`) || document.getElementById('change-avatar-file-input');
+    if (fileInput) fileInput.value = '';
+  },
+
+  initAvatarEdit(context, currentAvatar) {
+    const val = currentAvatar || this.defaultAvatars.employee;
+    this.setAvatarValue(context, val, true);
+    this.clearAvatarUrlInput(context);
+  },
+
+  renderAvatarPresets(context, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = this.avatarPresets.slice(0, 6).map((url, i) => `
+      <button type="button" onclick="UI.setAvatarPreset('${context}', '${url}')" class="shrink-0 w-6 h-6 rounded-lg overflow-hidden border border-slate-200 hover:scale-110 hover:ring-2 hover:ring-indigo-500 transition-all focus:outline-none" title="Select Preset ${i + 1}">
+        <img src="${url}" class="w-full h-full object-cover" alt="Preset ${i + 1}">
+      </button>
+    `).join('');
+  },
+
+  renderChangeAvatarModalPresets() {
+    const grid = document.getElementById('change-avatar-presets-grid');
+    if (!grid) return;
+    grid.innerHTML = this.avatarPresets.map((url, i) => `
+      <button type="button" onclick="UI.setAvatarPreset('change-modal', '${url}')" class="group relative aspect-square rounded-xl overflow-hidden border-2 border-slate-200 hover:border-indigo-600 hover:scale-105 transition-all focus:outline-none" title="Preset ${i + 1}">
+        <img src="${url}" class="w-full h-full object-cover group-hover:brightness-95" alt="Preset ${i + 1}">
+      </button>
+    `).join('');
+  },
+
+  openChangeAvatarModal(targetEmpId = null) {
+    const empId = targetEmpId || Auth.employee?.id || Auth.user?.employeeId;
+    let emp = null;
+    if (typeof HR !== 'undefined' && Array.isArray(HR.employees)) {
+      emp = HR.employees.find(e => e.id === empId);
+    }
+    if (!emp && typeof Employee !== 'undefined' && Employee.employeeData && Employee.employeeData.id === empId) {
+      emp = Employee.employeeData;
+    }
+    if (!emp && Auth.employee) {
+      emp = Auth.employee;
+    }
+
+    const currentAvatar = emp?.avatar || this.defaultAvatars.employee;
+    const name = emp?.name || 'User Profile';
+
+    const targetIdInput = document.getElementById('change-avatar-target-id');
+    if (targetIdInput) targetIdInput.value = empId || '';
+    const targetValInput = document.getElementById('change-avatar-value');
+    if (targetValInput) targetValInput.value = currentAvatar;
+    const titleEl = document.getElementById('modal-change-avatar-title');
+    if (titleEl) titleEl.textContent = `Change Profile Image`;
+    const subEl = document.getElementById('modal-change-avatar-subtitle');
+    if (subEl) subEl.textContent = `Update photo for ${name} (${empId || 'Self'})`;
+    
+    const preview = document.getElementById('change-avatar-preview');
+    if (preview) preview.src = currentAvatar;
+    
+    const urlInput = document.getElementById('change-avatar-url-input');
+    if (urlInput) urlInput.value = currentAvatar.startsWith('data:') ? '' : currentAvatar;
+
+    const fileInput = document.getElementById('change-avatar-file-input');
+    if (fileInput) fileInput.value = '';
+
+    this.renderChangeAvatarModalPresets();
+    this.openModal('modal-change-avatar');
+  },
+
+  async saveChangedAvatar() {
+    const empId = document.getElementById('change-avatar-target-id')?.value;
+    const avatar = document.getElementById('change-avatar-value')?.value;
+
+    if (!empId) {
+      this.toast('Employee ID missing', 'error');
+      return;
+    }
+    if (!avatar || !avatar.trim()) {
+      this.toast('Please choose or upload a photo', 'warning');
+      return;
+    }
+
+    const btn = document.getElementById('btn-save-changed-avatar');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+    }
+
+    try {
+      const res = await API.patch(`/employees/${empId}/avatar`, { avatar });
+      const updatedAvatar = res.avatar || avatar;
+
+      // 1. Update in HR employees cache
+      if (typeof HR !== 'undefined' && Array.isArray(HR.employees)) {
+        const target = HR.employees.find(e => e.id === empId);
+        if (target) target.avatar = updatedAvatar;
+      }
+
+      // 2. Update if this is the authenticated user
+      const isCurrentUser = (Auth.user?.employeeId === empId || Auth.employee?.id === empId);
+      if (isCurrentUser) {
+        if (Auth.employee) Auth.employee.avatar = updatedAvatar;
+        const headerAvatar = document.getElementById('header-user-avatar');
+        if (headerAvatar) headerAvatar.src = updatedAvatar;
+        this.renderProfileDropdown();
+      }
+
+      // 3. Update active view if viewing employee profile
+      if (typeof Employee !== 'undefined' && Employee.employeeData && Employee.employeeData.id === empId) {
+        Employee.employeeData.avatar = updatedAvatar;
+        if (typeof Employee.renderProfile === 'function') {
+          Employee.renderProfile();
+        }
+      }
+
+      // 4. Update HR views if in HR portal
+      if (typeof HR !== 'undefined') {
+        const viewModal = document.getElementById('modal-view-employee');
+        if (viewModal && !viewModal.classList.contains('hidden') && typeof HR.openViewEmployeeModal === 'function') {
+          HR.openViewEmployeeModal(empId);
+        }
+        if (typeof HR.renderProfile === 'function' && isCurrentUser) {
+          HR.renderProfile();
+        }
+        if (HR.currentTab === 'employees' && typeof HR.renderActiveTab === 'function') {
+          HR.renderActiveTab();
+        }
+      }
+
+      this.closeModal('modal-change-avatar');
+      this.toast('Profile image updated successfully!', 'success');
+    } catch (err) {
+      this.toast(err.message || 'Failed to update profile image', 'error');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `Save Photo`;
+      }
+    }
   }
 };
 

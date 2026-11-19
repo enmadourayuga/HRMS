@@ -394,6 +394,55 @@
       </div>
 
       <form id="form-add-employee" onsubmit="HR.submitNewEmployee(event)" class="p-6 space-y-4">
+        <!-- Profile Photo Selection (Add Employee / HR) -->
+        <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Profile Image (Optional)</label>
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
+            <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('add-employee-avatar-file').click()" title="Click to upload profile photo">
+              <img id="add-employee-avatar-preview" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces" class="w-16 h-16 rounded-2xl object-cover ring-2 ring-indigo-500/20 shadow-md group-hover:opacity-85 transition-all" alt="Avatar Preview">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-sm"></i>
+              </div>
+            </div>
+
+            <div class="flex-1 w-full space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <input type="file" id="add-employee-avatar-file" accept="image/*" class="hidden" onchange="UI.handleAvatarFileSelect(event, 'add-employee')">
+                <button type="button" onclick="document.getElementById('add-employee-avatar-file').click()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Upload Photo
+                </button>
+                <button type="button" onclick="UI.toggleAvatarUrlInput('add-employee')" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-link text-indigo-600"></i> Image URL
+                </button>
+                <button type="button" onclick="UI.cyclePresetAvatar('add-employee')" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-shuffle text-indigo-600"></i> Random Preset
+                </button>
+                <button type="button" onclick="UI.resetAvatarInput('add-employee')" class="px-2 py-1.5 text-slate-400 hover:text-rose-600 text-xs font-medium transition-colors" title="Reset to default">
+                  <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+              </div>
+
+              <!-- Collapsible URL Input -->
+              <div id="add-employee-avatar-url-wrapper" class="hidden">
+                <div class="relative">
+                  <input type="url" id="add-employee-avatar-url-input" placeholder="Paste image URL (https://...)" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pr-8" oninput="UI.handleAvatarUrlInput('add-employee', this.value)">
+                  <button type="button" onclick="UI.clearAvatarUrlInput('add-employee')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Presets row -->
+              <div class="flex items-center gap-1.5 pt-0.5">
+                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">Presets:</span>
+                <div class="flex items-center gap-1 overflow-x-auto py-0.5" id="add-employee-avatar-presets">
+                  <!-- Populated by UI.renderAvatarPresets -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="avatar" id="add-employee-avatar">
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
@@ -530,6 +579,56 @@
       <form id="form-edit-employee" onsubmit="HR.submitEditEmployee(event)" class="p-6 space-y-4">
         <input type="hidden" name="id" id="edit-employee-id">
 
+        <!-- Profile Photo Selection (Edit Employee) -->
+        <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Profile Image</label>
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
+            <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('edit-employee-avatar-file').click()" title="Click to upload new photo">
+              <img id="edit-employee-avatar-preview" src="" class="w-16 h-16 rounded-2xl object-cover ring-2 ring-indigo-500/20 shadow-md group-hover:opacity-85 transition-all" alt="Avatar Preview">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-sm"></i>
+              </div>
+            </div>
+
+            <div class="flex-1 w-full space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <input type="file" id="edit-employee-avatar-file" accept="image/*" class="hidden" onchange="UI.handleAvatarFileSelect(event, 'edit-employee')">
+                <button type="button" onclick="document.getElementById('edit-employee-avatar-file').click()" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-cloud-arrow-up text-indigo-600"></i> Change Photo
+                </button>
+                <button type="button" onclick="UI.toggleAvatarUrlInput('edit-employee')" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-link text-indigo-600"></i> Image URL
+                </button>
+                <button type="button" onclick="UI.cyclePresetAvatar('edit-employee')" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                  <i class="fa-solid fa-shuffle text-indigo-600"></i> Random Preset
+                </button>
+                <button type="button" onclick="UI.resetAvatarInput('edit-employee')" class="px-2 py-1.5 text-slate-400 hover:text-rose-600 text-xs font-medium transition-colors" title="Reset to default">
+                  <i class="fa-solid fa-rotate-left"></i> Reset
+                </button>
+              </div>
+
+              <!-- Collapsible URL Input -->
+              <div id="edit-employee-avatar-url-wrapper" class="hidden">
+                <div class="relative">
+                  <input type="url" id="edit-employee-avatar-url-input" placeholder="Paste image URL (https://...)" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pr-8" oninput="UI.handleAvatarUrlInput('edit-employee', this.value)">
+                  <button type="button" onclick="UI.clearAvatarUrlInput('edit-employee')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Presets row -->
+              <div class="flex items-center gap-1.5 pt-0.5">
+                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider shrink-0">Presets:</span>
+                <div class="flex items-center gap-1 overflow-x-auto py-0.5" id="edit-employee-avatar-presets">
+                  <!-- Populated by UI.renderAvatarPresets -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="avatar" id="edit-employee-avatar">
+        </div>
+
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
@@ -654,6 +753,85 @@
   <div id="modal-view-employee" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 modal-enter overflow-hidden my-8" id="view-employee-content">
       <!-- Injected dynamically by HR.openViewEmployeeModal -->
+    </div>
+  </div>
+
+  <!-- 1d. Change Profile Image Modal (Self or Any Employee) -->
+  <div id="modal-change-avatar" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 modal-enter overflow-hidden my-8">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-camera"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base" id="modal-change-avatar-title">Change Profile Image</h3>
+            <p class="text-xs text-slate-500" id="modal-change-avatar-subtitle">Update your profile picture</p>
+          </div>
+        </div>
+        <button onclick="UI.closeModal('modal-change-avatar')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="change-avatar-target-id">
+        <input type="hidden" id="change-avatar-value">
+
+        <!-- Center Preview Circle -->
+        <div class="flex flex-col items-center justify-center pt-1">
+          <div class="relative group cursor-pointer" onclick="document.getElementById('change-avatar-file-input').click()" title="Click to choose a photo">
+            <img id="change-avatar-preview" src="" class="w-24 h-24 rounded-3xl object-cover ring-4 ring-indigo-500/20 shadow-xl group-hover:opacity-85 transition-all" alt="Avatar Preview">
+            <div class="absolute inset-0 bg-slate-900/40 rounded-3xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+              <i class="fa-solid fa-camera text-white text-xl"></i>
+            </div>
+            <span class="absolute -bottom-1 -right-1 w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs shadow-md border-2 border-white">
+              <i class="fa-solid fa-pen"></i>
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2 font-medium">Click image to upload from device</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-center gap-2">
+          <input type="file" id="change-avatar-file-input" accept="image/*" class="hidden" onchange="UI.handleAvatarFileSelect(event, 'change-modal')">
+          <button type="button" onclick="document.getElementById('change-avatar-file-input').click()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl text-xs border border-indigo-200 transition-colors flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload From Device
+          </button>
+          <button type="button" onclick="UI.cyclePresetAvatar('change-modal')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs border border-slate-200 transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-shuffle"></i> Random Preset
+          </button>
+        </div>
+
+        <!-- Or Web Image URL -->
+        <div class="space-y-1">
+          <label class="block text-xs font-semibold text-slate-700">Or Paste Image URL</label>
+          <div class="relative">
+            <input type="url" id="change-avatar-url-input" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" oninput="UI.handleAvatarUrlInput('change-modal', this.value)">
+          </div>
+        </div>
+
+        <!-- Curated Presets Grid -->
+        <div class="space-y-1.5 pt-1">
+          <label class="block text-xs font-semibold text-slate-700">Or Choose from Presets</label>
+          <div class="grid grid-cols-5 gap-2" id="change-avatar-presets-grid">
+            <!-- Rendered presets -->
+          </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
+          <button type="button" onclick="UI.resetAvatarInput('change-modal')" class="text-xs text-rose-600 hover:text-rose-700 font-medium flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left"></i> Reset to Default
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="UI.closeModal('modal-change-avatar')" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-medium">Cancel</button>
+            <button type="button" onclick="UI.saveChangedAvatar()" id="btn-save-changed-avatar" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-md shadow-indigo-600/20 transition-colors">
+              Save Photo
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

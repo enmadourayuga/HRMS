@@ -1100,10 +1100,13 @@ const Employee = {
 
         <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div class="flex items-center gap-5">
-            <div class="relative">
-              <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces'}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white/10 shadow-xl" alt="${emp.name}">
-              <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${isInactive ? 'bg-rose-500' : 'bg-emerald-500'} ring-2 ring-slate-900 flex items-center justify-center text-[10px]" title="${emp.status || 'Active'}">
-                <i class="fa-solid fa-check text-white"></i>
+            <div class="relative group cursor-pointer shrink-0" onclick="UI.openChangeAvatarModal('${emp.id}')" title="Click to change profile image">
+              <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces'}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white/10 shadow-xl group-hover:opacity-85 transition-all" alt="${emp.name}">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-base"></i>
+              </div>
+              <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px] shadow-lg border-2 border-slate-900" title="Change Photo">
+                <i class="fa-solid fa-camera"></i>
               </span>
             </div>
             <div>
@@ -1123,6 +1126,11 @@ const Employee = {
                 <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-indigo-400"></i> Joined ${UI.formatDate(emp.joinDate)}</span>
               </div>
             </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="UI.openChangeAvatarModal('${emp.id}')" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all flex items-center gap-2 shadow-sm">
+              <i class="fa-solid fa-camera"></i> Change Photo
+            </button>
           </div>
         </div>
       </div>
@@ -1289,6 +1297,12 @@ const Employee = {
         </div>
       </div>
     `;
+  },
+
+  openChangeAvatarModal() {
+    if (typeof UI !== 'undefined' && typeof UI.openChangeAvatarModal === 'function') {
+      UI.openChangeAvatarModal(this.employeeData?.id || Auth.user?.employeeId);
+    }
   }
 };
 

@@ -387,7 +387,12 @@ const HR = {
       <tr class="hover:bg-slate-50 transition-colors ${emp.status === 'Inactive' ? 'bg-slate-50/60 opacity-80' : ''}">
         <td class="px-5 py-4">
           <div class="flex items-center gap-3">
-            <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200" alt="${emp.name}">
+            <div class="relative group cursor-pointer shrink-0" onclick="UI.openChangeAvatarModal('${emp.id}')" title="Click to change profile image">
+              <img src="${emp.avatar}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200 group-hover:opacity-80 transition-all" alt="${emp.name}">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-[10px]"></i>
+              </div>
+            </div>
             <div>
               <div class="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <span>${emp.name}</span>
@@ -439,6 +444,9 @@ const HR = {
             </button>
             <button onclick="HR.openEditEmployeeModal('${emp.id}')" title="Edit Employee (EMP-008)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200 transition-colors flex items-center gap-1">
               <i class="fa-solid fa-pen text-[11px]"></i> Edit
+            </button>
+            <button onclick="UI.openChangeAvatarModal('${emp.id}')" title="Change Profile Image" class="px-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg border border-slate-200 transition-colors">
+              <i class="fa-solid fa-camera text-[11px]"></i>
             </button>
             <button onclick="HR.toggleEmployeeStatus('${emp.id}')" title="${emp.status === 'Inactive' ? 'Activate Employee' : 'Deactivate Employee'} (EMP-010)" class="px-2.5 py-1.5 ${emp.status === 'Inactive' ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'} text-xs font-semibold rounded-lg transition-colors flex items-center gap-1">
               <i class="fa-solid ${emp.status === 'Inactive' ? 'fa-user-check' : 'fa-user-slash'} text-[11px]"></i> ${emp.status === 'Inactive' ? 'Activate' : 'Deactivate'}
@@ -1147,6 +1155,12 @@ const HR = {
     const addCasual = document.getElementById('add-employee-leave-casual');
     if (addCasual) addCasual.value = 5;
 
+    // Initialize profile photo selection for standard employee
+    if (typeof UI !== 'undefined') {
+      UI.resetAvatarInput('add-employee', UI.defaultAvatars.employee);
+      UI.renderAvatarPresets('add-employee', 'add-employee-avatar-presets');
+    }
+
     UI.openModal('modal-add-employee');
   },
 
@@ -1216,6 +1230,12 @@ const HR = {
     const addCasual = document.getElementById('add-employee-leave-casual');
     if (addCasual) addCasual.value = 6;
 
+    // Initialize profile photo selection for HR account
+    if (typeof UI !== 'undefined') {
+      UI.resetAvatarInput('add-employee', UI.defaultAvatars.hr);
+      UI.renderAvatarPresets('add-employee', 'add-employee-avatar-presets');
+    }
+
     UI.openModal('modal-add-employee');
   },
 
@@ -1239,6 +1259,7 @@ const HR = {
     const annualVal = formData.get('leaveAnnualTotal');
     const sickVal = formData.get('leaveSickTotal');
     const casualVal = formData.get('leaveCasualTotal');
+    const avatar = formData.get('avatar') || document.getElementById('add-employee-avatar')?.value;
 
     const body = {
       name: formData.get('name'),
@@ -1253,6 +1274,7 @@ const HR = {
       salaryStructureId: formData.get('salaryStructureId') || 'STR-001',
       phone: formData.get('phone'),
       location: formData.get('location'),
+      avatar: (avatar && String(avatar).trim()) ? String(avatar).trim() : undefined,
       leaveBalances: {
         annual: { total: (annualVal !== null && annualVal !== '') ? Math.max(0, parseInt(annualVal, 10)) : defaultAnnual, used: 0 },
         sick: { total: (sickVal !== null && sickVal !== '') ? Math.max(0, parseInt(sickVal, 10)) : defaultSick, used: 0 },
@@ -1308,7 +1330,12 @@ const HR = {
       content.innerHTML = `
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <img src="${emp.avatar}" class="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-500/20" alt="${emp.name}">
+            <div class="relative group cursor-pointer shrink-0" onclick="UI.openChangeAvatarModal('${emp.id}')" title="Click to change photo">
+              <img src="${emp.avatar}" class="w-12 h-12 rounded-full object-cover ring-2 ring-indigo-500/20 group-hover:opacity-85 transition-all" alt="${emp.name}">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-xs"></i>
+              </div>
+            </div>
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="font-bold text-slate-900 text-lg">${emp.name}</h3>
@@ -1319,9 +1346,14 @@ const HR = {
               <p class="text-xs text-slate-500">${emp.jobTitle} • ${emp.department}</p>
             </div>
           </div>
-          <button onclick="UI.closeModal('modal-view-employee')" class="text-slate-400 hover:text-slate-600">
-            <i class="fa-solid fa-xmark text-lg"></i>
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="UI.openChangeAvatarModal('${emp.id}')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold rounded-xl text-xs transition-colors flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-camera text-indigo-600"></i> Change Photo
+            </button>
+            <button onclick="UI.closeModal('modal-view-employee')" class="text-slate-400 hover:text-slate-600 p-1">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
         </div>
 
         <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
@@ -1482,6 +1514,12 @@ const HR = {
     const casualHint = document.getElementById('edit-employee-casual-used-hint');
     if (casualHint) casualHint.textContent = `Used: ${casualUsed} | Default: ${defaultCasual}`;
 
+    // Initialize profile photo selection for edit employee
+    if (typeof UI !== 'undefined') {
+      UI.initAvatarEdit('edit-employee', emp.avatar);
+      UI.renderAvatarPresets('edit-employee', 'edit-employee-avatar-presets');
+    }
+
     document.getElementById('edit-employee-subtitle').textContent = `Editing ${emp.name} (${emp.id})`;
 
     UI.openModal('modal-edit-employee');
@@ -1509,6 +1547,7 @@ const HR = {
     const annualVal = formData.get('leaveAnnualTotal');
     const sickVal = formData.get('leaveSickTotal');
     const casualVal = formData.get('leaveCasualTotal');
+    const avatar = formData.get('avatar') || document.getElementById('edit-employee-avatar')?.value;
 
     const body = {
       name: formData.get('name'),
@@ -1523,6 +1562,7 @@ const HR = {
       status: formData.get('status'),
       phone: formData.get('phone'),
       location: formData.get('location'),
+      avatar: (avatar && String(avatar).trim()) ? String(avatar).trim() : emp?.avatar,
       leaveBalances: {
         annual: {
           total: (annualVal !== null && annualVal !== '') ? Math.max(0, parseInt(annualVal, 10)) : (currentBalances.annual?.total ?? defaultAnnual),
@@ -1542,6 +1582,15 @@ const HR = {
     try {
       const updated = await API.put(`/employees/${empId}`, body);
       UI.toast(`Employee details for ${updated.name} updated successfully!`, 'success');
+
+      // Sync avatar if editing current logged-in user
+      if (Auth.user?.employeeId === empId || Auth.employee?.id === empId) {
+        if (Auth.employee) Auth.employee.avatar = updated.avatar;
+        const headerAvatar = document.getElementById('header-user-avatar');
+        if (headerAvatar) headerAvatar.src = updated.avatar;
+        UI.renderProfileDropdown();
+      }
+
       UI.closeModal('modal-edit-employee');
       await this.loadAllData();
       this.renderActiveTab();
@@ -2337,7 +2386,15 @@ const HR = {
       <div class="bg-gradient-to-r from-purple-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-purple-900/40 relative overflow-hidden">
         <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div class="flex items-center gap-5">
-            <img src="${emp.avatar || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces'}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white/10 shadow-xl" alt="${emp.name}">
+            <div class="relative group cursor-pointer shrink-0" onclick="UI.openChangeAvatarModal('${emp.id || Auth.user?.employeeId}')" title="Click to change profile image">
+              <img src="${emp.avatar || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces'}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white/10 shadow-xl group-hover:opacity-85 transition-all" alt="${emp.name}">
+              <div class="absolute inset-0 bg-slate-900/40 rounded-2xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-camera text-white text-base"></i>
+              </div>
+              <span class="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-[10px] shadow-lg border-2 border-purple-950" title="Change Photo">
+                <i class="fa-solid fa-camera"></i>
+              </span>
+            </div>
             <div>
               <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
                 <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">${emp.name || 'HR Specialist'}</h1>
@@ -2354,6 +2411,11 @@ const HR = {
                 <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-purple-400"></i> Joined ${UI.formatDate(emp.joinDate)}</span>
               </div>
             </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="UI.openChangeAvatarModal('${emp.id || Auth.user?.employeeId}')" class="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl text-xs font-semibold backdrop-blur-sm transition-all flex items-center gap-2 shadow-sm">
+              <i class="fa-solid fa-camera"></i> Change Photo
+            </button>
           </div>
         </div>
       </div>
@@ -2409,6 +2471,12 @@ const HR = {
         </div>
       </div>
     `;
+  },
+
+  openChangeAvatarModal(empId = null) {
+    if (typeof UI !== 'undefined' && typeof UI.openChangeAvatarModal === 'function') {
+      UI.openChangeAvatarModal(empId || Auth.employee?.id || Auth.user?.employeeId);
+    }
   }
 };
 

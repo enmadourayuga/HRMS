@@ -7,7 +7,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database handling with in-memory cache and file persistence
@@ -290,7 +291,8 @@ app.post('/api/employees', (req, res) => {
     employmentType = 'Full-Time',
     joinDate, 
     biometricRef, 
-    salaryStructureId = 'STR-001'
+    salaryStructureId = 'STR-001',
+    avatar
   } = req.body;
 
   if (!name || !email || !jobTitle) {
@@ -344,7 +346,7 @@ app.post('/api/employees', (req, res) => {
     // EMP-003: Personal and contact details
     phone: phone || '+91 98765 00000',
     location: location || 'Bengaluru (HQ)',
-    avatar: `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
+    avatar: (avatar && String(avatar).trim()) ? String(avatar).trim() : `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
     status: 'Active',
     manager: manager || 'Elena Rostova',
     leaveBalances: {
@@ -405,6 +407,9 @@ app.put('/api/employees/:id', (req, res) => {
   if (req.body.salary !== undefined) {
     updatedEmp.salary = Number(req.body.salary);
   }
+  if (req.body.avatar !== undefined && req.body.avatar !== null) {
+    updatedEmp.avatar = String(req.body.avatar).trim();
+  }
 
   // Handle leave balances update if provided
   if (req.body.leaveBalances) {
@@ -464,6 +469,26 @@ app.patch('/api/employees/:id/status', (req, res) => {
   res.json({ message: `Employee ${emp.id} status updated to ${status}`, employee: emp });
 });
 
+// Dedicated endpoint to update employee avatar
+app.patch('/api/employees/:id/avatar', (req, res) => {
+  const emp = db.employees.find(e => e.id === req.params.id);
+  if (!emp) return res.status(404).json({ error: 'Employee not found' });
+
+  const authUser = getAuthUser(req);
+  if (authUser && authUser.role === 'employee' && authUser.employeeId !== req.params.id) {
+    return res.status(403).json({ error: 'Access denied: You can only update your own profile image.' });
+  }
+
+  const { avatar } = req.body;
+  if (!avatar || !String(avatar).trim()) {
+    return res.status(400).json({ error: 'Avatar image URL or data is required' });
+  }
+
+  emp.avatar = String(avatar).trim();
+  saveDatabase();
+  res.json({ message: 'Profile image updated successfully', avatar: emp.avatar, employee: emp });
+});
+
 // Dedicated endpoint: Only HR Admin can create an HR account
 app.post('/api/hr-accounts', (req, res) => {
   const authUser = getAuthUser(req);
@@ -471,7 +496,7 @@ app.post('/api/hr-accounts', (req, res) => {
     return res.status(403).json({ error: 'Access denied: Only the HR Admin can create a new HR account.' });
   }
 
-  const { name, email, jobTitle = 'HR Specialist', department = 'Human Resources', salary = 1400000, phone, location, isHrAdmin = false } = req.body;
+  const { name, email, jobTitle = 'HR Specialist', department = 'Human Resources', salary = 1400000, phone, location, isHrAdmin = false, avatar } = req.body;
   if (!name || !email) {
     return res.status(400).json({ error: 'Name and email are required' });
   }
@@ -501,7 +526,7 @@ app.post('/api/hr-accounts', (req, res) => {
     biometricRef: `BIO-${newId}`,
     phone: phone || '+91 98765 00000',
     location: location || 'Bengaluru (HQ)',
-    avatar: `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
+    avatar: (avatar && String(avatar).trim()) ? String(avatar).trim() : `https://images.unsplash.com/photo-${1535713875002 + db.employees.length}?w=200&h=200&fit=crop&crop=faces`,
     status: 'Active',
     manager: 'Elena Rostova',
     leaveBalances: {

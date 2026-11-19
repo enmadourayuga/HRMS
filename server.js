@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,15 +13,30 @@ app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Database handling with in-memory cache and file persistence
-const DB_PATH = path.join(__dirname, 'data', 'db.json');
+const DB_PATH = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'db.json')
+  : path.join(__dirname, 'data', 'db.json');
 const SEED_PATH = path.join(__dirname, 'data', 'seedData.json');
 
 function loadDatabase() {
   if (!fs.existsSync(DB_PATH)) {
-    const seed = fs.readFileSync(SEED_PATH, 'utf8');
-    fs.writeFileSync(DB_PATH, seed, 'utf8');
+    const initialSource = fs.existsSync(path.join(__dirname, 'data', 'db.json'))
+      ? path.join(__dirname, 'data', 'db.json')
+      : SEED_PATH;
+    const seed = fs.readFileSync(initialSource, 'utf8');
+    try {
+      fs.writeFileSync(DB_PATH, seed, 'utf8');
+    } catch (e) {
+      console.warn('Could not write initial database file:', e.message);
+    }
   }
-  const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+  let raw;
+  try {
+    raw = fs.readFileSync(DB_PATH, 'utf8');
+  } catch (e) {
+    raw = fs.readFileSync(SEED_PATH, 'utf8');
+  }
+  const data = JSON.parse(raw);
   if (!data.salaryStructures) {
     data.salaryStructures = [
       {
@@ -88,7 +104,11 @@ function loadDatabase() {
 let db = loadDatabase();
 
 function saveDatabase() {
-  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error saving database to file:', err.message);
+  }
 }
 
 // Helper: Extract authenticated user from Authorization or X-User-Email header
@@ -1857,7 +1877,11 @@ app.post('/api/announcements', (req, res) => {
 // Reset to seed data
 app.post('/api/reset', (req, res) => {
   const seed = fs.readFileSync(SEED_PATH, 'utf8');
-  fs.writeFileSync(DB_PATH, seed, 'utf8');
+  try {
+    fs.writeFileSync(DB_PATH, seed, 'utf8');
+  } catch (err) {
+    console.error('Error saving reset seed to file:', err.message);
+  }
   db = JSON.parse(seed);
   try {
     syncBiometricPunches();
@@ -1877,6 +1901,10 @@ try {
   console.error('Initial biometric punch sync error:', e);
 }
 
-app.listen(PORT, () => {
-  console.log(`HRMS Server is running at http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`HRMS Server is running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

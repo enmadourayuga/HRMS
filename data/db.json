@@ -59,9 +59,50 @@
       "role": "employee",
       "isHrAdmin": false,
       "employeeId": "EMP-011"
+    },
+    {
+      "id": "USR-EMP-012",
+      "email": "navasva186@gmail.com",
+      "password": "password123",
+      "role": "employee",
+      "isHrAdmin": false,
+      "employeeId": "EMP-012"
     }
   ],
   "employees": [
+    {
+      "id": "EMP-012",
+      "name": "Navas",
+      "email": "navasva186@gmail.com",
+      "jobTitle": "Data Engineer",
+      "department": "Engineering",
+      "role": "employee",
+      "employmentType": "Full-Time",
+      "isHrAdmin": false,
+      "joinDate": "2026-11-19",
+      "salary": 230000,
+      "salaryStructureId": "STR-001",
+      "biometricRef": "BIO-EMP-012",
+      "phone": "+91 98765 00000",
+      "location": "Bengaluru (HQ)",
+      "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces",
+      "status": "Active",
+      "manager": "Elena Rostova",
+      "leaveBalances": {
+        "annual": {
+          "total": 20,
+          "used": 0
+        },
+        "sick": {
+          "total": 10,
+          "used": 0
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
+      }
+    },
     {
       "id": "EMP-011",
       "name": "Rohan Sharma",
@@ -2696,9 +2737,9 @@
       "grossPay": 95833,
       "totalDeductions": 0,
       "netPay": 95833,
-      "status": "Pending Approval",
-      "reviewedBy": null,
-      "approvedAt": null,
+      "status": "Approved",
+      "reviewedBy": "Elena Rostova",
+      "approvedAt": "2026-11-19",
       "monthlyCTC": 95833
     }
   ],

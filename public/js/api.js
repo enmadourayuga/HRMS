@@ -1,6 +1,17 @@
 // API Client Wrapper
 const API = {
-  baseUrl: '/api',
+  get baseUrl() {
+    // 1. Explicit override if set
+    if (typeof window !== 'undefined' && window.NEXUS_API_URL) {
+      return window.NEXUS_API_URL.replace(/\/$/, '');
+    }
+    // 2. When hosted on Vercel or any external domain other than Render, route calls to live Render backend
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !window.location.hostname.includes('onrender.com')) {
+      return 'https://hrms-1-gaus.onrender.com/api';
+    }
+    // 3. Fallback for localhost or when served directly from Render
+    return '/api';
+  },
 
   async request(endpoint, options = {}, isRetry = false) {
     const url = `${this.baseUrl}${endpoint}`;

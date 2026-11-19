@@ -1,6 +1,14 @@
 // API Client Wrapper with JWT Support
 
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+const getApiBase = () => {
+  let base = (import.meta.env.VITE_API_BASE || '/api').trim().replace(/\/+$/, '');
+  if (base.startsWith('http') && !base.endsWith('/api')) {
+    base = `${base}/api`;
+  }
+  return base;
+};
+
+const API_BASE = getApiBase();
 
 export const tokenStorage = {
   getAccess: () => localStorage.getItem('nexus_access_token'),

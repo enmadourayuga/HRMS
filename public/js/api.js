@@ -2,7 +2,7 @@
 const API = {
   baseUrl: '/api',
 
-  async request(endpoint, options = {}) {
+  async request(endpoint, options = {}, isRetry = false) {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
@@ -21,6 +21,33 @@ const API = {
       });
 
       const data = await response.json().catch(() => ({}));
+
+      // Auto-refresh access token on 401 Unauthorized if refreshToken is present
+      if (response.status === 401 && !isRetry && !endpoint.startsWith('/auth/')) {
+        const refreshToken = localStorage.getItem('nexus_refreshToken');
+        if (refreshToken) {
+          try {
+            const refreshRes = await fetch(`${this.baseUrl}/auth/refresh`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken })
+            });
+            const refreshData = await refreshRes.json();
+            if (refreshRes.ok && refreshData.token) {
+              localStorage.setItem('nexus_token', refreshData.token);
+              if (refreshData.refreshToken) {
+                localStorage.setItem('nexus_refreshToken', refreshData.refreshToken);
+              }
+              return this.request(endpoint, options, true);
+            }
+          } catch (refreshErr) {
+            console.warn('Token auto-refresh failed:', refreshErr);
+          }
+        }
+        if (window.Auth && typeof window.Auth.logout === 'function') {
+          window.Auth.logout();
+        }
+      }
 
       if (!response.ok) {
         throw new Error(data.error || `HTTP error! Status: ${response.status}`);

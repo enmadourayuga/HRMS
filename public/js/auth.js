@@ -45,6 +45,9 @@ const Auth = {
       this.employee = data.employee;
 
       localStorage.setItem('nexus_token', data.token);
+      if (data.refreshToken) {
+        localStorage.setItem('nexus_refreshToken', data.refreshToken);
+      }
       localStorage.setItem('nexus_user', JSON.stringify(data.user));
       localStorage.setItem('nexus_employee', JSON.stringify(data.employee));
 
@@ -70,6 +73,7 @@ const Auth = {
 
   logout() {
     localStorage.removeItem('nexus_token');
+    localStorage.removeItem('nexus_refreshToken');
     localStorage.removeItem('nexus_user');
     localStorage.removeItem('nexus_employee');
     this.user = null;

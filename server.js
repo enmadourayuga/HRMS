@@ -3,9 +3,40 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// JWT Configuration & Expiration Periods
+const JWT_SECRET = process.env.JWT_SECRET || 'nexus-hrms-jwt-secret-key-2026';
+const REFRESH_SECRET = process.env.REFRESH_SECRET || 'nexus-hrms-refresh-secret-key-2026';
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || '1h';     // Access token valid for 1 hour
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || '7d';   // Refresh token valid for 7 days
+
+function generateAccessToken(user) {
+  return jwt.sign(
+    {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      employeeId: user.employeeId
+    },
+    JWT_SECRET,
+    { expiresIn: ACCESS_TOKEN_EXPIRY }
+  );
+}
+
+function generateRefreshToken(user) {
+  return jwt.sign(
+    {
+      userId: user.id,
+      type: 'refresh'
+    },
+    REFRESH_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRY }
+  );
+}
 
 app.use(cors());
 app.use(express.json({ limit: '15mb' }));
@@ -121,6 +152,22 @@ function getAuthUser(req) {
   const authHeader = req.headers.authorization;
   if (!authHeader) return null;
   const token = authHeader.replace('Bearer ', '').trim();
+  if (!token) return null;
+
+  // 1. Verify as signed JWT
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded && decoded.userId) {
+      const user = (db.users || []).find(u => u.id === decoded.userId);
+      if (user) return user;
+    }
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return null;
+    }
+  }
+
+  // 2. Backward compatibility fallback for legacy tokens (token-<userId>-<timestamp>)
   const parts = token.split('-');
   if (parts.length >= 3) {
     const userId = parts.slice(1, -1).join('-');
@@ -195,9 +242,15 @@ app.post('/api/auth/login', (req, res) => {
   }
 
   const isHrAdmin = isHrAdminUser(user);
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
 
   res.json({
-    token: `token-${user.id}-${Date.now()}`,
+    token: accessToken,
+    accessToken,
+    refreshToken,
+    expiresIn: ACCESS_TOKEN_EXPIRY,
+    refreshExpiresIn: REFRESH_TOKEN_EXPIRY,
     user: {
       id: user.id,
       email: user.email,
@@ -209,6 +262,61 @@ app.post('/api/auth/login', (req, res) => {
       ...employee,
       isHrAdmin
     } : null
+  });
+});
+
+app.post('/api/auth/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    return res.status(400).json({ error: 'Refresh token is required' });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+    if (decoded.type !== 'refresh' || !decoded.userId) {
+      return res.status(401).json({ error: 'Invalid refresh token type' });
+    }
+
+    const user = (db.users || []).find(u => u.id === decoded.userId);
+    if (!user) {
+      return res.status(401).json({ error: 'User no longer exists' });
+    }
+
+    const employee = (db.employees || []).find(e => e.id === user.employeeId);
+    if (employee && employee.status === 'Inactive') {
+      return res.status(403).json({ error: 'This employee account has been deactivated. Please contact HR.' });
+    }
+
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    res.json({
+      token: newAccessToken,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      expiresIn: ACCESS_TOKEN_EXPIRY,
+      refreshExpiresIn: REFRESH_TOKEN_EXPIRY
+    });
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired refresh token' });
+  }
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const user = getAuthUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized or token expired' });
+  }
+  const employee = (db.employees || []).find(e => e.id === user.employeeId) || null;
+  res.json({
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      isHrAdmin: isHrAdminUser(user),
+      employeeId: user.employeeId
+    },
+    employee
   });
 });
 
@@ -1901,7 +2009,7 @@ try {
   console.error('Initial biometric punch sync error:', e);
 }
 
-if (!process.env.VERCEL) {
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`HRMS Server is running at http://localhost:${PORT}`);
   });

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="nexusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Rect -->
+  <rect width="64" height="64" rx="16" fill="url(#nexusGrad)" />
+  <!-- Roof / Shelter (HR / People Roof) -->
+  <path d="M32 13L13 28H19V47C19 48.1 19.9 49 21 49H43C44.1 49 45 48.1 45 47V28H51L32 13Z" fill="white" fill-opacity="0.18" />
+  <!-- Center person (HR / Lead) -->
+  <circle cx="32" cy="27" r="4.5" fill="white" />
+  <path d="M24.5 44C24.5 39.5 28 36 32 36C36 36 39.5 39.5 39.5 44V46H24.5V44Z" fill="white" />
+  <!-- Left team member -->
+  <circle cx="21" cy="30" r="3.5" fill="white" fill-opacity="0.85" />
+  <path d="M15 45C15 41.5 17.5 38.8 21 38.5C21.7 39.7 22.7 40.7 24 41.4C23.3 43.1 23 44.5 22.9 46H15V45Z" fill="white" fill-opacity="0.85" />
+  <!-- Right team member -->
+  <circle cx="43" cy="30" r="3.5" fill="white" fill-opacity="0.85" />
+  <path d="M49 45C49 41.5 46.5 38.8 43 38.5C42.3 39.7 41.3 40.7 40 41.4C40.7 43.1 41 44.5 41.1 46H49V45Z" fill="white" fill-opacity="0.85" />
+</svg>

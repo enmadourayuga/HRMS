@@ -42,6 +42,9 @@ const Employee = {
       // Update stored employee profile
       Auth.employee = emp;
       localStorage.setItem('nexus_employee', JSON.stringify(emp));
+      if (typeof UI !== 'undefined' && typeof UI.renderProfileDropdown === 'function') {
+        UI.renderProfileDropdown();
+      }
       await this.loadNotifications();
       this.updateLeaveBalanceHelper();
     } catch (err) {
@@ -68,6 +71,9 @@ const Employee = {
     switch (this.activeTab) {
       case 'dashboard':
         this.renderDashboard();
+        break;
+      case 'profile':
+        this.renderProfile();
         break;
       case 'attendance':
         this.renderAttendance();
@@ -182,7 +188,7 @@ const Employee = {
             ` : `
               <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-semibold flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
-                <span>Shift Completed (${todayAtt.totalHours} hrs recorded)</span>
+                <span>Shift Completed (${typeof todayAtt.totalHours === 'number' ? todayAtt.totalHours : (todayAtt.totalHours || 0)} hrs recorded)</span>
               </div>
             `)}
           </div>
@@ -357,7 +363,7 @@ const Employee = {
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
               <i class="fa-solid fa-circle-check text-emerald-600 text-2xl mb-1"></i>
               <div class="text-sm font-bold text-slate-900">Shift Completed for Today</div>
-              <div class="text-xs text-slate-500 mt-0.5">${todayAtt.clockIn} &rarr; ${todayAtt.clockOut} (${todayAtt.totalHours} hrs)</div>
+              <div class="text-xs text-slate-500 mt-0.5">${todayAtt.clockIn} &rarr; ${todayAtt.clockOut} (${typeof todayAtt.totalHours === 'number' ? todayAtt.totalHours : (todayAtt.totalHours || 0)} hrs)</div>
             </div>
           `)}
         </div>
@@ -385,7 +391,7 @@ const Employee = {
                   <td class="px-5 py-3.5 font-mono text-xs text-slate-900 font-semibold">${a.date}</td>
                   <td class="px-5 py-3.5 text-xs text-emerald-600 font-mono font-medium">${a.clockIn || '--'}</td>
                   <td class="px-5 py-3.5 text-xs text-slate-600 font-mono">${a.clockOut || '--'}</td>
-                  <td class="px-5 py-3.5 text-xs font-semibold text-slate-800">${a.totalHours ? `${a.totalHours} hrs` : '--'}</td>
+                  <td class="px-5 py-3.5 text-xs font-semibold text-slate-800">${typeof a.totalHours === 'number' ? `${a.totalHours} hrs` : (a.totalHours ? `${a.totalHours} hrs` : '--')}</td>
                   <td class="px-5 py-3.5 text-center">
                     <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${a.status === 'Present' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}">
                       ${a.status}
@@ -489,7 +495,7 @@ const Employee = {
     `;
   },
 
-  // ---------------- 4. EMPLOYEE PAYSLIPS ----------------
+  // ---------------- 4. EMPLOYEE PAYROLL ----------------
   renderPayslips() {
     const container = document.getElementById('emp-tab-payslips');
     if (!container) return;
@@ -501,7 +507,7 @@ const Employee = {
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-900">Salary & Compensation Slips</h2>
+          <h2 class="text-xl font-bold text-slate-900">Salary & Payroll Statements</h2>
           <p class="text-xs text-slate-500 mt-0.5">Access and print official monthly payroll statements approved by HR</p>
         </div>
       </div>
@@ -511,9 +517,9 @@ const Employee = {
           <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-100">
             <i class="fa-solid fa-file-invoice text-2xl"></i>
           </div>
-          <h3 class="text-base font-bold text-slate-900">No Approved Payslips Available Yet</h3>
+          <h3 class="text-base font-bold text-slate-900">No Approved Payroll Statements Available Yet</h3>
           <p class="text-xs text-slate-500 mt-1.5 max-w-md mx-auto leading-relaxed">
-            Your payroll statements are currently being reviewed by HR. Once HR approves and releases your salary slips, they will automatically appear here for you to view and download.
+            Your payroll statements are currently being reviewed by HR. Once HR approves and releases your payroll statements, they will automatically appear here for you to view and download.
           </p>
         </div>
       ` : `
@@ -523,8 +529,8 @@ const Employee = {
               <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                 <tr>
                   <th class="px-5 py-3.5">Pay Period</th>
-                  <th class="px-5 py-3.5">Gross Earnings</th>
-                  <th class="px-5 py-3.5">Tax & Deductions</th>
+                  <th class="px-5 py-3.5">Salary</th>
+                  <th class="px-5 py-3.5">LOP Deduction</th>
                   <th class="px-5 py-3.5">Net Take-Home</th>
                   <th class="px-5 py-3.5 text-center">HR Approval Status</th>
                   <th class="px-5 py-3.5 text-right">Statement</th>
@@ -532,17 +538,19 @@ const Employee = {
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
                 ${approvedSlips.map(slip => {
-                  const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || 0;
+                  const lopAmount = slip.deductions?.attendanceDeduction || slip.deductions?.lossOfPay || (slip.totalDeductions !== undefined ? slip.totalDeductions : 0);
                   const lopDays = slip.attendanceSummary?.lopDays || (lopAmount > 0 ? 1 : 0);
+                  const salary = slip.baseSalary || slip.grossPay || 0;
+                  const netPay = slip.netPay !== undefined ? slip.netPay : (salary - lopAmount);
                   return `
                     <tr class="hover:bg-slate-50 transition-colors">
                       <td class="px-5 py-4">
                         <div class="font-bold text-slate-900">${slip.month} ${slip.year}</div>
                         <div class="text-[11px] text-slate-400">Paid on ${UI.formatDate(slip.payDate)}</div>
                       </td>
-                      <td class="px-5 py-4 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(slip.grossPay || slip.baseSalary)}</td>
+                      <td class="px-5 py-4 font-mono text-xs text-slate-900 font-medium">${UI.formatCurrency(salary)}</td>
                       <td class="px-5 py-4">
-                        <div class="font-mono text-xs text-rose-600 font-semibold">-${UI.formatCurrency(slip.totalDeductions || 0)}</div>
+                        <div class="font-mono text-xs text-rose-600 font-semibold">${lopAmount > 0 ? `-${UI.formatCurrency(lopAmount)}` : '₹0'}</div>
                         ${lopAmount > 0 ? `
                           <div class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 mt-1">
                             <i class="fa-solid fa-clock-rotate-left text-[9px]"></i>
@@ -552,7 +560,7 @@ const Employee = {
                           <div class="text-[10px] text-emerald-600 mt-0.5 font-medium">₹0 LOP (100% Present)</div>
                         `}
                       </td>
-                      <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(slip.netPay || slip.baseSalary)}</td>
+                      <td class="px-5 py-4 font-mono text-xs font-bold text-emerald-600">${UI.formatCurrency(netPay)}</td>
                       <td class="px-5 py-4 text-center">
                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <i class="fa-solid fa-circle-check text-[10px]"></i> Approved & Released
@@ -577,13 +585,13 @@ const Employee = {
   viewPayslip(slipId) {
     const slip = (this.myPayslips || []).find(p => p.id === slipId);
     if (!slip) {
-      UI.toast('Could not find selected payslip', 'error');
+      UI.toast('Could not find selected payroll statement', 'error');
       return;
     }
 
     // Safety check: employee should NEVER view unapproved slips
     if (slip.status !== 'Approved' && slip.status !== 'Paid' && slip.status !== 'Finalized') {
-      UI.toast('This payslip has not been approved by HR yet', 'warning');
+      UI.toast('This payroll statement has not been approved by HR yet', 'warning');
       return;
     }
 
@@ -686,23 +694,11 @@ const Employee = {
           <div class="space-y-1.5">
             <div class="flex justify-between py-1 border-b border-slate-100">
               <span class="text-slate-600">Basic Salary</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.baseSalary)}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">House Rent Allowance (HRA)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.hra || Math.round(slip.baseSalary * 0.40))}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Special Allowance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.specialAllowance || Math.round(slip.baseSalary * 0.20))}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Conveyance Allowance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.allowances?.conveyance || 1600)}</span>
+              <span class="font-mono font-medium">${UI.formatCurrency(slip.baseSalary || slip.grossPay)}</span>
             </div>
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Gross Earnings</span>
-              <span class="font-mono text-emerald-700">${UI.formatCurrency(slip.grossPay)}</span>
+              <span class="font-mono text-emerald-700">${UI.formatCurrency(slip.baseSalary || slip.grossPay)}</span>
             </div>
           </div>
         </div>
@@ -710,18 +706,6 @@ const Employee = {
         <div>
           <h4 class="font-bold text-slate-900 uppercase text-[11px] mb-2 pb-1 border-b border-slate-200 text-rose-700">Deductions (INR)</h4>
           <div class="space-y-1.5">
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Income Tax (TDS)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.incomeTax || Math.round(slip.grossPay * 0.10))}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Employees' Provident Fund (EPF)</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.providentFund || Math.round(slip.baseSalary * 0.12))}</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-100">
-              <span class="text-slate-600">Health & Group Insurance</span>
-              <span class="font-mono font-medium">${UI.formatCurrency(slip.deductions?.healthInsurance || 1200)}</span>
-            </div>
             ${lopAmount > 0 ? `
               <div class="flex justify-between py-1.5 border-b border-rose-100 bg-rose-50/70 px-2 rounded -mx-2">
                 <div>
@@ -729,7 +713,7 @@ const Employee = {
                     <i class="fa-solid fa-user-clock text-rose-500 text-[10px]"></i>
                     Attendance / Loss of Pay (LOP)
                   </span>
-                  <span class="text-[10px] text-rose-600 block mt-0.5">${attSummary.lopDays} day(s) deduction (${attSummary.absentDays} absent${attSummary.lateDays > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
+                  <span class="text-[10px] text-rose-600 block mt-0.5">${attSummary.lopDays || 1} day(s) deduction (${attSummary.absentDays || 0} absent${(attSummary.lateDays || 0) > 0 ? `, ${attSummary.lateDays} late` : ''})</span>
                 </div>
                 <span class="font-mono font-bold text-rose-700">-${UI.formatCurrency(lopAmount)}</span>
               </div>
@@ -741,7 +725,7 @@ const Employee = {
             `}
             <div class="flex justify-between py-2 font-bold text-slate-900">
               <span>Total Deductions</span>
-              <span class="font-mono text-rose-700">-${UI.formatCurrency(slip.totalDeductions)}</span>
+              <span class="font-mono text-rose-700">${lopAmount > 0 ? `-${UI.formatCurrency(lopAmount)}` : '₹0'}</span>
             </div>
           </div>
         </div>
@@ -753,7 +737,7 @@ const Employee = {
           <span class="text-xs text-slate-500">NEFT / RTGS Direct Bank Transfer</span>
         </div>
         <div class="text-2xl font-black text-indigo-900 font-mono">
-          ${UI.formatCurrency(slip.netPay)}
+          ${UI.formatCurrency((slip.baseSalary || slip.grossPay) - lopAmount)}
         </div>
       </div>
     `;
@@ -1072,6 +1056,239 @@ const Employee = {
     } catch (err) {
       UI.toast(err.message || 'Failed to submit correction request', 'error');
     }
+  },
+
+  // ---------------- 6. EMPLOYEE PROFILE (EMP-009) ----------------
+  renderProfile() {
+    const container = document.getElementById('emp-tab-profile');
+    if (!container) return;
+
+    const emp = this.employeeData || Auth.employee || {};
+    const struct = emp.salaryStructure || {
+      name: emp.salaryStructureId === 'STR-002' ? 'Executive Leadership Structure' :
+            emp.salaryStructureId === 'STR-003' ? 'Junior & Trainee Structure' : 'Standard Corporate Structure',
+      basicPercentage: 50,
+      hraPercentage: 30,
+      specialAllowancePercentage: 15,
+      conveyanceFixed: 1600,
+      pfPercentage: 12,
+      taxPercentage: 10,
+      healthInsuranceFixed: 1200
+    };
+
+    const monthly = Math.round((emp.salary || 0) / 12);
+    const basic = Math.round(monthly * ((struct.basicPercentage || 50) / 100));
+    const hra = Math.round(monthly * ((struct.hraPercentage || 30) / 100));
+    const special = Math.round(monthly * ((struct.specialAllowancePercentage || 15) / 100));
+    const conveyance = struct.conveyanceFixed || 1600;
+
+    const balances = emp.leaveBalances || {
+      annual: { total: 20, used: 0 },
+      sick: { total: 10, used: 0 },
+      casual: { total: 5, used: 0 }
+    };
+
+    const isInactive = emp.status === 'Inactive';
+
+    container.innerHTML = `
+      <!-- Profile Hero Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl border border-indigo-900/40 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute right-12 top-6 opacity-10 hidden sm:block">
+          <i class="fa-solid fa-id-card-clip text-9xl"></i>
+        </div>
+
+        <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div class="flex items-center gap-5">
+            <div class="relative">
+              <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces'}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-white/10 shadow-xl" alt="${emp.name}">
+              <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full ${isInactive ? 'bg-rose-500' : 'bg-emerald-500'} ring-2 ring-slate-900 flex items-center justify-center text-[10px]" title="${emp.status || 'Active'}">
+                <i class="fa-solid fa-check text-white"></i>
+              </span>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">${emp.name}</h1>
+                <span class="px-3 py-1 rounded-full text-xs font-bold ${isInactive ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">
+                  ${emp.status || 'Active'}
+                </span>
+                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-white/10 text-indigo-200 border border-white/10">
+                  ${emp.id}
+                </span>
+              </div>
+              <p class="text-indigo-200 text-sm font-medium">${emp.jobTitle} • <span class="text-white/80">${emp.department}</span></p>
+              <div class="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-300">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-indigo-400"></i> ${emp.location || 'HQ Office'}</span>
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-briefcase text-indigo-400"></i> ${emp.employmentType || 'Full-Time'}</span>
+                <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-indigo-400"></i> Joined ${UI.formatDate(emp.joinDate)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Profile Information Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- 1. Personal & Contact Details -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-user-circle"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">Personal & Contact Details</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Full Legal Name</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.name}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Official Work Email</div>
+              <div class="font-bold text-slate-900 mt-0.5 truncate" title="${emp.email}">${emp.email}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Primary Phone Number</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.phone || '--'}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Office / Work Location</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.location || '--'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Employment & Organizational Details -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-building-user"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">Employment & Role Details</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Employee ID</div>
+              <div class="font-mono font-bold text-indigo-700 mt-0.5">${emp.id}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Department</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.department}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Designation / Title</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.jobTitle}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Employment Classification</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.employmentType || 'Full-Time'}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Official Date of Joining</div>
+              <div class="font-bold text-slate-900 mt-0.5">${UI.formatDate(emp.joinDate)}</div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="text-[11px] font-medium text-slate-400">Reporting Manager</div>
+              <div class="font-bold text-slate-900 mt-0.5">${emp.manager || 'Elena Rostova (HR Admin)'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Biometric & Device Identification -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-fingerprint"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">Biometric & System Security</h3>
+            </div>
+            <span class="text-[10px] font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+              Hardware Linked
+            </span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-100 flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-bold text-purple-900">Biometric Reference ID</div>
+                <div class="text-[11px] text-purple-600">Registered biometric punch card ID</div>
+              </div>
+              <div class="font-mono font-bold text-sm text-purple-800 bg-white px-3 py-1.5 rounded-lg border border-purple-200 flex items-center gap-1.5">
+                <i class="fa-solid fa-fingerprint text-purple-600"></i>
+                <span>${emp.biometricRef || ('BIO-' + emp.id)}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-[11px] font-medium text-slate-400">System User ID</div>
+                <div class="font-mono font-bold text-slate-800 mt-0.5">USR-${emp.id}</div>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="text-[11px] font-medium text-slate-400">Portal Role Permission</div>
+                <div class="font-semibold text-slate-800 mt-0.5 capitalize">${emp.role || 'employee'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Salary -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-money-check-dollar"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 text-sm">Salary</h3>
+            </div>
+          </div>
+
+          <div class="p-4 bg-emerald-50/50 rounded-xl border border-emerald-100 flex items-center justify-between">
+            <div class="text-xs font-bold text-emerald-950">Salary</div>
+            <div class="font-mono font-extrabold text-base text-emerald-700">
+              ${UI.formatCurrency(emp.salary)}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 5. Leave Balances Overview -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm">Leave Balance Allocations</h3>
+          </div>
+          <button onclick="Employee.switchTab('leaves')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+            Request Leave &rarr;
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 bg-indigo-50/60 rounded-xl border border-indigo-100 text-center">
+            <div class="text-xs font-bold text-indigo-900">Annual Paid Leave</div>
+            <div class="text-2xl font-extrabold text-indigo-700 mt-1.5">${(balances.annual?.total || 20) - (balances.annual?.used || 0)} <span class="text-xs text-indigo-500 font-normal">days left</span></div>
+            <div class="text-[11px] text-indigo-600 mt-1">${balances.annual?.used || 0} used of ${balances.annual?.total || 20} allocated</div>
+          </div>
+          <div class="p-4 bg-rose-50/60 rounded-xl border border-rose-100 text-center">
+            <div class="text-xs font-bold text-rose-900">Sick & Medical Leave</div>
+            <div class="text-2xl font-extrabold text-rose-700 mt-1.5">${(balances.sick?.total || 10) - (balances.sick?.used || 0)} <span class="text-xs text-rose-500 font-normal">days left</span></div>
+            <div class="text-[11px] text-rose-600 mt-1">${balances.sick?.used || 0} used of ${balances.sick?.total || 10} allocated</div>
+          </div>
+          <div class="p-4 bg-emerald-50/60 rounded-xl border border-emerald-100 text-center">
+            <div class="text-xs font-bold text-emerald-900">Casual Leave</div>
+            <div class="text-2xl font-extrabold text-emerald-700 mt-1.5">${(balances.casual?.total || 5) - (balances.casual?.used || 0)} <span class="text-xs text-emerald-500 font-normal">days left</span></div>
+            <div class="text-[11px] text-emerald-600 mt-1">${balances.casual?.used || 0} used of ${balances.casual?.total || 5} allocated</div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 };
 

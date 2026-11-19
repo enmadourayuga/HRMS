@@ -101,6 +101,105 @@ const UI = {
     }
   },
 
+  toggleProfileMenu() {
+    const menu = document.getElementById('profile-menu');
+    if (menu) {
+      const isHidden = menu.classList.toggle('hidden');
+      if (!isHidden) {
+        this.renderProfileDropdown();
+        document.getElementById('switch-menu')?.classList.add('hidden');
+        document.getElementById('notifications-menu')?.classList.add('hidden');
+      }
+    }
+  },
+
+  renderProfileDropdown() {
+    const content = document.getElementById('profile-menu-content');
+    if (!content) return;
+
+    const auth = typeof Auth !== 'undefined' ? Auth : window.Auth;
+    const emp = (typeof Employee !== 'undefined' && Employee.employeeData) ? Employee.employeeData : (auth?.employee || {});
+    const user = auth?.user || {};
+
+    if (!emp.id && !user.email) {
+      content.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">No active profile session.</div>`;
+      return;
+    }
+
+    const struct = emp.salaryStructure || {
+      name: emp.salaryStructureId === 'STR-002' ? 'Executive Leadership Structure' :
+            emp.salaryStructureId === 'STR-003' ? 'Junior & Trainee Structure' : 'Standard Corporate Structure'
+    };
+
+    const isHR = user.role === 'hr' || user.role === 'hr_admin' || user.role === 'finance';
+    const status = emp.status || 'Active';
+    const isInactive = status === 'Inactive';
+
+    content.innerHTML = `
+      <div class="space-y-3.5">
+        <!-- Header User Card -->
+        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+          <div class="relative shrink-0">
+            <img src="${emp.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces'}" class="w-12 h-12 rounded-xl object-cover ring-2 ring-indigo-500/20" alt="${emp.name || 'User'}">
+            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full ${isInactive ? 'bg-rose-500' : 'bg-emerald-500'} ring-2 ring-white"></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <h4 class="font-bold text-slate-900 text-sm truncate">${emp.name || user.email}</h4>
+              <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">${emp.id || 'N/A'}</span>
+            </div>
+            <p class="text-xs text-slate-500 truncate">${emp.jobTitle || (isHR ? 'HR Team' : 'Employee')}</p>
+            <div class="flex items-center gap-1.5 mt-1">
+              <span class="text-[10px] font-semibold ${isInactive ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'} border px-2 py-0.5 rounded-full">
+                ${status}
+              </span>
+              <span class="text-[10px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                ${emp.employmentType || 'Full-Time'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-3 Key Basic Details -->
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-2 text-xs">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-slate-500 flex items-center gap-1.5 shrink-0"><i class="fa-regular fa-envelope text-slate-400 w-3.5 text-center"></i> Email:</span>
+            <span class="font-semibold text-slate-800 truncate" title="${emp.email || user.email}">${emp.email || user.email}</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-slate-500 flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-phone text-slate-400 w-3.5 text-center"></i> Phone:</span>
+            <span class="font-semibold text-slate-800">${emp.phone || '--'}</span>
+          </div>
+
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-slate-500 flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-location-dot text-slate-400 w-3.5 text-center"></i> Location:</span>
+            <span class="font-semibold text-slate-800 truncate">${emp.location || 'HQ Office'}</span>
+          </div>
+        </div>
+
+        <!-- Action Links -->
+        <div class="pt-1 flex items-center gap-2">
+          <button onclick="UI.openFullProfile()" class="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm shadow-indigo-600/20 transition-all">
+            <i class="fa-solid fa-id-card"></i> View Full Profile
+          </button>
+          <button onclick="Auth.logout()" class="py-2 px-3 bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  openFullProfile() {
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) profileMenu.classList.add('hidden');
+    const app = typeof App !== 'undefined' ? App : window.App;
+    if (app && typeof app.navigateTo === 'function') {
+      app.navigateTo('profile');
+    }
+  },
+
   async markAllNotificationsRead() {
     try {
       const empId = Auth.user?.employeeId;
@@ -189,6 +288,12 @@ document.addEventListener('click', (e) => {
   const notifMenu = document.getElementById('notifications-menu');
   if (notifBtn && notifMenu && !notifBtn.contains(e.target) && !notifMenu.contains(e.target)) {
     notifMenu.classList.add('hidden');
+  }
+
+  const profileBtn = document.getElementById('btn-user-profile');
+  const profileMenu = document.getElementById('profile-menu');
+  if (profileBtn && profileMenu && !profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+    profileMenu.classList.add('hidden');
   }
 });
 

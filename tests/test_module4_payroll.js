@@ -186,18 +186,18 @@ async function runPayrollTests() {
     );
 
     // -------------------------------------------------------------------------
-    // TEST 6: PAY-006 - Gross Salary Calculation Based on Structure
+    // TEST 6: PAY-006 - Gross Salary Calculation (Salary Only)
     // -------------------------------------------------------------------------
-    console.log('\n--- TEST 6: PAY-006 - Gross Salary Calculation Based on Structure ---');
+    console.log('\n--- TEST 6: PAY-006 - Gross Salary Calculation (Salary Only) ---');
     const basic = sampleSlip.baseSalary;
-    const hra = sampleSlip.allowances.hra;
-    const special = sampleSlip.allowances.specialAllowance;
-    const conveyance = sampleSlip.allowances.conveyance;
+    const hra = sampleSlip.allowances?.hra || 0;
+    const special = sampleSlip.allowances?.specialAllowance || 0;
+    const conveyance = sampleSlip.allowances?.conveyance || 0;
     const expectedGross = basic + hra + special + conveyance;
 
     assert(
       sampleSlip.grossPay === expectedGross,
-      'PAY-006.1: Gross pay correctly sums Basic + HRA + Special Allowance + Conveyance',
+      'PAY-006.1: Gross pay correctly equals Salary (extra allowances removed)',
       `Gross: ${sampleSlip.grossPay}, Sum: ${expectedGross}`
     );
 
@@ -208,32 +208,33 @@ async function runPayrollTests() {
     );
 
     // -------------------------------------------------------------------------
-    // TEST 7: PAY-007 - Applicable Deductions Calculation
+    // TEST 7: PAY-007 - Applicable Deductions (LOP Only)
     // -------------------------------------------------------------------------
-    console.log('\n--- TEST 7: PAY-007 - Applicable Deductions (PF, Tax, Insurance, LOP) ---');
+    console.log('\n--- TEST 7: PAY-007 - Applicable Deductions (LOP Attendance Deduction) ---');
     const ded = sampleSlip.deductions;
+    const lopDeduction = ded.attendanceDeduction !== undefined ? ded.attendanceDeduction : (ded.lossOfPay || 0);
     assert(
-      typeof ded.providentFund === 'number' && ded.providentFund > 0,
-      'PAY-007.1: Provident Fund (PF) deduction calculated based on structure percentage',
-      `PF: ${ded.providentFund}`
+      typeof lopDeduction === 'number' && lopDeduction >= 0,
+      'PAY-007.1: Loss of pay (LOP) attendance deduction calculated',
+      `LOP: ${lopDeduction}`
     );
 
     assert(
-      typeof ded.incomeTax === 'number' && ded.incomeTax > 0,
-      'PAY-007.2: Income Tax (TDS) deduction calculated based on structure percentage',
+      ded.incomeTax === 0 || ded.incomeTax === undefined,
+      'PAY-007.2: Income Tax (TDS) removed as requested',
       `TDS: ${ded.incomeTax}`
     );
 
     assert(
-      typeof ded.healthInsurance === 'number' && ded.healthInsurance > 0,
-      'PAY-007.3: Health Insurance statutory deduction applied',
-      `Insurance: ${ded.healthInsurance}`
+      ded.providentFund === 0 || ded.providentFund === undefined,
+      'PAY-007.3: Provident Fund (PF) removed as requested',
+      `PF: ${ded.providentFund}`
     );
 
-    const sumDeductions = ded.providentFund + ded.incomeTax + ded.healthInsurance + (ded.attendanceDeduction || 0);
+    const sumDeductions = lopDeduction;
     assert(
       sampleSlip.totalDeductions === sumDeductions,
-      'PAY-007.4: Total deductions correctly aggregates PF, Tax, Insurance, and LOP',
+      'PAY-007.4: Total deductions correctly equals LOP deduction only',
       `Total deductions: ${sampleSlip.totalDeductions}, sum: ${sumDeductions}`
     );
 
@@ -325,11 +326,11 @@ async function runPayrollTests() {
     );
 
     assert(
-      empView.data.allowances?.hra !== undefined && 
-      empView.data.deductions?.providentFund !== undefined &&
+      empView.data.baseSalary !== undefined && 
+      empView.data.deductions?.attendanceDeduction !== undefined &&
       empView.data.attendanceSummary?.payableDays !== undefined,
-      'PAY-011.2: Payslip contains complete itemized breakdown (HRA, PF, Tax, Payable Days)',
-      `Allowances & deductions itemized: true`
+      'PAY-011.2: Payslip contains simplified Salary and LOP breakdown',
+      `Salary & LOP verified: true`
     );
 
     // -------------------------------------------------------------------------

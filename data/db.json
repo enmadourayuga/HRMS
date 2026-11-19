@@ -51,9 +51,50 @@
       "role": "finance",
       "isHrAdmin": false,
       "employeeId": "EMP-010"
+    },
+    {
+      "id": "USR-EMP-011",
+      "email": "rohan.sharma@hrms.com",
+      "password": "password123",
+      "role": "employee",
+      "isHrAdmin": false,
+      "employeeId": "EMP-011"
     }
   ],
   "employees": [
+    {
+      "id": "EMP-011",
+      "name": "Rohan Sharma",
+      "email": "rohan.sharma@hrms.com",
+      "jobTitle": "Principal Cloud & Security Architect",
+      "department": "Infrastructure & Sec",
+      "role": "employee",
+      "employmentType": "Full-Time",
+      "isHrAdmin": false,
+      "joinDate": "2026-10-15",
+      "salary": 2400000,
+      "salaryStructureId": "STR-002",
+      "biometricRef": "BIO-9801-V2",
+      "phone": "+91 98765 99999",
+      "location": "Hyderabad (Tech Hub)",
+      "avatar": "https://images.unsplash.com/photo-1535713875012?w=200&h=200&fit=crop&crop=faces",
+      "status": "Active",
+      "manager": "Elena Rostova",
+      "leaveBalances": {
+        "annual": {
+          "total": 20,
+          "used": 0
+        },
+        "sick": {
+          "total": 10,
+          "used": 0
+        },
+        "casual": {
+          "total": 5,
+          "used": 0
+        }
+      }
+    },
     {
       "id": "EMP-001",
       "name": "Elena Rostova",
@@ -104,7 +145,7 @@
       "leaveBalances": {
         "annual": {
           "total": 20,
-          "used": 9
+          "used": 6
         },
         "sick": {
           "total": 10,
@@ -380,36 +421,6 @@
   ],
   "leaves": [
     {
-      "id": "LV-765",
-      "employeeId": "EMP-002",
-      "employeeName": "Alex Morgan",
-      "department": "Engineering",
-      "leaveType": "Sick",
-      "startDate": "2026-12-10",
-      "endDate": "2026-12-11",
-      "days": 2,
-      "reason": "Mild fever checkup",
-      "status": "Rejected",
-      "appliedOn": "2026-11-18",
-      "reviewedBy": "Elena Rostova (HR)",
-      "reviewComment": "Critical sprint release dates. Please reschedule if possible."
-    },
-    {
-      "id": "LV-307",
-      "employeeId": "EMP-002",
-      "employeeName": "Alex Morgan",
-      "department": "Engineering",
-      "leaveType": "Annual",
-      "startDate": "2026-12-01",
-      "endDate": "2026-12-03",
-      "days": 3,
-      "reason": "Year-end personal vacation",
-      "status": "Approved",
-      "appliedOn": "2026-11-18",
-      "reviewedBy": "Elena Rostova (HR)",
-      "reviewComment": "Approved. Enjoy your time off!"
-    },
-    {
       "id": "LV-101",
       "employeeId": "EMP-002",
       "employeeName": "Alex Morgan",
@@ -511,7 +522,7 @@
       "status": "Present",
       "totalHours": 8.7,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "08:52 AM",
@@ -532,7 +543,7 @@
       "status": "Present",
       "totalHours": 8.4,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "09:05 AM",
@@ -553,7 +564,7 @@
       "status": "Late",
       "totalHours": 8.3,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "09:28 AM",
@@ -574,7 +585,7 @@
       "status": "Present",
       "totalHours": 7.3,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "08:58 AM",
@@ -616,7 +627,7 @@
       "status": "Present",
       "totalHours": 8.8,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "08:45 AM",
@@ -637,7 +648,7 @@
       "status": "Present",
       "totalHours": 8.3,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18",
       "originalBiometric": {
         "clockIn": "09:10 AM",
@@ -658,7 +669,7 @@
       "status": "Present",
       "totalHours": 2.2,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18"
     },
     {
@@ -671,7 +682,7 @@
       "status": "Present",
       "totalHours": 2.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
+      "validatedBy": "Elena Rostova (HR)",
       "validatedAt": "2026-11-18"
     },
     {
@@ -684,8 +695,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-206",
@@ -697,8 +708,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-205",
@@ -710,8 +721,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-204",
@@ -723,8 +734,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-203",
@@ -736,8 +747,8 @@
       "status": "On Leave",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-202",
@@ -749,8 +760,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-201",
@@ -762,8 +773,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-200",
@@ -775,8 +786,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17"
     },
     {
       "id": "ATT-199",
@@ -788,8 +799,8 @@
       "status": "Present",
       "totalHours": 8.7,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18",
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-17",
       "originalBiometric": {
         "clockIn": "08:50 AM",
         "clockOut": "05:30 PM",
@@ -809,8 +820,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-197",
@@ -822,8 +833,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-196",
@@ -835,8 +846,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-195",
@@ -848,8 +859,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-194",
@@ -861,8 +872,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-193",
@@ -874,8 +885,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-192",
@@ -887,8 +898,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-191",
@@ -900,8 +911,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-190",
@@ -913,8 +924,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-16"
     },
     {
       "id": "ATT-189",
@@ -926,8 +937,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-188",
@@ -939,8 +950,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-187",
@@ -952,8 +963,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-186",
@@ -965,8 +976,8 @@
       "status": "Absent",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-185",
@@ -978,8 +989,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-184",
@@ -991,8 +1002,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-183",
@@ -1004,8 +1015,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-182",
@@ -1017,8 +1028,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-181",
@@ -1030,8 +1041,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-13"
     },
     {
       "id": "ATT-180",
@@ -1043,8 +1054,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-179",
@@ -1056,8 +1067,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-178",
@@ -1069,8 +1080,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-177",
@@ -1082,8 +1093,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-176",
@@ -1095,8 +1106,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-175",
@@ -1108,8 +1119,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-174",
@@ -1121,8 +1132,8 @@
       "status": "Late",
       "totalHours": 8,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-173",
@@ -1134,8 +1145,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-172",
@@ -1147,8 +1158,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-12"
     },
     {
       "id": "ATT-171",
@@ -1160,8 +1171,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-170",
@@ -1173,8 +1184,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-169",
@@ -1186,8 +1197,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-168",
@@ -1199,8 +1210,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-167",
@@ -1212,8 +1223,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-166",
@@ -1225,8 +1236,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-165",
@@ -1238,8 +1249,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-164",
@@ -1251,8 +1262,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-163",
@@ -1264,8 +1275,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-11"
     },
     {
       "id": "ATT-162",
@@ -1277,8 +1288,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-161",
@@ -1290,8 +1301,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-160",
@@ -1303,8 +1314,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-159",
@@ -1316,8 +1327,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-158",
@@ -1329,8 +1340,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-157",
@@ -1342,8 +1353,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-156",
@@ -1355,8 +1366,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-155",
@@ -1368,8 +1379,8 @@
       "status": "Absent",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-154",
@@ -1381,8 +1392,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-10"
     },
     {
       "id": "ATT-153",
@@ -1394,8 +1405,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-152",
@@ -1407,8 +1418,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-151",
@@ -1420,8 +1431,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-150",
@@ -1433,8 +1444,8 @@
       "status": "Absent",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-149",
@@ -1446,8 +1457,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-148",
@@ -1459,8 +1470,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-147",
@@ -1472,8 +1483,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-146",
@@ -1485,8 +1496,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-145",
@@ -1498,8 +1509,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-09"
     },
     {
       "id": "ATT-144",
@@ -1511,8 +1522,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-143",
@@ -1524,8 +1535,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-142",
@@ -1537,8 +1548,8 @@
       "status": "Absent",
       "totalHours": 0,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-141",
@@ -1550,8 +1561,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-140",
@@ -1563,8 +1574,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-139",
@@ -1576,8 +1587,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-138",
@@ -1589,8 +1600,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-137",
@@ -1602,8 +1613,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-136",
@@ -1615,8 +1626,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-06"
     },
     {
       "id": "ATT-135",
@@ -1628,8 +1639,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-134",
@@ -1641,8 +1652,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-133",
@@ -1654,8 +1665,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-132",
@@ -1667,8 +1678,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-131",
@@ -1680,8 +1691,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-130",
@@ -1693,8 +1704,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-129",
@@ -1706,8 +1717,8 @@
       "status": "Late",
       "totalHours": 8,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-128",
@@ -1719,8 +1730,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-127",
@@ -1732,8 +1743,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-05"
     },
     {
       "id": "ATT-126",
@@ -1745,8 +1756,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-125",
@@ -1758,8 +1769,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-124",
@@ -1771,8 +1782,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-123",
@@ -1784,8 +1795,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-122",
@@ -1797,8 +1808,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-121",
@@ -1810,8 +1821,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-120",
@@ -1823,8 +1834,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-119",
@@ -1836,8 +1847,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-118",
@@ -1849,8 +1860,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-04"
     },
     {
       "id": "ATT-117",
@@ -1862,8 +1873,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-116",
@@ -1875,8 +1886,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-115",
@@ -1888,8 +1899,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-114",
@@ -1901,8 +1912,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-113",
@@ -1914,8 +1925,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-112",
@@ -1927,8 +1938,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-111",
@@ -1940,8 +1951,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-110",
@@ -1953,8 +1964,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-109",
@@ -1966,8 +1977,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-03"
     },
     {
       "id": "ATT-108",
@@ -1979,8 +1990,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-107",
@@ -1992,8 +2003,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-106",
@@ -2005,8 +2016,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-105",
@@ -2018,8 +2029,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-104",
@@ -2031,8 +2042,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-103",
@@ -2044,8 +2055,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-102",
@@ -2057,8 +2068,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-101",
@@ -2070,8 +2081,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     },
     {
       "id": "ATT-100",
@@ -2083,8 +2094,8 @@
       "status": "Present",
       "totalHours": 8.5,
       "isValidated": true,
-      "validatedBy": "hr@hrms.com",
-      "validatedAt": "2026-11-18"
+      "validatedBy": "Elena Rostova (HR)",
+      "validatedAt": "2026-11-02"
     }
   ],
   "payslips": [
@@ -2095,45 +2106,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 91667,
+      "baseSalary": 183333,
       "allowances": {
-        "hra": 55000,
-        "specialAllowance": 27500,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 17577,
-        "providentFund": 11000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 109998,
-        "lossOfPay": 109998
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 6111,
+        "lossOfPay": 6111
       },
-      "grossPay": 175767,
-      "totalDeductions": 139775,
-      "netPay": 35992,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
+      "grossPay": 183333,
+      "totalDeductions": 6111,
+      "netPay": 177222,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 12,
+        "presentDays": 29,
         "paidLeaveDays": 0,
-        "payableDays": 12,
         "absentDays": 1,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 18,
+        "unpaidLeaveDays": 0,
+        "lopDays": 1,
         "perDayRate": 6111,
-        "attendanceDeduction": 109998,
-        "lossOfPay": 109998
+        "attendanceDeduction": 6111,
+        "salaryDivisor": 30,
+        "payableDays": 29,
+        "lossOfPay": 6111
       },
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 183333,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-11-003",
@@ -2142,45 +2149,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 73125,
+      "baseSalary": 162500,
       "allowances": {
-        "hra": 56875,
-        "specialAllowance": 29250,
-        "conveyance": 3200
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 24368,
-        "providentFund": 8775,
-        "healthInsurance": 2500,
-        "attendanceDeduction": 94798,
-        "lossOfPay": 94798
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 2709,
+        "lossOfPay": 2709
       },
-      "grossPay": 162450,
-      "totalDeductions": 130441,
-      "netPay": 32009,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
+      "grossPay": 162500,
+      "totalDeductions": 2709,
+      "netPay": 159791,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 13,
+        "presentDays": 29.5,
         "paidLeaveDays": 0,
-        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 3,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0.5,
-        "lopDays": 17.5,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0.5,
         "perDayRate": 5417,
-        "attendanceDeduction": 94798,
-        "lossOfPay": 94798
+        "attendanceDeduction": 2709,
+        "salaryDivisor": 30,
+        "payableDays": 29.5,
+        "lossOfPay": 2709
       },
-      "salaryStructureId": "STR-002",
-      "salaryStructureName": "Executive Leadership Structure",
-      "monthlyCTC": 162500,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "monthlyCTC": 162500
     },
     {
       "id": "PS-2026-11-004",
@@ -2189,45 +2192,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 100000,
+      "baseSalary": 200000,
       "allowances": {
-        "hra": 60000,
-        "specialAllowance": 30000,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 19160,
-        "providentFund": 12000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 113339,
-        "lossOfPay": 113339
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
-      "grossPay": 191600,
-      "totalDeductions": 145699,
-      "netPay": 45901,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
+      "grossPay": 200000,
+      "totalDeductions": 0,
+      "netPay": 200000,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 13,
+        "presentDays": 30,
         "paidLeaveDays": 0,
-        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 17,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
         "perDayRate": 6667,
-        "attendanceDeduction": 113339,
-        "lossOfPay": 113339
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 200000,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "monthlyCTC": 200000
     },
     {
       "id": "PS-2026-11-005",
@@ -2236,45 +2235,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 60417,
+      "baseSalary": 120833,
       "allowances": {
-        "hra": 36250,
-        "specialAllowance": 18125,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 11639,
-        "providentFund": 7250,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 64448,
-        "lossOfPay": 64448
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
-      "grossPay": 116392,
-      "totalDeductions": 84537,
-      "netPay": 31855,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
+      "grossPay": 120833,
+      "totalDeductions": 0,
+      "netPay": 120833,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 11,
+        "presentDays": 27,
         "paidLeaveDays": 3,
-        "payableDays": 14,
         "absentDays": 0,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 16,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
         "perDayRate": 4028,
-        "attendanceDeduction": 64448,
-        "lossOfPay": 64448
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 120833,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "monthlyCTC": 120833
     },
     {
       "id": "PS-2026-11-001",
@@ -2283,45 +2278,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 69375,
+      "baseSalary": 154167,
       "allowances": {
-        "hra": 53958,
-        "specialAllowance": 27750,
-        "conveyance": 3200
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 23142,
-        "providentFund": 8325,
-        "healthInsurance": 2500,
-        "attendanceDeduction": 87363,
-        "lossOfPay": 87363
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
-      "grossPay": 154283,
-      "totalDeductions": 121330,
-      "netPay": 32953,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
+      "grossPay": 154167,
+      "totalDeductions": 0,
+      "netPay": 154167,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 13,
+        "presentDays": 30,
         "paidLeaveDays": 0,
-        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 17,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
         "perDayRate": 5139,
-        "attendanceDeduction": 87363,
-        "lossOfPay": 87363
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "salaryStructureId": "STR-002",
-      "salaryStructureName": "Executive Leadership Structure",
-      "monthlyCTC": 154167,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "monthlyCTC": 154167
     },
     {
       "id": "PS-2026-10-002",
@@ -2332,35 +2323,39 @@
       "payDate": "2026-10-31",
       "baseSalary": 183333,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 294932,
-      "totalDeductions": 52693,
-      "netPay": 242239,
+      "grossPay": 183333,
+      "totalDeductions": 0,
+      "netPay": 183333,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 8333,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6111,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-09-002",
@@ -2371,35 +2366,39 @@
       "payDate": "2026-09-30",
       "baseSalary": 183333,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 294932,
-      "totalDeductions": 52693,
-      "netPay": 242239,
+      "grossPay": 183333,
+      "totalDeductions": 0,
+      "netPay": 183333,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-09-29",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 8333,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6111,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-10-003",
@@ -2410,35 +2409,39 @@
       "payDate": "2026-10-31",
       "baseSalary": 162500,
       "allowances": {
-        "hra": 65000,
-        "specialAllowance": 32500,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 26160,
-        "providentFund": 19500,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 261600,
-      "totalDeductions": 46860,
-      "netPay": 214740,
+      "grossPay": 162500,
+      "totalDeductions": 0,
+      "netPay": 162500,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 7386,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 5417,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 162500
     },
     {
       "id": "PS-2026-10-004",
@@ -2447,37 +2450,41 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 116667,
+      "baseSalary": 200000,
       "allowances": {
-        "hra": 46667,
-        "specialAllowance": 23333,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 18827,
-        "providentFund": 14000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 188267,
-      "totalDeductions": 34027,
-      "netPay": 154240,
+      "grossPay": 200000,
+      "totalDeductions": 0,
+      "netPay": 200000,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 5303,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6667,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 200000
     },
     {
       "id": "PS-2026-10-005",
@@ -2486,37 +2493,41 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 133333,
+      "baseSalary": 120833,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 214933,
-      "totalDeductions": 38693,
-      "netPay": 176240,
+      "grossPay": 120833,
+      "totalDeductions": 0,
+      "netPay": 120833,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 6061,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 4028,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 120833
     },
     {
       "id": "PS-2026-11-006",
@@ -2525,45 +2536,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 66667,
+      "baseSalary": 133333,
       "allowances": {
-        "hra": 40000,
-        "specialAllowance": 20000,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 12827,
-        "providentFund": 8000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 84436,
-        "lossOfPay": 84436
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 8888,
+        "lossOfPay": 8888
       },
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 11,
+        "presentDays": 28,
         "paidLeaveDays": 0,
-        "payableDays": 11,
         "absentDays": 2,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 19,
+        "unpaidLeaveDays": 0,
+        "lopDays": 2,
         "perDayRate": 4444,
-        "attendanceDeduction": 84436,
-        "lossOfPay": 84436
+        "attendanceDeduction": 8888,
+        "salaryDivisor": 30,
+        "payableDays": 28,
+        "lossOfPay": 8888
       },
-      "grossPay": 128267,
-      "totalDeductions": 106463,
-      "netPay": 21804,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 133333,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "grossPay": 133333,
+      "totalDeductions": 8888,
+      "netPay": 124445,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
+      "monthlyCTC": 133333
     },
     {
       "id": "PS-2026-11-007",
@@ -2572,45 +2579,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 87500,
+      "baseSalary": 175000,
       "allowances": {
-        "hra": 52500,
-        "specialAllowance": 26250,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 16785,
-        "providentFund": 10500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 104994,
-        "lossOfPay": 104994
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 5833,
+        "lossOfPay": 5833
       },
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 12,
+        "presentDays": 29,
         "paidLeaveDays": 0,
-        "payableDays": 12,
         "absentDays": 1,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 18,
+        "unpaidLeaveDays": 0,
+        "lopDays": 1,
         "perDayRate": 5833,
-        "attendanceDeduction": 104994,
-        "lossOfPay": 104994
+        "attendanceDeduction": 5833,
+        "salaryDivisor": 30,
+        "payableDays": 29,
+        "lossOfPay": 5833
       },
-      "grossPay": 167850,
-      "totalDeductions": 133479,
-      "netPay": 34371,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 175000,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "grossPay": 175000,
+      "totalDeductions": 5833,
+      "netPay": 169167,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
+      "monthlyCTC": 175000
     },
     {
       "id": "PS-2026-11-008",
@@ -2619,45 +2622,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 79167,
+      "baseSalary": 158333,
       "allowances": {
-        "hra": 47500,
-        "specialAllowance": 23750,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 15202,
-        "providentFund": 9500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 89726,
-        "lossOfPay": 89726
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 13,
+        "presentDays": 30,
         "paidLeaveDays": 0,
-        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 17,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
         "perDayRate": 5278,
-        "attendanceDeduction": 89726,
-        "lossOfPay": 89726
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "grossPay": 152017,
-      "totalDeductions": 115628,
-      "netPay": 36389,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
-      "salaryStructureId": "STR-001",
-      "salaryStructureName": "Standard Corporate Structure",
-      "monthlyCTC": 158333,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "grossPay": 158333,
+      "totalDeductions": 0,
+      "netPay": 158333,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
+      "monthlyCTC": 158333
     },
     {
       "id": "PS-2026-11-009",
@@ -2666,45 +2665,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 43125,
+      "baseSalary": 95833,
       "allowances": {
-        "hra": 33542,
-        "specialAllowance": 17250,
-        "conveyance": 3200
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 14568,
-        "providentFund": 5175,
-        "healthInsurance": 2500,
-        "attendanceDeduction": 54298,
-        "lossOfPay": 54298
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 0,
+        "lossOfPay": 0
       },
       "attendanceSummary": {
-        "salaryDivisor": 30,
         "totalWorkingDays": 30,
-        "presentDays": 13,
+        "presentDays": 30,
         "paidLeaveDays": 0,
-        "payableDays": 13,
         "absentDays": 0,
         "lateDays": 0,
-        "unpaidLeaveDays": 0,
         "latePenaltyDays": 0,
-        "lopDays": 17,
+        "unpaidLeaveDays": 0,
+        "lopDays": 0,
         "perDayRate": 3194,
-        "attendanceDeduction": 54298,
-        "lossOfPay": 54298
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "grossPay": 97117,
-      "totalDeductions": 76541,
-      "netPay": 20576,
-      "status": "Finalized",
-      "reviewedBy": "David Miller (Finance Lead)",
-      "approvedAt": "2026-11-18",
-      "salaryStructureId": "STR-002",
-      "salaryStructureName": "Executive Leadership Structure",
-      "monthlyCTC": 95833,
-      "finalizedBy": "David Miller (Finance Lead)",
-      "finalizedAt": "2026-11-18"
+      "grossPay": 95833,
+      "totalDeductions": 0,
+      "netPay": 95833,
+      "status": "Pending Approval",
+      "reviewedBy": null,
+      "approvedAt": null,
+      "monthlyCTC": 95833
     }
   ],
   "announcements": [
@@ -2823,18 +2818,6 @@
       "pfPercentage": 12,
       "taxPercentage": 5,
       "healthInsuranceFixed": 800
-    },
-    {
-      "id": "STR-004",
-      "name": "Contract Specialist Structure",
-      "description": "Custom structure for contractors",
-      "basicPercentage": 60,
-      "hraPercentage": 25,
-      "specialAllowancePercentage": 10,
-      "conveyanceFixed": 2500,
-      "pfPercentage": 12,
-      "taxPercentage": 10,
-      "healthInsuranceFixed": 1500
     }
   ],
   "payrollPolicy": {
@@ -2845,26 +2828,6 @@
     "requireAttendanceValidation": true
   },
   "notifications": [
-    {
-      "id": "NTF-1794998756490-866",
-      "employeeId": "EMP-002",
-      "title": "Leave Request Rejected",
-      "message": "Your Sick leave application for 2026-12-10 to 2026-12-11 (2 day(s)) has been rejected by Elena Rostova (HR). Note: Critical sprint release dates. Please reschedule if possible.",
-      "type": "leave_rejected",
-      "referenceId": "LV-765",
-      "createdAt": "2026-11-18T10:45:56.490Z",
-      "read": false
-    },
-    {
-      "id": "NTF-1794998756483-527",
-      "employeeId": "EMP-002",
-      "title": "Leave Request Approved",
-      "message": "Your Annual leave application for 2026-12-01 to 2026-12-03 (3 day(s)) has been approved by Elena Rostova (HR). Note: Approved. Enjoy your time off!",
-      "type": "leave_approved",
-      "referenceId": "LV-307",
-      "createdAt": "2026-11-18T10:45:56.483Z",
-      "read": true
-    },
     {
       "id": "NTF-101",
       "employeeId": "EMP-002",

@@ -2003,35 +2003,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 183333,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 8333,
-        "lossOfPay": 8333
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 6111,
+        "lossOfPay": 6111
       },
-      "grossPay": 294932,
-      "totalDeductions": 61026,
-      "netPay": 233906,
+      "grossPay": 183333,
+      "totalDeductions": 6111,
+      "netPay": 177222,
       "status": "Pending Approval",
       "reviewedBy": null,
       "approvedAt": null,
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21,
+        "totalWorkingDays": 30,
+        "presentDays": 29,
         "paidLeaveDays": 0,
         "absentDays": 1,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 1,
-        "perDayRate": 8333,
-        "attendanceDeduction": 8333
-      }
+        "perDayRate": 6111,
+        "attendanceDeduction": 6111,
+        "salaryDivisor": 30,
+        "payableDays": 29,
+        "lossOfPay": 6111
+      },
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-11-003",
@@ -2042,35 +2046,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 162500,
       "allowances": {
-        "hra": 65000,
-        "specialAllowance": 32500,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 26160,
-        "providentFund": 19500,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 3693,
-        "lossOfPay": 3693
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 2709,
+        "lossOfPay": 2709
       },
-      "grossPay": 261600,
-      "totalDeductions": 50553,
-      "netPay": 211047,
+      "grossPay": 162500,
+      "totalDeductions": 2709,
+      "netPay": 159791,
       "status": "Pending Approval",
       "reviewedBy": null,
       "approvedAt": null,
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21.5,
+        "totalWorkingDays": 30,
+        "presentDays": 29.5,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 3,
         "latePenaltyDays": 0.5,
         "unpaidLeaveDays": 0,
         "lopDays": 0.5,
-        "perDayRate": 7386,
-        "attendanceDeduction": 3693
-      }
+        "perDayRate": 5417,
+        "attendanceDeduction": 2709,
+        "salaryDivisor": 30,
+        "payableDays": 29.5,
+        "lossOfPay": 2709
+      },
+      "monthlyCTC": 162500
     },
     {
       "id": "PS-2026-11-004",
@@ -2079,37 +2087,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 116667,
+      "baseSalary": 200000,
       "allowances": {
-        "hra": 46667,
-        "specialAllowance": 23333,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 18827,
-        "providentFund": 14000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 188267,
-      "totalDeductions": 34027,
-      "netPay": 154240,
+      "grossPay": 200000,
+      "totalDeductions": 0,
+      "netPay": 200000,
       "status": "Pending Approval",
       "reviewedBy": null,
       "approvedAt": null,
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 5303,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6667,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 200000
     },
     {
       "id": "PS-2026-11-005",
@@ -2118,37 +2130,41 @@
       "month": "November",
       "year": 2026,
       "payDate": "2026-11-30",
-      "baseSalary": 133333,
+      "baseSalary": 120833,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 214933,
-      "totalDeductions": 38693,
-      "netPay": 176240,
+      "grossPay": 120833,
+      "totalDeductions": 0,
+      "netPay": 120833,
       "status": "Pending Approval",
       "reviewedBy": null,
       "approvedAt": null,
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 19,
+        "totalWorkingDays": 30,
+        "presentDays": 27,
         "paidLeaveDays": 3,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 6061,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 4028,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 120833
     },
     {
       "id": "PS-2026-11-001",
@@ -2159,35 +2175,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 154167,
       "allowances": {
-        "hra": 61667,
-        "specialAllowance": 30833,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 24827,
-        "providentFund": 18500,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 248267,
-      "totalDeductions": 44527,
-      "netPay": 203740,
+      "grossPay": 154167,
+      "totalDeductions": 0,
+      "netPay": 154167,
       "status": "Pending Approval",
       "reviewedBy": null,
       "approvedAt": null,
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 7008,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 5139,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 154167
     },
     {
       "id": "PS-2026-10-002",
@@ -2198,35 +2218,39 @@
       "payDate": "2026-10-31",
       "baseSalary": 183333,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 294932,
-      "totalDeductions": 52693,
-      "netPay": 242239,
+      "grossPay": 183333,
+      "totalDeductions": 0,
+      "netPay": 183333,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 8333,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6111,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-09-002",
@@ -2237,35 +2261,39 @@
       "payDate": "2026-09-30",
       "baseSalary": 183333,
       "allowances": {
-        "hra": 73333,
-        "specialAllowance": 36666,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 29493,
-        "providentFund": 22000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 294932,
-      "totalDeductions": 52693,
-      "netPay": 242239,
+      "grossPay": 183333,
+      "totalDeductions": 0,
+      "netPay": 183333,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-09-29",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 8333,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6111,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 183333
     },
     {
       "id": "PS-2026-10-003",
@@ -2276,35 +2304,39 @@
       "payDate": "2026-10-31",
       "baseSalary": 162500,
       "allowances": {
-        "hra": 65000,
-        "specialAllowance": 32500,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 26160,
-        "providentFund": 19500,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 261600,
-      "totalDeductions": 46860,
-      "netPay": 214740,
+      "grossPay": 162500,
+      "totalDeductions": 0,
+      "netPay": 162500,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 7386,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 5417,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 162500
     },
     {
       "id": "PS-2026-10-004",
@@ -2313,37 +2345,41 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 116667,
+      "baseSalary": 200000,
       "allowances": {
-        "hra": 46667,
-        "specialAllowance": 23333,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 18827,
-        "providentFund": 14000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 188267,
-      "totalDeductions": 34027,
-      "netPay": 154240,
+      "grossPay": 200000,
+      "totalDeductions": 0,
+      "netPay": 200000,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 5303,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 6667,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 200000
     },
     {
       "id": "PS-2026-10-005",
@@ -2352,37 +2388,41 @@
       "month": "October",
       "year": 2026,
       "payDate": "2026-10-31",
-      "baseSalary": 133333,
+      "baseSalary": 120833,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
-      "grossPay": 214933,
-      "totalDeductions": 38693,
-      "netPay": 176240,
+      "grossPay": 120833,
+      "totalDeductions": 0,
+      "netPay": 120833,
       "status": "Approved",
       "reviewedBy": "Elena Rostova (HR)",
       "approvedAt": "2026-10-30",
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 6061,
-        "attendanceDeduction": 0
-      }
+        "perDayRate": 4028,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
+      },
+      "monthlyCTC": 120833
     },
     {
       "id": "PS-2026-11-006",
@@ -2393,35 +2433,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 133333,
       "allowances": {
-        "hra": 53333,
-        "specialAllowance": 26667,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 21493,
-        "providentFund": 16000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 12122,
-        "lossOfPay": 12122
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 8888,
+        "lossOfPay": 8888
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 20,
+        "totalWorkingDays": 30,
+        "presentDays": 28,
         "paidLeaveDays": 0,
         "absentDays": 2,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 2,
-        "perDayRate": 6061,
-        "attendanceDeduction": 12122
+        "perDayRate": 4444,
+        "attendanceDeduction": 8888,
+        "salaryDivisor": 30,
+        "payableDays": 28,
+        "lossOfPay": 8888
       },
-      "grossPay": 214933,
-      "totalDeductions": 50815,
-      "netPay": 164118,
+      "grossPay": 133333,
+      "totalDeductions": 8888,
+      "netPay": 124445,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "monthlyCTC": 133333
     },
     {
       "id": "PS-2026-11-007",
@@ -2432,35 +2476,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 175000,
       "allowances": {
-        "hra": 70000,
-        "specialAllowance": 35000,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 28160,
-        "providentFund": 21000,
-        "healthInsurance": 1200,
-        "attendanceDeduction": 7955,
-        "lossOfPay": 7955
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
+        "attendanceDeduction": 5833,
+        "lossOfPay": 5833
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 21,
+        "totalWorkingDays": 30,
+        "presentDays": 29,
         "paidLeaveDays": 0,
         "absentDays": 1,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 1,
-        "perDayRate": 7955,
-        "attendanceDeduction": 7955
+        "perDayRate": 5833,
+        "attendanceDeduction": 5833,
+        "salaryDivisor": 30,
+        "payableDays": 29,
+        "lossOfPay": 5833
       },
-      "grossPay": 281600,
-      "totalDeductions": 58315,
-      "netPay": 223285,
+      "grossPay": 175000,
+      "totalDeductions": 5833,
+      "netPay": 169167,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "monthlyCTC": 175000
     },
     {
       "id": "PS-2026-11-008",
@@ -2471,35 +2519,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 158333,
       "allowances": {
-        "hra": 63333,
-        "specialAllowance": 31667,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 25493,
-        "providentFund": 19000,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 7197,
-        "attendanceDeduction": 0
+        "perDayRate": 5278,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "grossPay": 254933,
-      "totalDeductions": 45693,
-      "netPay": 209240,
+      "grossPay": 158333,
+      "totalDeductions": 0,
+      "netPay": 158333,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "monthlyCTC": 158333
     },
     {
       "id": "PS-2026-11-009",
@@ -2510,35 +2562,39 @@
       "payDate": "2026-11-30",
       "baseSalary": 95833,
       "allowances": {
-        "hra": 38333,
-        "specialAllowance": 19167,
-        "conveyance": 1600
+        "hra": 0,
+        "specialAllowance": 0,
+        "conveyance": 0
       },
       "deductions": {
-        "incomeTax": 15493,
-        "providentFund": 11500,
-        "healthInsurance": 1200,
+        "incomeTax": 0,
+        "providentFund": 0,
+        "healthInsurance": 0,
         "attendanceDeduction": 0,
         "lossOfPay": 0
       },
       "attendanceSummary": {
-        "totalWorkingDays": 22,
-        "presentDays": 22,
+        "totalWorkingDays": 30,
+        "presentDays": 30,
         "paidLeaveDays": 0,
         "absentDays": 0,
         "lateDays": 0,
         "latePenaltyDays": 0,
         "unpaidLeaveDays": 0,
         "lopDays": 0,
-        "perDayRate": 4356,
-        "attendanceDeduction": 0
+        "perDayRate": 3194,
+        "attendanceDeduction": 0,
+        "salaryDivisor": 30,
+        "payableDays": 30,
+        "lossOfPay": 0
       },
-      "grossPay": 154933,
-      "totalDeductions": 28193,
-      "netPay": 126740,
+      "grossPay": 95833,
+      "totalDeductions": 0,
+      "netPay": 95833,
       "status": "Pending Approval",
       "reviewedBy": null,
-      "approvedAt": null
+      "approvedAt": null,
+      "monthlyCTC": 95833
     }
   ],
   "announcements": [

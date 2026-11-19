@@ -348,9 +348,18 @@ app.post('/api/employees', (req, res) => {
     status: 'Active',
     manager: manager || 'Elena Rostova',
     leaveBalances: {
-      annual: { total: 20, used: 0 },
-      sick: { total: 10, used: 0 },
-      casual: { total: 5, used: 0 }
+      annual: {
+        total: Number(req.body.leaveBalances?.annual?.total ?? req.body.leaveAnnualTotal ?? (isCreatingHrAccount ? 22 : 20)),
+        used: 0
+      },
+      sick: {
+        total: Number(req.body.leaveBalances?.sick?.total ?? req.body.leaveSickTotal ?? (isCreatingHrAccount ? 12 : 10)),
+        used: 0
+      },
+      casual: {
+        total: Number(req.body.leaveBalances?.casual?.total ?? req.body.leaveCasualTotal ?? (isCreatingHrAccount ? 6 : 5)),
+        used: 0
+      }
     }
   };
 
@@ -395,6 +404,35 @@ app.put('/api/employees/:id', (req, res) => {
 
   if (req.body.salary !== undefined) {
     updatedEmp.salary = Number(req.body.salary);
+  }
+
+  // Handle leave balances update if provided
+  if (req.body.leaveBalances) {
+    const existingLB = existing.leaveBalances || {
+      annual: { total: 20, used: 0 },
+      sick: { total: 10, used: 0 },
+      casual: { total: 5, used: 0 }
+    };
+    updatedEmp.leaveBalances = {
+      annual: {
+        total: req.body.leaveBalances.annual?.total !== undefined && req.body.leaveBalances.annual?.total !== null && req.body.leaveBalances.annual?.total !== ''
+          ? Math.max(0, Number(req.body.leaveBalances.annual.total))
+          : (existingLB.annual?.total ?? 20),
+        used: Number(existingLB.annual?.used ?? 0)
+      },
+      sick: {
+        total: req.body.leaveBalances.sick?.total !== undefined && req.body.leaveBalances.sick?.total !== null && req.body.leaveBalances.sick?.total !== ''
+          ? Math.max(0, Number(req.body.leaveBalances.sick.total))
+          : (existingLB.sick?.total ?? 10),
+        used: Number(existingLB.sick?.used ?? 0)
+      },
+      casual: {
+        total: req.body.leaveBalances.casual?.total !== undefined && req.body.leaveBalances.casual?.total !== null && req.body.leaveBalances.casual?.total !== ''
+          ? Math.max(0, Number(req.body.leaveBalances.casual.total))
+          : (existingLB.casual?.total ?? 5),
+        used: Number(existingLB.casual?.used ?? 0)
+      }
+    };
   }
 
   db.employees[index] = updatedEmp;
@@ -467,9 +505,18 @@ app.post('/api/hr-accounts', (req, res) => {
     status: 'Active',
     manager: 'Elena Rostova',
     leaveBalances: {
-      annual: { total: 22, used: 0 },
-      sick: { total: 12, used: 0 },
-      casual: { total: 6, used: 0 }
+      annual: {
+        total: Number(req.body.leaveBalances?.annual?.total ?? req.body.leaveAnnualTotal ?? 22),
+        used: 0
+      },
+      sick: {
+        total: Number(req.body.leaveBalances?.sick?.total ?? req.body.leaveSickTotal ?? 12),
+        used: 0
+      },
+      casual: {
+        total: Number(req.body.leaveBalances?.casual?.total ?? req.body.leaveCasualTotal ?? 6),
+        used: 0
+      }
     }
   };
 
@@ -641,15 +688,15 @@ app.post('/api/notifications/mark-all-read', (req, res) => {
 
 // ----------------- MODULE 2: ATTENDANCE MANAGEMENT & BIOMETRICS (ATT-001 to ATT-012, BR-ATT-01 to BR-ATT-06) -----------------
 
-// Helper: Parse 12-hour or 24-hour time to minutes from midnight
+// Helper: Parse 12-hour or 24-hour time to minutes from midnight (supports optional seconds)
 function parseTimeToMinutes(t) {
   if (!t) return null;
   t = String(t).trim();
-  const match12 = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
-  if (!match12) return null;
-  let h = parseInt(match12[1], 10);
-  const m = parseInt(match12[2], 10);
-  const ampm = match12[3] ? match12[3].toUpperCase() : null;
+  const match = t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+  if (!match) return null;
+  let h = parseInt(match[1], 10);
+  const m = parseInt(match[2], 10);
+  const ampm = match[4] ? match[4].toUpperCase() : null;
   if (ampm === 'PM' && h < 12) h += 12;
   if (ampm === 'AM' && h === 12) h = 0;
   return h * 60 + m;
@@ -660,8 +707,11 @@ function calculateWorkingHours(clockIn, clockOut) {
   if (!clockIn || !clockOut) return 0;
   const inMin = parseTimeToMinutes(clockIn);
   const outMin = parseTimeToMinutes(clockOut);
-  if (inMin === null || outMin === null || outMin <= inMin) return 0;
-  return Math.round(((outMin - inMin) / 60) * 10) / 10;
+  if (inMin === null || outMin === null) return 0;
+  let diff = outMin - inMin;
+  if (diff < 0) diff += 24 * 60; // Support cross-midnight shifts
+  if (diff <= 0) return 0;
+  return Math.round((diff / 60) * 10) / 10;
 }
 
 // ATT-001, ATT-004, ATT-011, BR-ATT-01, BR-ATT-02, BR-ATT-06:
@@ -749,6 +799,8 @@ function syncBiometricPunches() {
       status = 'Late';
     } else if (missingPunch) {
       status = 'Missing Punch';
+    } else if (clockIn && clockOut && totalHours === 0) {
+      status = 'Absent';
     } else if (totalHours > 0 && totalHours < 4.0) {
       status = 'Half Day';
     }
@@ -761,7 +813,7 @@ function syncBiometricPunches() {
         attRecord.originalBiometric = {
           clockIn: attRecord.clockIn || clockIn,
           clockOut: attRecord.clockOut || clockOut,
-          totalHours: attRecord.totalHours || totalHours
+          totalHours: attRecord.totalHours !== undefined ? attRecord.totalHours : totalHours
         };
       }
 
@@ -1419,16 +1471,10 @@ function calculateAttendanceSummary(employeeId, month, year, baseSalary) {
   const latePenaltyUnit = policy.latePenaltyDays || 0.5;
   const latePenaltyDays = Math.floor(lateCount / penaltyThreshold) * latePenaltyUnit;
 
-  // PAY-004: Calculate payable working days (BRD Section 7 & Glossary: Present days + Approved paid leave)
-  // If no attendance records for this month, default presentCount reasonably based on salary divisor - unpaid
-  const effectivePresentDays = empAtt.length > 0 
-    ? presentCount 
-    : Math.max(0, salaryDivisor - approvedPaidLeaveDays - unpaidLeaveDays);
-
-  const payableDays = Math.min(salaryDivisor, effectivePresentDays + approvedPaidLeaveDays);
-
-  // PAY-005: Calculate loss of pay (LOP) days and deduction
-  const lopDays = Math.max(0, salaryDivisor - payableDays + latePenaltyDays);
+  // PAY-004 & PAY-005: Calculate payable days and loss of pay (LOP)
+  const lopDays = Math.max(0, absentCount + unpaidLeaveDays + latePenaltyDays);
+  const payableDays = Math.max(0, salaryDivisor - lopDays);
+  const effectivePresentDays = Math.max(0, payableDays - approvedPaidLeaveDays);
   const attendanceDeduction = Math.round(perDayRate * lopDays);
 
   return {
@@ -1635,26 +1681,15 @@ app.post('/api/payslips/generate-cycle', (req, res) => {
       healthInsuranceFixed: 1200
     };
 
-    const monthlyCTC = Math.round((emp.salary || 900000) / 12);
+    const monthlySalary = Math.round((emp.salary || 900000) / 12);
     
-    // PAY-006: Calculate gross salary components according to assigned salary structure
-    const basic = Math.round(monthlyCTC * (struct.basicPercentage / 100));
-    const hra = Math.round(monthlyCTC * (struct.hraPercentage / 100));
-    const special = Math.round(monthlyCTC * (struct.specialAllowancePercentage / 100));
-    const conveyance = struct.conveyanceFixed || 1600;
-    const gross = basic + hra + special + conveyance;
-
     // PAY-002, PAY-004, PAY-005: Retrieve validated attendance, calculate payable days and LOP
-    const attSummary = calculateAttendanceSummary(emp.id, month, Number(year), monthlyCTC);
+    const attSummary = calculateAttendanceSummary(emp.id, month, Number(year), monthlySalary);
+    const attDeduction = attSummary.attendanceDeduction || 0;
 
-    // PAY-007: Calculate applicable deductions
-    const pf = Math.round(basic * ((struct.pfPercentage || 12) / 100));
-    const tax = Math.round(gross * ((struct.taxPercentage || 10) / 100));
-    const insurance = struct.healthInsuranceFixed || 1200;
-    const attDeduction = attSummary.attendanceDeduction;
-    const totalDeductions = tax + pf + insurance + attDeduction;
-
-    // PAY-008: Calculate net salary automatically
+    // Simplified model: Gross is Salary, Deductions is LOP, Net is Salary - LOP
+    const gross = monthlySalary;
+    const totalDeductions = attDeduction;
     const net = gross - totalDeductions;
 
     if (!slip) {
@@ -1665,19 +1700,19 @@ app.post('/api/payslips/generate-cycle', (req, res) => {
         month,
         year: Number(year),
         payDate: `${year}-${month === 'November' ? '11-30' : (month === 'December' ? '12-31' : '10-31')}`,
-        salaryStructureId: struct.id,
-        salaryStructureName: struct.name,
-        baseSalary: basic,
-        monthlyCTC,
+        salaryStructureId: struct?.id || 'STR-001',
+        salaryStructureName: struct?.name || 'Standard Structure',
+        baseSalary: monthlySalary,
+        monthlyCTC: monthlySalary,
         allowances: { 
-          hra, 
-          specialAllowance: special, 
-          conveyance 
+          hra: 0, 
+          specialAllowance: 0, 
+          conveyance: 0 
         },
         deductions: { 
-          incomeTax: tax, 
-          providentFund: pf, 
-          healthInsurance: insurance,
+          incomeTax: 0, 
+          providentFund: 0, 
+          healthInsurance: 0,
           attendanceDeduction: attDeduction,
           lossOfPay: attDeduction
         },
@@ -1694,16 +1729,16 @@ app.post('/api/payslips/generate-cycle', (req, res) => {
       db.payslips.unshift(slip);
       added++;
     } else if (forceRecalculate || slip.status !== 'Finalized') {
-      slip.salaryStructureId = struct.id;
-      slip.salaryStructureName = struct.name;
-      slip.baseSalary = basic;
-      slip.monthlyCTC = monthlyCTC;
-      slip.allowances = { hra, specialAllowance: special, conveyance };
+      slip.salaryStructureId = struct?.id || 'STR-001';
+      slip.salaryStructureName = struct?.name || 'Standard Structure';
+      slip.baseSalary = monthlySalary;
+      slip.monthlyCTC = monthlySalary;
+      slip.allowances = { hra: 0, specialAllowance: 0, conveyance: 0 };
       slip.attendanceSummary = attSummary;
       slip.deductions = {
-        incomeTax: tax,
-        providentFund: pf,
-        healthInsurance: insurance,
+        incomeTax: 0,
+        providentFund: 0,
+        healthInsurance: 0,
         attendanceDeduction: attDeduction,
         lossOfPay: attDeduction
       };
@@ -1733,37 +1768,29 @@ app.post('/api/payslips/recalculate-all', (req, res) => {
       const emp = (db.employees || []).find(e => e.id === slip.employeeId);
       const struct = (db.salaryStructures || []).find(s => s.id === (emp?.salaryStructureId || 'STR-001')) || (db.salaryStructures && db.salaryStructures[0]);
       
-      const monthlyCTC = Math.round((emp?.salary || 900000) / 12);
-      const attSummary = calculateAttendanceSummary(slip.employeeId, slip.month, slip.year, monthlyCTC);
+      const monthlySalary = Math.round((emp?.salary || 900000) / 12);
+      const attSummary = calculateAttendanceSummary(slip.employeeId, slip.month, slip.year, monthlySalary);
+      const attDeduction = attSummary.attendanceDeduction || 0;
+      const gross = monthlySalary;
+      const totalDeductions = attDeduction;
 
-      const basic = Math.round(monthlyCTC * (struct.basicPercentage / 100));
-      const hra = Math.round(monthlyCTC * (struct.hraPercentage / 100));
-      const special = Math.round(monthlyCTC * (struct.specialAllowancePercentage / 100));
-      const conveyance = struct.conveyanceFixed || 1600;
-      const gross = basic + hra + special + conveyance;
-
-      const pf = Math.round(basic * ((struct.pfPercentage || 12) / 100));
-      const tax = Math.round(gross * ((struct.taxPercentage || 10) / 100));
-      const insurance = struct.healthInsuranceFixed || 1200;
-      const attDeduction = attSummary.attendanceDeduction;
-
-      slip.salaryStructureId = struct.id;
-      slip.salaryStructureName = struct.name;
-      slip.baseSalary = basic;
-      slip.monthlyCTC = monthlyCTC;
-      slip.allowances = { hra, specialAllowance: special, conveyance };
+      slip.salaryStructureId = struct?.id || 'STR-001';
+      slip.salaryStructureName = struct?.name || 'Standard Structure';
+      slip.baseSalary = monthlySalary;
+      slip.monthlyCTC = monthlySalary;
+      slip.allowances = { hra: 0, specialAllowance: 0, conveyance: 0 };
       slip.attendanceSummary = attSummary;
       slip.deductions = {
-        incomeTax: tax,
-        providentFund: pf,
-        healthInsurance: insurance,
+        incomeTax: 0,
+        providentFund: 0,
+        healthInsurance: 0,
         attendanceDeduction: attDeduction,
         lossOfPay: attDeduction
       };
 
       slip.grossPay = gross;
-      slip.totalDeductions = pf + tax + insurance + attDeduction;
-      slip.netPay = gross - slip.totalDeductions;
+      slip.totalDeductions = totalDeductions;
+      slip.netPay = gross - totalDeductions;
       count++;
     }
   });

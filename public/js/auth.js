@@ -131,6 +131,12 @@ const Auth = {
     // Initialize Role Navigation and Views
     App.setupRoleNavigation(this.user.role);
 
+    // Initial render for profile dropdown in navbar
+    const ui = typeof UI !== 'undefined' ? UI : window.UI;
+    if (ui && typeof ui.renderProfileDropdown === 'function') {
+      ui.renderProfileDropdown();
+    }
+
     // Initial check for notifications
     const emp = typeof Employee !== 'undefined' ? Employee : window.Employee;
     if (emp && typeof emp.loadNotifications === 'function') {

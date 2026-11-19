@@ -261,16 +261,33 @@
             </div>
           </div>
 
-          <!-- User profile pill -->
-          <div class="flex items-center gap-3 pl-3 border-l border-slate-200">
-            <img id="header-user-avatar" src="" class="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20" alt="Avatar">
-            <div class="hidden md:block text-left">
-              <div id="header-user-name" class="text-xs font-bold text-slate-900 leading-tight"></div>
-              <div id="header-user-title" class="text-[11px] text-slate-500 leading-tight"></div>
+          <!-- User Profile Section in Navbar -->
+          <div class="relative pl-3 border-l border-slate-200">
+            <div class="flex items-center gap-1">
+              <button id="btn-user-profile" onclick="UI.toggleProfileMenu()" title="View Profile Details" class="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100/90 transition-all text-left group focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                <div class="relative">
+                  <img id="header-user-avatar" src="" class="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/20 group-hover:ring-indigo-500/50 transition-all" alt="Avatar">
+                  <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                </div>
+                <div class="hidden md:block text-left">
+                  <div class="flex items-center gap-1.5">
+                    <span id="header-user-name" class="text-xs font-bold text-slate-900 leading-tight"></span>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 transition-colors"></i>
+                  </div>
+                  <div id="header-user-title" class="text-[11px] text-slate-500 leading-tight"></div>
+                </div>
+              </button>
+              <button onclick="Auth.logout()" title="Sign Out" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors ml-0.5">
+                <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
+              </button>
             </div>
-            <button onclick="Auth.logout()" title="Sign Out" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors ml-1">
-              <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
-            </button>
+
+            <!-- Profile Dropdown in Navbar -->
+            <div id="profile-menu" class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3.5 z-50">
+              <div id="profile-menu-content">
+                <!-- Rendered dynamically by UI.renderProfileDropdown() -->
+              </div>
+            </div>
           </div>
 
         </div>
@@ -318,6 +335,8 @@
           <div id="hr-view-container" class="hidden space-y-6">
             <!-- HR Overview Section -->
             <div id="hr-tab-overview" class="tab-content space-y-6"></div>
+            <!-- HR Profile Section -->
+            <div id="hr-tab-profile" class="tab-content hidden space-y-6"></div>
             <!-- HR Employees Directory Section -->
             <div id="hr-tab-employees" class="tab-content hidden space-y-6"></div>
             <!-- HR Leave Management Section -->
@@ -334,11 +353,13 @@
           <div id="emp-view-container" class="hidden space-y-6">
             <!-- Employee Dashboard Section -->
             <div id="emp-tab-dashboard" class="tab-content space-y-6"></div>
+            <!-- Employee Profile Section (EMP-009) -->
+            <div id="emp-tab-profile" class="tab-content hidden space-y-6"></div>
             <!-- Employee Attendance Section -->
             <div id="emp-tab-attendance" class="tab-content hidden space-y-6"></div>
             <!-- Employee Leave Request Section -->
             <div id="emp-tab-leaves" class="tab-content hidden space-y-6"></div>
-            <!-- Employee Payslips Section -->
+            <!-- Employee Payroll Section -->
             <div id="emp-tab-payslips" class="tab-content hidden space-y-6"></div>
             <!-- Employee Team Directory -->
             <div id="emp-tab-directory" class="tab-content hidden space-y-6"></div>
@@ -414,7 +435,7 @@
             </select>
           </div>
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary (₹ / INR)</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Salary (₹ / INR)</label>
             <input type="number" name="salary" placeholder="1200000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
@@ -452,6 +473,31 @@
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
             <input type="text" name="location" placeholder="San Francisco, CA / Remote" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Leave Quota Allocation (Defaults: Annual 20, Sick 10, Casual 5) -->
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Leave Quota Allocation (Days / Year)</label>
+            <span class="text-[11px] text-slate-500 font-medium">Configurable per employee</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-700 mb-1">Annual Leave</label>
+              <input type="number" min="0" max="365" name="leaveAnnualTotal" id="add-employee-leave-annual" value="20" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-400 mt-0.5 block">Default: 20 days</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-rose-700 mb-1">Sick Leave</label>
+              <input type="number" min="0" max="365" name="leaveSickTotal" id="add-employee-leave-sick" value="10" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-400 mt-0.5 block">Default: 10 days</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-amber-700 mb-1">Casual Leave</label>
+              <input type="number" min="0" max="365" name="leaveCasualTotal" id="add-employee-leave-casual" value="5" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-400 mt-0.5 block">Default: 5 days</span>
+            </div>
           </div>
         </div>
 
@@ -525,7 +571,7 @@
             </select>
           </div>
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Annual Salary / CTC (₹) *</label>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Salary (₹) *</label>
             <input type="number" name="salary" id="edit-employee-salary" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
           </div>
         </div>
@@ -568,6 +614,31 @@
           <div class="col-span-2 sm:col-span-1">
             <label class="block text-xs font-semibold text-slate-700 mb-1">Work Location</label>
             <input type="text" name="location" id="edit-employee-location" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- Leave Quota Allocation (EMP-008) -->
+        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Leave Quota Allocation (Total Days)</label>
+            <span class="text-[11px] text-slate-500 font-medium">Update total days given</span>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-indigo-700 mb-1">Annual Leave</label>
+              <input type="number" min="0" max="365" name="leaveAnnualTotal" id="edit-employee-leave-annual" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-500 mt-0.5 block" id="edit-employee-annual-used-hint">Used: 0 | Default: 20</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-rose-700 mb-1">Sick Leave</label>
+              <input type="number" min="0" max="365" name="leaveSickTotal" id="edit-employee-leave-sick" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-500 mt-0.5 block" id="edit-employee-sick-used-hint">Used: 0 | Default: 10</span>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-amber-700 mb-1">Casual Leave</label>
+              <input type="number" min="0" max="365" name="leaveCasualTotal" id="edit-employee-leave-casual" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white">
+              <span class="text-[10px] text-slate-500 mt-0.5 block" id="edit-employee-casual-used-hint">Used: 0 | Default: 5</span>
+            </div>
           </div>
         </div>
 

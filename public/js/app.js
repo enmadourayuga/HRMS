@@ -30,6 +30,10 @@ const App = {
           <i class="fa-solid fa-gauge-high w-5 text-center text-slate-400"></i>
           <span>Dashboard Overview</span>
         </button>
+        <button onclick="App.navigateTo('profile')" id="nav-profile" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
+          <i class="fa-solid fa-id-badge w-5 text-center text-slate-400"></i>
+          <span>My Profile</span>
+        </button>
         <button onclick="App.navigateTo('employees')" id="nav-employees" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-users-gear w-5 text-center text-slate-400"></i>
           <span>Employee Directory</span>
@@ -68,6 +72,10 @@ const App = {
           <i class="fa-solid fa-house-laptop w-5 text-center text-slate-400"></i>
           <span>My Dashboard</span>
         </button>
+        <button onclick="App.navigateTo('profile')" id="nav-profile" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
+          <i class="fa-solid fa-id-badge w-5 text-center text-slate-400"></i>
+          <span>My Profile</span>
+        </button>
         <button onclick="App.navigateTo('attendance')" id="nav-attendance" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-fingerprint w-5 text-center text-slate-400"></i>
           <span>My Attendance</span>
@@ -78,7 +86,7 @@ const App = {
         </button>
         <button onclick="App.navigateTo('payslips')" id="nav-payslips" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-receipt w-5 text-center text-slate-400"></i>
-          <span>My Payslips</span>
+          <span>My Payroll</span>
         </button>
         <button onclick="App.navigateTo('directory')" id="nav-directory" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-address-book w-5 text-center text-slate-400"></i>

@@ -70,7 +70,7 @@ const App = {
         </button>
         <button onclick="App.navigateTo('attendance')" id="nav-attendance" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-fingerprint w-5 text-center text-slate-400"></i>
-          <span>Punch Attendance</span>
+          <span>My Attendance</span>
         </button>
         <button onclick="App.navigateTo('leaves')" id="nav-leaves" class="w-full text-left px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-3 transition-colors">
           <i class="fa-solid fa-calendar-days w-5 text-center text-slate-400"></i>

@@ -170,18 +170,19 @@ const Employee = {
 
           <div>
             ${!todayAtt?.clockIn ? `
-              <button onclick="Employee.clockIn()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-play text-xs"></i>
-                <span>Clock In Now</span>
-              </button>
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center text-xs text-slate-600 font-medium flex items-center justify-center gap-2">
+                <i class="fa-solid fa-fingerprint text-slate-400 text-sm"></i>
+                <span>Awaiting Biometric Entry Scan</span>
+              </div>
             ` : (!todayAtt?.clockOut ? `
-              <button onclick="Employee.clockOut()" class="w-full py-3.5 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-rose-600/20 transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-stop text-xs"></i>
-                <span>Clock Out for Today</span>
-              </button>
+              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-medium flex items-center justify-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active Shift &bull; In at ${todayAtt.clockIn}</span>
+              </div>
             ` : `
-              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-semibold">
-                <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Day completed (${todayAtt.totalHours} hours recorded)
+              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-semibold flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                <span>Shift Completed (${todayAtt.totalHours} hrs recorded)</span>
               </div>
             `)}
           </div>
@@ -313,7 +314,7 @@ const Employee = {
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">My Attendance & Hours</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Punch in/out daily and review historical working hours</p>
+          <p class="text-xs text-slate-500 mt-0.5">Track daily biometric scan times and historical working hours</p>
         </div>
         <button onclick="UI.openModal('modal-request-attendance-correction')" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-xl text-xs sm:text-sm border border-indigo-200 flex items-center gap-1.5 transition-colors">
           <i class="fa-solid fa-clock-rotate-left text-xs"></i>
@@ -338,19 +339,20 @@ const Employee = {
 
         <div class="space-y-3">
           ${!todayAtt?.clockIn ? `
-            <button onclick="Employee.clockIn()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2">
-              <i class="fa-solid fa-right-to-bracket"></i>
-              <span>Punch Clock In</span>
-            </button>
-          ` : (!todayAtt?.clockOut ? `
-            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center text-xs text-emerald-800 font-medium mb-2 flex items-center justify-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Currently Clocked In &amp; Active</span>
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+              <i class="fa-solid fa-fingerprint text-slate-400 text-2xl mb-1.5"></i>
+              <div class="text-sm font-semibold text-slate-700">Awaiting Biometric Entry Punch</div>
+              <p class="text-xs text-slate-500 mt-1">Recorded automatically when you scan at the office biometric device</p>
             </div>
-            <button onclick="Employee.clockOut()" class="w-full py-4 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-rose-600/20 transition-all flex items-center justify-center gap-2">
-              <i class="fa-solid fa-right-from-bracket"></i>
-              <span>Punch Clock Out</span>
-            </button>
+          ` : (!todayAtt?.clockOut ? `
+            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+              <div class="flex items-center justify-center gap-2 mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-sm font-bold text-emerald-800">Shift In Progress (Active)</span>
+              </div>
+              <div class="text-xs text-emerald-700">Clocked in via biometric machine at <strong>${todayAtt.clockIn}</strong></div>
+              <div class="text-[11px] text-slate-500 mt-1.5">Scan biometric device on departure to record exit time</div>
+            </div>
           ` : `
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
               <i class="fa-solid fa-circle-check text-emerald-600 text-2xl mb-1"></i>

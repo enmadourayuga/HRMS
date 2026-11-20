@@ -50,8 +50,7 @@ class HRMSApiTests(TestCase):
     def test_create_and_fetch_attendance(self):
         att = AttendanceRecord.objects.create(
             id='ATT-TEST-001',
-            employee_id='EMP-TEST-001',
-            employee_name='Test User',
+            employee=self.employee,
             date='2026-11-19',
             clock_in='09:00 AM',
             status='Present'
@@ -59,12 +58,27 @@ class HRMSApiTests(TestCase):
         res = self.client.get('/api/attendance/')
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data), 1)
+        # Verify FK-derived fields appear in API response
+        self.assertEqual(res.data[0]['employee_id'], 'EMP-TEST-001')
+        self.assertEqual(res.data[0]['employee_name'], 'Test User')
+
+    def test_create_attendance_via_api(self):
+        """Frontend sends employee_id as a string — verify backward compat."""
+        res = self.client.post('/api/attendance/', {
+            'id': 'ATT-TEST-002',
+            'employee_id': self.employee.id,
+            'date': '2026-11-20',
+            'clock_in': '09:00 AM',
+            'clock_out': '06:00 PM',
+            'status': 'Present',
+        }, format='json')
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.data['employee_name'], 'Test User')
 
     def test_create_and_fetch_leave(self):
         lv = LeaveRequest.objects.create(
             id='LV-TEST-001',
-            employee_id='EMP-TEST-001',
-            employee_name='Test User',
+            employee=self.employee,
             leave_type='Annual',
             start_date='2026-11-20',
             end_date='2026-11-22',
@@ -73,12 +87,13 @@ class HRMSApiTests(TestCase):
         res = self.client.get('/api/leaves/')
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['employee_id'], 'EMP-TEST-001')
+        self.assertEqual(res.data[0]['employee_name'], 'Test User')
 
     def test_create_and_fetch_payroll(self):
         py = PayrollEntry.objects.create(
             id='PS-TEST-001',
-            employee_id='EMP-TEST-001',
-            employee_name='Test User',
+            employee=self.employee,
             month='November',
             year=2026,
             base_salary=50000,
@@ -87,6 +102,8 @@ class HRMSApiTests(TestCase):
         res = self.client.get('/api/payroll/')
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['employee_id'], 'EMP-TEST-001')
+        self.assertEqual(res.data[0]['employee_name'], 'Test User')
 
     def test_create_and_fetch_announcement(self):
         an = Announcement.objects.create(

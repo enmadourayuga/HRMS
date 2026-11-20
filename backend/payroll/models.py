@@ -1,9 +1,10 @@
 from django.db import models
+from employees.models import Employee
+
 
 class PayrollEntry(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
-    employee_id = models.CharField(max_length=50)
-    employee_name = models.CharField(max_length=100)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='payroll_entries')
     month = models.CharField(max_length=50)
     year = models.IntegerField(default=2026)
     pay_date = models.DateField(null=True, blank=True)
@@ -23,4 +24,4 @@ class PayrollEntry(models.Model):
         ordering = ['-year', '-month']
 
     def __str__(self):
-        return f"{self.employee_name} - {self.month} {self.year} ({self.net_pay})"
+        return f"{self.employee.name} - {self.month} {self.year} ({self.net_pay})"

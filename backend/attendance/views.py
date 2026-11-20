@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions
 from .models import AttendanceRecord
 from .serializers import AttendanceRecordSerializer
 
+
 def parse_time_to_minutes(time_str):
     if not time_str:
         return None
@@ -20,6 +21,7 @@ def parse_time_to_minutes(time_str):
         h = 0
     return h * 60 + m
 
+
 def calculate_worked_hours(clock_in, clock_out):
     if not clock_in or not clock_out:
         return 0.0
@@ -32,8 +34,9 @@ def calculate_worked_hours(clock_in, clock_out):
         diff += 24 * 60
     return round(diff / 60.0, 1)
 
+
 class AttendanceRecordViewSet(viewsets.ModelViewSet):
-    queryset = AttendanceRecord.objects.all()
+    queryset = AttendanceRecord.objects.select_related('employee').all()
     serializer_class = AttendanceRecordSerializer
     permission_classes = [permissions.IsAuthenticated]
 

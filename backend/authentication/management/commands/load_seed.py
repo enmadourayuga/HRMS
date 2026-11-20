@@ -83,14 +83,13 @@ class Command(BaseCommand):
             emp_count += 1
         self.stdout.write(self.style.SUCCESS(f'Processed {emp_count} employees.'))
 
-        # 3. Attendance
+        # 3. Attendance (uses FK to Employee)
         att_count = 0
         for a in data.get('attendance', []):
             AttendanceRecord.objects.update_or_create(
                 id=a['id'],
                 defaults={
                     'employee_id': a.get('employeeId', ''),
-                    'employee_name': a.get('employeeName', ''),
                     'date': a.get('date'),
                     'clock_in': a.get('clockIn'),
                     'clock_out': a.get('clockOut'),
@@ -104,14 +103,13 @@ class Command(BaseCommand):
             att_count += 1
         self.stdout.write(self.style.SUCCESS(f'Processed {att_count} attendance records.'))
 
-        # 4. Leaves
+        # 4. Leaves (uses FK to Employee)
         leave_count = 0
         for lv in data.get('leaves', []):
             LeaveRequest.objects.update_or_create(
                 id=lv['id'],
                 defaults={
                     'employee_id': lv.get('employeeId', ''),
-                    'employee_name': lv.get('employeeName', ''),
                     'department': lv.get('department', ''),
                     'leave_type': lv.get('leaveType', 'Annual'),
                     'start_date': lv.get('startDate'),
@@ -127,14 +125,13 @@ class Command(BaseCommand):
             leave_count += 1
         self.stdout.write(self.style.SUCCESS(f'Processed {leave_count} leave requests.'))
 
-        # 5. Payslips
+        # 5. Payslips (uses FK to Employee)
         payslip_count = 0
         for p in data.get('payslips', []):
             PayrollEntry.objects.update_or_create(
                 id=p['id'],
                 defaults={
                     'employee_id': p.get('employeeId', ''),
-                    'employee_name': p.get('employeeName', ''),
                     'month': p.get('month', ''),
                     'year': p.get('year', 2026),
                     'pay_date': p.get('payDate'),

@@ -1,9 +1,10 @@
 from django.db import models
+from employees.models import Employee
+
 
 class LeaveRequest(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
-    employee_id = models.CharField(max_length=50)
-    employee_name = models.CharField(max_length=100)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='leave_requests')
     department = models.CharField(max_length=100, blank=True, null=True)
     leave_type = models.CharField(max_length=50)
     start_date = models.DateField()
@@ -20,4 +21,4 @@ class LeaveRequest(models.Model):
         ordering = ['-applied_on', '-created_at']
 
     def __str__(self):
-        return f"{self.employee_name} ({self.leave_type}): {self.start_date} to {self.end_date} - {self.status}"
+        return f"{self.employee.name} ({self.leave_type}): {self.start_date} to {self.end_date} - {self.status}"

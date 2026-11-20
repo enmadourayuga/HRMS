@@ -1,9 +1,10 @@
 from django.db import models
+from employees.models import Employee
+
 
 class AttendanceRecord(models.Model):
     id = models.CharField(max_length=50, primary_key=True)
-    employee_id = models.CharField(max_length=50)
-    employee_name = models.CharField(max_length=100)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='attendance_records')
     date = models.DateField()
     clock_in = models.CharField(max_length=30, null=True, blank=True)
     clock_out = models.CharField(max_length=30, null=True, blank=True)
@@ -17,4 +18,4 @@ class AttendanceRecord(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"{self.employee_name} ({self.date}) - {self.status}"
+        return f"{self.employee.name} ({self.date}) - {self.status}"

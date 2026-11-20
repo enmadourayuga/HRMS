@@ -553,6 +553,10 @@ export default function App() {
               departments={departments}
               onOpenEmployeeModal={() => setModalEmployeeOpen(true)}
               onEditEmployee={(emp) => {
+                if (!isHR) {
+                  addToast?.('Only HR administrators can edit employee information.', 'error');
+                  return;
+                }
                 setSelectedEmployeeForEdit(emp);
                 setModalEditEmployeeOpen(true);
               }}
@@ -622,7 +626,7 @@ export default function App() {
         isHRAdmin={Boolean(user?.is_hr_admin)}
       />
 
-      {modalEditEmployeeOpen && selectedEmployeeForEdit && (
+      {isHR && modalEditEmployeeOpen && selectedEmployeeForEdit && (
         <EditEmployeeModal
           key={selectedEmployeeForEdit.id}
           isOpen={modalEditEmployeeOpen}

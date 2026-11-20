@@ -111,6 +111,11 @@ export default function ProfilePage({
 
   const handleSaveContactInfo = async (e) => {
     e.preventDefault();
+    if (!isUserHR) {
+      addToast?.('Employees are not allowed to edit their information.', 'error');
+      setEditInfoOpen(false);
+      return;
+    }
     try {
       setSavingInfo(true);
       if (profile.id) {
@@ -147,26 +152,28 @@ export default function ProfilePage({
           <p className="text-xs text-slate-500">
             {isUserHR
               ? 'View and manage employee credentials, photo, and job details'
-              : 'View and manage your employee credentials and contact info (photo managed by HR)'}
+              : 'View your employee credentials, photo, and job details (managed by HR)'}
           </p>
         </div>
         <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => {
-              setContactForm({ phone: profile.phone || '', location: profile.location || '' });
-              setEditInfoOpen(true);
-            }}
-            className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
-          >
-            <i className="fa-solid fa-pen-to-square text-indigo-500"></i> Edit Contact Info
-          </button>
           {isUserHR && (
-            <button
-              onClick={() => setPhotoModalOpen(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-2"
-            >
-              <i className="fa-solid fa-camera"></i> Change Photo
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  setContactForm({ phone: profile.phone || '', location: profile.location || '' });
+                  setEditInfoOpen(true);
+                }}
+                className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2"
+              >
+                <i className="fa-solid fa-pen-to-square text-indigo-500"></i> Edit Contact Info
+              </button>
+              <button
+                onClick={() => setPhotoModalOpen(true)}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-2"
+              >
+                <i className="fa-solid fa-camera"></i> Change Photo
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -240,7 +247,7 @@ export default function ProfilePage({
             </p>
             {!isUserHR && (
               <p className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-1.5">
-                <i className="fa-solid fa-shield-halved text-indigo-400"></i> Profile photo managed by HR administration
+                <i className="fa-solid fa-lock text-indigo-400"></i> Employee information is managed by HR (read-only)
               </p>
             )}
           </div>
@@ -295,15 +302,17 @@ export default function ProfilePage({
                   <p className="text-xs text-slate-400">Personal identity and company records</p>
                 </div>
               </div>
-              <button
-                onClick={() => {
-                  setContactForm({ phone: profile.phone || '', location: profile.location || '' });
-                  setEditInfoOpen(true);
-                }}
-                className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
-              >
-                <i className="fa-solid fa-pen text-[10px]"></i> Edit
-              </button>
+              {isUserHR && (
+                <button
+                  onClick={() => {
+                    setContactForm({ phone: profile.phone || '', location: profile.location || '' });
+                    setEditInfoOpen(true);
+                  }}
+                  className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+                >
+                  <i className="fa-solid fa-pen text-[10px]"></i> Edit
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -576,8 +585,8 @@ export default function ProfilePage({
         </div>
       )}
 
-      {/* MODAL: Edit Contact Info */}
-      {editInfoOpen && (
+      {/* MODAL: Edit Contact Info (HR Only) */}
+      {isUserHR && editInfoOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl modal-enter">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">

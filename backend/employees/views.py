@@ -35,6 +35,11 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         user = request.user
         is_admin = getattr(user, 'is_hr_admin', False) or getattr(user, 'is_superuser', False)
+        is_hr = getattr(user, 'role', '') == 'hr' or is_admin
+
+        if not is_hr:
+            return Response({'detail': 'Employees are not allowed to edit their information.'}, status=status.HTTP_403_FORBIDDEN)
+
         target_role = request.data.get('role')
         target_is_hr_admin = request.data.get('is_hr_admin')
 
@@ -50,6 +55,11 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         user = request.user
         is_admin = getattr(user, 'is_hr_admin', False) or getattr(user, 'is_superuser', False)
+        is_hr = getattr(user, 'role', '') == 'hr' or is_admin
+
+        if not is_hr:
+            return Response({'detail': 'Employees are not allowed to edit their information.'}, status=status.HTTP_403_FORBIDDEN)
+
         target_role = request.data.get('role')
         target_is_hr_admin = request.data.get('is_hr_admin')
 
@@ -61,6 +71,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         if 'avatar' in request.data and not (user.role == 'hr' or user.is_hr_admin):
             return Response({'error': 'Only HR administrators can change profile pictures for employees.'}, status=status.HTTP_403_FORBIDDEN)
         return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        is_admin = getattr(user, 'is_hr_admin', False) or getattr(user, 'is_superuser', False)
+        is_hr = getattr(user, 'role', '') == 'hr' or is_admin
+
+        if not is_hr:
+            return Response({'detail': 'Employees are not allowed to delete employee records.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         instance = serializer.save()

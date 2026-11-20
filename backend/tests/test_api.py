@@ -416,7 +416,7 @@ class HRMSApiTests(TestCase):
         self.assertEqual(res.status_code, 403)
         self.assertIn('Only HR administrators can change profile pictures', res.data['error'])
 
-    def test_non_hr_can_update_contact_info_without_avatar(self):
+    def test_non_hr_cannot_update_contact_info(self):
         emp_user = User.objects.create_user(
             id='USR-NORMAL-EMP5',
             email='regular5@hrms.com',
@@ -448,9 +448,8 @@ class HRMSApiTests(TestCase):
             'phone': '9876543210',
             'location': 'Bengaluru (HQ)'
         }, format='json')
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.data['phone'], '9876543210')
-        self.assertEqual(res.data['location'], 'Bengaluru (HQ)')
+        self.assertEqual(res.status_code, 403)
+        self.assertIn('Employees are not allowed to edit their information', res.data.get('detail', ''))
 
     def test_other_hr_cannot_create_hr_account(self):
         # Create an HR user who is NOT an HR admin

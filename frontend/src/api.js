@@ -70,7 +70,15 @@ export async function apiRequest(endpoint, options = {}, isRetry = false) {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.detail || errData.message || `Request failed with status ${res.status}`);
+      let msg = errData.detail || errData.message;
+      if (!msg && typeof errData === 'object' && Object.keys(errData).length > 0) {
+        msg = Object.entries(errData)
+          .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(' ') : v}`)
+          .join('; ');
+      }
+      const err = new Error(msg || `Request failed with status ${res.status}`);
+      err.data = errData;
+      throw err;
     }
 
     return await res.json();
@@ -101,6 +109,9 @@ export const API = {
   updateEmployee: (id, emp) => apiRequest(`/employees/${id}/`, {
     method: 'PATCH',
     body: JSON.stringify(emp)
+  }),
+  toggleEmployeeStatus: (id) => apiRequest(`/employees/${id}/toggle_status/`, {
+    method: 'POST'
   }),
   uploadAvatar: async (file) => {
     const formData = new FormData();

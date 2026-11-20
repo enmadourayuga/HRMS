@@ -8,7 +8,8 @@ export default function Header({
   onLogout,
   onOpenProfile
 }) {
-  const isHR = user.role === 'hr' || user.is_hr_admin;
+  const isHRAdmin = Boolean(user?.is_hr_admin);
+  const isHR = user?.role === 'hr' || isHRAdmin;
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 shadow-sm">
@@ -23,9 +24,13 @@ export default function Header({
                 Nexus<span className="text-indigo-600">HR</span>
               </span>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                isHR ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'
+                isHRAdmin
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : isHR
+                  ? 'bg-purple-100 text-purple-700'
+                  : 'bg-emerald-100 text-emerald-700'
               }`}>
-                {isHR ? 'HR Admin' : 'Employee'}
+                {isHRAdmin ? 'HR Admin' : isHR ? 'HR Staff' : 'Employee'}
               </span>
             </div>
           </div>

@@ -28,6 +28,7 @@ import PayslipModal from './components/modals/PayslipModal';
 // Demo user shortcuts
 const DEMO_USERS = [
   { label: 'Elena Rostova (HR Admin)', email: 'hr@hrms.com', role: 'hr', is_hr_admin: true },
+  { label: 'Clara Oswald (HR Staff)', email: 'clara.hr@hrms.com', role: 'hr', is_hr_admin: false },
   { label: 'Alex Morgan (Engineering)', email: 'alex.morgan@hrms.com', role: 'employee' },
   { label: 'Sarah Chen (Design)', email: 'sarah.chen@hrms.com', role: 'employee' },
   { label: 'Marcus Vance (DevOps)', email: 'marcus.vance@hrms.com', role: 'employee' },
@@ -73,12 +74,16 @@ export default function App() {
   const [employeeForm, setEmployeeForm] = useState({
     name: '',
     email: '',
+    password: 'password123',
     job_title: '',
     department: 'Engineering',
     role: 'employee',
-    salary: 60000,
+    salary: '',
     phone: '',
     location: 'Bengaluru (HQ)',
+    join_date: new Date().toISOString().split('T')[0],
+    employment_type: 'Full-Time',
+    manager: '',
     avatar: '',
     avatarFile: null,
     avatarPreview: ''
@@ -220,7 +225,58 @@ export default function App() {
 
   // Add Employee
   const handleAddEmployee = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+
+    const name = employeeForm.name?.trim() || '';
+    const email = employeeForm.email?.trim() || '';
+    const password = employeeForm.password?.trim() || '';
+    const job_title = employeeForm.job_title?.trim() || '';
+    const department = employeeForm.department?.trim() || '';
+    const role = employeeForm.role || 'employee';
+    const salary = parseInt(employeeForm.salary, 10);
+    const phone = employeeForm.phone?.trim() || '';
+    const location = employeeForm.location?.trim() || '';
+    const join_date = employeeForm.join_date;
+    const employment_type = employeeForm.employment_type || 'Full-Time';
+    const manager = employeeForm.manager?.trim() || null;
+
+    if (!name) {
+      addToast('Please enter the employee full name.', 'error');
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      addToast('Please enter a valid work email address.', 'error');
+      return;
+    }
+    if (!password || password.length < 6) {
+      addToast('Please provide a login password (at least 6 characters).', 'error');
+      return;
+    }
+    if (!job_title) {
+      addToast('Please enter the job title.', 'error');
+      return;
+    }
+    if (!department) {
+      addToast('Please select a department.', 'error');
+      return;
+    }
+    if (isNaN(salary) || salary <= 0) {
+      addToast('Please enter a valid annual salary greater than 0.', 'error');
+      return;
+    }
+    if (!phone || phone.replace(/[\s\-\(\)\+]/g, '').length < 7) {
+      addToast('Please enter a valid contact phone number (at least 7 digits).', 'error');
+      return;
+    }
+    if (!location) {
+      addToast('Please enter the work location.', 'error');
+      return;
+    }
+    if (!join_date) {
+      addToast('Please select a joining date.', 'error');
+      return;
+    }
+
     try {
       let avatarUrl = employeeForm.avatar;
       if (employeeForm.avatarFile) {
@@ -232,43 +288,69 @@ export default function App() {
         }
       }
       if (!avatarUrl) {
-        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(employeeForm.name)}&background=6366f1&color=fff`;
+        avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
+      }
+
+      // Compute next numeric EMP ID safely to prevent collisions
+      const maxId = employees.reduce((max, emp) => {
+        const match = emp.id?.match(/EMP-(\d+)/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          return num > max ? num : max;
+        }
+        return max;
+      }, 0);
+      const nextId = `EMP-${(maxId + 1).toString().padStart(3, '0')}`;
+
+      const isHRAdmin = Boolean(user?.is_hr_admin);
+      const isTargetHR = role === 'hr' || Boolean(employeeForm.is_hr_admin);
+      if (isTargetHR && !isHRAdmin) {
+        addToast('Permission denied: Only HR administrators can create new HR accounts.', 'error');
+        return;
       }
 
       const payload = {
-        id: `EMP-${(employees.length + 1).toString().padStart(3, '0')}`,
-        name: employeeForm.name,
-        email: employeeForm.email,
-        job_title: employeeForm.job_title,
-        department: employeeForm.department,
-        role: employeeForm.role,
-        salary: parseInt(employeeForm.salary, 10) || 50000,
-        phone: employeeForm.phone,
-        location: employeeForm.location,
+        id: nextId,
+        name,
+        email,
+        password,
+        job_title,
+        department,
+        role,
+        is_hr_admin: role === 'hr',
+        salary,
+        phone,
+        location,
         avatar: avatarUrl,
         status: 'Active',
-        employment_type: 'Full-Time',
-        join_date: new Date().toISOString().split('T')[0]
+        employment_type,
+        join_date,
+        manager
       };
+
       await API.createEmployee(payload);
-      addToast(`Employee ${payload.name} added successfully!`, 'success');
+      addToast(`${role === 'hr' ? 'HR Administrator' : 'Employee'} ${payload.name} added successfully!`, 'success');
       setModalEmployeeOpen(false);
       setEmployeeForm({
         name: '',
         email: '',
+        password: 'password123',
         job_title: '',
         department: 'Engineering',
         role: 'employee',
-        salary: 60000,
+        salary: '',
         phone: '',
         location: 'Bengaluru (HQ)',
+        join_date: new Date().toISOString().split('T')[0],
+        employment_type: 'Full-Time',
+        manager: '',
         avatar: '',
         avatarFile: null,
         avatarPreview: ''
       });
       refreshData();
     } catch (err) {
-      addToast('Failed to add employee.', 'error');
+      addToast(err.message || 'Failed to add employee.', 'error');
     }
   };
 
@@ -280,6 +362,34 @@ export default function App() {
     }
     addToast(`Employee ${updatedEmp.name} updated successfully!`, 'success');
     refreshData();
+  };
+
+  // Toggle Employee Status (Active / Inactive)
+  const handleToggleEmployeeStatus = async (emp) => {
+    if (!isHR) return;
+    const willDeactivate = emp.status === 'Active';
+    if (willDeactivate) {
+      if (emp.email === user?.email || emp.id === user?.employee_id) {
+        addToast('You cannot deactivate your own HR administrator account.', 'error');
+        return;
+      }
+      const confirmed = window.confirm(
+        `Are you sure you want to deactivate ${emp.name}'s account? They will be locked out and cannot log in to the portal.`
+      );
+      if (!confirmed) return;
+    }
+
+    try {
+      const res = await API.toggleEmployeeStatus(emp.id);
+      const isNowActive = res.status === 'Active';
+      addToast(
+        `Employee ${emp.name} account has been ${isNowActive ? 'reactivated' : 'deactivated'}.`,
+        'success'
+      );
+      refreshData();
+    } catch (err) {
+      addToast(err.message || 'Failed to update account status.', 'error');
+    }
   };
 
   // Profile updated by employee directly
@@ -422,6 +532,7 @@ export default function App() {
           {activeTab === 'profile' && (
             <ProfilePage
               user={user}
+              isHR={isHR}
               employeeProfile={employeeProfile}
               onProfileUpdated={handleProfileUpdated}
               todayAttendance={todayAttendance}
@@ -445,6 +556,9 @@ export default function App() {
                 setSelectedEmployeeForEdit(emp);
                 setModalEditEmployeeOpen(true);
               }}
+              onToggleStatus={handleToggleEmployeeStatus}
+              currentUserId={user?.employee_id}
+              currentUserEmail={user?.email}
             />
           )}
 
@@ -504,6 +618,8 @@ export default function App() {
         employeeForm={employeeForm}
         setEmployeeForm={setEmployeeForm}
         onSubmit={handleAddEmployee}
+        currentUser={user}
+        isHRAdmin={Boolean(user?.is_hr_admin)}
       />
 
       {modalEditEmployeeOpen && selectedEmployeeForEdit && (

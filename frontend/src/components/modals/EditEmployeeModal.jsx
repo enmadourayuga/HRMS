@@ -35,8 +35,6 @@ export default function EditEmployeeModal({
   const [avatarPreview, setAvatarPreview] = useState(() => employee?.avatar || '');
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showUrlInput, setShowUrlInput] = useState(false);
-  const [urlInputValue, setUrlInputValue] = useState('');
 
   if (!isOpen || !employee) return null;
 
@@ -46,15 +44,6 @@ export default function EditEmployeeModal({
       setSelectedFile(file);
       const objectUrl = URL.createObjectURL(file);
       setAvatarPreview(objectUrl);
-    }
-  };
-
-  const handleApplyUrl = () => {
-    if (urlInputValue.trim()) {
-      setAvatarPreview(urlInputValue.trim());
-      setFormData(prev => ({ ...prev, avatar: urlInputValue.trim() }));
-      setSelectedFile(null);
-      setShowUrlInput(false);
     }
   };
 
@@ -170,14 +159,6 @@ export default function EditEmployeeModal({
                     <i className="fa-solid fa-arrow-up-from-bracket"></i> Upload Photo
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowUrlInput(!showUrlInput)}
-                    className="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold rounded-lg text-xs transition-colors flex items-center gap-1.5"
-                  >
-                    <i className="fa-solid fa-link"></i> Image Link
-                  </button>
-
                   {avatarPreview && (
                     <button
                       type="button"
@@ -189,25 +170,6 @@ export default function EditEmployeeModal({
                     </button>
                   )}
                 </div>
-
-                {showUrlInput && (
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <input
-                      type="url"
-                      value={urlInputValue}
-                      onChange={e => setUrlInputValue(e.target.value)}
-                      placeholder="Paste image URL (e.g. https://...)"
-                      className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleApplyUrl}
-                      className="px-3 py-1 bg-slate-800 text-white rounded-lg font-semibold text-xs hover:bg-slate-700"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                )}
 
                 {/* Preset Avatars */}
                 <div className="pt-1">

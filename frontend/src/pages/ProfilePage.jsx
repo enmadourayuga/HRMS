@@ -12,6 +12,7 @@ const PRESET_AVATARS = [
 
 export default function ProfilePage({
   user,
+  isHR,
   employeeProfile,
   onProfileUpdated,
   todayAttendance,
@@ -19,6 +20,7 @@ export default function ProfilePage({
   onGoToPayroll,
   addToast
 }) {
+  const isUserHR = Boolean(isHR ?? (user?.role === 'hr' || user?.is_hr_admin));
   const todayFormatted = React.useMemo(() => new Date().toLocaleDateString(), []);
   const fileInputRef = useRef(null);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -31,10 +33,6 @@ export default function ProfilePage({
     phone: employeeProfile?.phone || '',
     location: employeeProfile?.location || ''
   });
-
-  // Photo modal state
-  const [urlInput, setUrlInput] = useState('');
-  const [showUrlInput, setShowUrlInput] = useState(false);
 
   // Fallback profile if employeeProfile not yet loaded
   const profile = employeeProfile || {
@@ -55,6 +53,10 @@ export default function ProfilePage({
   };
 
   const handleAvatarFileSelected = async (e) => {
+    if (!isUserHR) {
+      addToast?.('Only HR administrators can change profile pictures.', 'error');
+      return;
+    }
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -87,6 +89,10 @@ export default function ProfilePage({
   };
 
   const handleSetAvatarUrl = async (url) => {
+    if (!isUserHR) {
+      addToast?.('Only HR administrators can change profile pictures.', 'error');
+      return;
+    }
     try {
       setUploading(true);
       if (profile.id) {
@@ -95,8 +101,6 @@ export default function ProfilePage({
       onProfileUpdated({ ...profile, avatar: url });
       addToast?.('Profile picture updated!', 'success');
       setPhotoModalOpen(false);
-      setUrlInput('');
-      setShowUrlInput(false);
     } catch (err) {
       console.error(err);
       addToast?.('Failed to update profile picture.', 'error');
@@ -140,7 +144,11 @@ export default function ProfilePage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">My Profile</h2>
-          <p className="text-xs text-slate-500">View and manage your employee credentials, photo, and job details</p>
+          <p className="text-xs text-slate-500">
+            {isUserHR
+              ? 'View and manage employee credentials, photo, and job details'
+              : 'View and manage your employee credentials and contact info (photo managed by HR)'}
+          </p>
         </div>
         <div className="flex items-center gap-2.5">
           <button
@@ -152,12 +160,14 @@ export default function ProfilePage({
           >
             <i className="fa-solid fa-pen-to-square text-indigo-500"></i> Edit Contact Info
           </button>
-          <button
-            onClick={() => setPhotoModalOpen(true)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-2"
-          >
-            <i className="fa-solid fa-camera"></i> Change Photo
-          </button>
+          {isUserHR && (
+            <button
+              onClick={() => setPhotoModalOpen(true)}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-2"
+            >
+              <i className="fa-solid fa-camera"></i> Change Photo
+            </button>
+          )}
         </div>
       </div>
 
@@ -182,14 +192,23 @@ export default function ProfilePage({
                 alt={profile.name}
                 className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover border-4 border-white shadow-xl ring-2 ring-indigo-100 bg-white"
               />
-              <button
-                type="button"
-                onClick={() => setPhotoModalOpen(true)}
-                title="Change Profile Picture"
-                className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-xs shadow-lg transition-transform hover:scale-105 border-2 border-white"
-              >
-                <i className="fa-solid fa-camera"></i>
-              </button>
+              {isUserHR ? (
+                <button
+                  type="button"
+                  onClick={() => setPhotoModalOpen(true)}
+                  title="Change Profile Picture"
+                  className="absolute bottom-1 right-1 w-9 h-9 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center text-xs shadow-lg transition-transform hover:scale-105 border-2 border-white"
+                >
+                  <i className="fa-solid fa-camera"></i>
+                </button>
+              ) : (
+                <div
+                  title="Profile picture can only be changed by HR administrators"
+                  className="absolute bottom-1 right-1 w-8 h-8 rounded-xl bg-slate-900/60 backdrop-blur-sm text-white flex items-center justify-center text-xs shadow-md border-2 border-white cursor-not-allowed"
+                >
+                  <i className="fa-solid fa-lock text-[10px]"></i>
+                </div>
+              )}
             </div>
 
             {/* Quick Action Badges */}
@@ -201,11 +220,13 @@ export default function ProfilePage({
                 <i className="fa-solid fa-briefcase text-slate-400"></i> {profile.employment_type || 'Full-Time'}
               </span>
               <span className={`px-3 py-1 rounded-xl font-bold text-xs uppercase tracking-wider ${
-                profile.role === 'hr' || profile.is_hr_admin
+                profile.is_hr_admin
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : profile.role === 'hr'
                   ? 'bg-purple-100 text-purple-700'
                   : 'bg-emerald-100 text-emerald-700'
               }`}>
-                {profile.role === 'hr' || profile.is_hr_admin ? 'HR Admin' : 'Employee'}
+                {profile.is_hr_admin ? 'HR Admin' : profile.role === 'hr' ? 'HR Staff' : 'Employee'}
               </span>
             </div>
           </div>
@@ -217,6 +238,11 @@ export default function ProfilePage({
               <span className="text-slate-300">•</span>
               <span className="text-indigo-600 font-semibold">{profile.department}</span>
             </p>
+            {!isUserHR && (
+              <p className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-1.5">
+                <i className="fa-solid fa-shield-halved text-indigo-400"></i> Profile photo managed by HR administration
+              </p>
+            )}
           </div>
 
           {/* Quick info row */}
@@ -435,23 +461,36 @@ export default function ProfilePage({
                 <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
               </button>
 
-              <button
-                onClick={() => setPhotoModalOpen(true)}
-                className="w-full p-3 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-100 flex items-center justify-between text-xs text-slate-700 hover:text-indigo-600 font-semibold transition-all group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <i className="fa-solid fa-camera text-slate-400 group-hover:text-indigo-500"></i>
-                  <span>Update Profile Picture</span>
+              {isUserHR ? (
+                <button
+                  onClick={() => setPhotoModalOpen(true)}
+                  className="w-full p-3 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-100 hover:border-indigo-100 flex items-center justify-between text-xs text-slate-700 hover:text-indigo-600 font-semibold transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <i className="fa-solid fa-camera text-slate-400 group-hover:text-indigo-500"></i>
+                    <span>Update Profile Picture</span>
+                  </div>
+                  <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                </button>
+              ) : (
+                <div
+                  className="w-full p-3 rounded-2xl bg-slate-50/60 border border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium cursor-not-allowed"
+                  title="Profile pictures can only be changed by HR administrators"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <i className="fa-solid fa-lock text-slate-300"></i>
+                    <span>Profile Photo (HR Only)</span>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded font-semibold">Locked</span>
                 </div>
-                <i className="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
-              </button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* MODAL: Change Profile Picture */}
-      {photoModalOpen && (
+      {/* MODAL: Change Profile Picture (HR Only) */}
+      {isUserHR && photoModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl modal-enter">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
@@ -501,35 +540,6 @@ export default function ProfilePage({
                     </>
                   )}
                 </button>
-
-                <button
-                  type="button"
-                  disabled={uploading}
-                  onClick={() => setShowUrlInput(!showUrlInput)}
-                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
-                >
-                  <i className="fa-solid fa-link"></i> Use Image URL
-                </button>
-
-                {showUrlInput && (
-                  <div className="flex items-center gap-1.5 pt-1">
-                    <input
-                      type="url"
-                      value={urlInput}
-                      onChange={e => setUrlInput(e.target.value)}
-                      placeholder="Paste image URL (https://...)"
-                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <button
-                      type="button"
-                      disabled={uploading || !urlInput.trim()}
-                      onClick={() => handleSetAvatarUrl(urlInput.trim())}
-                      className="px-3 py-2 bg-indigo-600 text-white font-semibold rounded-xl text-xs hover:bg-indigo-500 disabled:opacity-50"
-                    >
-                      Apply
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* Presets */}

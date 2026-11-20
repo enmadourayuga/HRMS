@@ -107,12 +107,13 @@ export default function ApplyLeaveModal({
             const isSelected = currentType === typeKey;
 
             return (
-              <div
+              <button
                 key={typeKey}
+                type="button"
                 onClick={() => setLeaveForm({ ...leaveForm, leave_type: typeKey.charAt(0).toUpperCase() + typeKey.slice(1) })}
                 className={`p-2 rounded-xl text-center cursor-pointer transition-all border ${
                   isSelected
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-300'
                     : 'bg-white text-slate-700 border-slate-200 hover:border-indigo-300'
                 }`}
               >
@@ -123,32 +124,12 @@ export default function ApplyLeaveModal({
                 <div className={`text-[9px] mt-0.5 ${isSelected ? 'text-indigo-200' : 'text-slate-400'}`}>
                   {b.used || 0}/{b.total || 0} used
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="font-semibold text-slate-700">Leave Category</label>
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                availableDays > 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'
-              }`}>
-                {availableDays} day(s) available
-              </span>
-            </div>
-            <select
-              value={leaveForm.leave_type}
-              onChange={e => setLeaveForm({ ...leaveForm, leave_type: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="Annual">Annual Leave</option>
-              <option value="Sick">Sick Leave</option>
-              <option value="Casual">Casual Leave</option>
-            </select>
-          </div>
-
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block font-semibold text-slate-700 mb-1">Start Date</label>

@@ -90,7 +90,7 @@ export default function Sidebar({
                     activeTab === 'overview' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <i className="fa-solid fa-house w-4"></i> My Portal & Punch
+                  <i className="fa-solid fa-house w-4"></i> My Portal
                 </button>
                 <button
                   onClick={() => setActiveTab('profile')}

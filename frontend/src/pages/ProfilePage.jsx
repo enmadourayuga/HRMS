@@ -15,7 +15,6 @@ export default function ProfilePage({
   employeeProfile,
   onProfileUpdated,
   todayAttendance,
-  onClockInOut,
   onGoToLeaves,
   onGoToPayroll,
   addToast
@@ -346,24 +345,9 @@ export default function ProfilePage({
                   <p className="text-xs text-slate-400">Current work day session summary</p>
                 </div>
               </div>
-              <button
-                onClick={onClockInOut}
-                className={`px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-1.5 ${
-                  !todayAttendance
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                    : !todayAttendance.clock_out
-                    ? 'bg-amber-600 hover:bg-amber-500 text-white'
-                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                }`}
-                disabled={Boolean(todayAttendance && todayAttendance.clock_out)}
-              >
-                <i className="fa-solid fa-fingerprint"></i>
-                {!todayAttendance
-                  ? 'Clock In Now'
-                  : !todayAttendance.clock_out
-                  ? 'Clock Out Now'
-                  : 'Shift Completed'}
-              </button>
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-lg text-xs font-semibold text-slate-600 border border-slate-200">
+                <i className="fa-solid fa-fingerprint text-emerald-600"></i> Biometric Sync
+              </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">

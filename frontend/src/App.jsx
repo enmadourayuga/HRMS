@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { API, tokenStorage } from './api';
-import { calculateWorkedHours } from './utils/time';
 import useNotifications from './hooks/useNotifications';
 
 // Pages
@@ -45,8 +44,6 @@ export default function App() {
   // App datasets
   const [employees, setEmployees] = useState([]);
   const [attendance, setAttendance] = useState([]);
-  // Store current day's attendance record ID for checkout
-  const [todayAttendanceId, setTodayAttendanceId] = useState(null);
   const [leaves, setLeaves] = useState([]);
   const [payroll, setPayroll] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -176,46 +173,6 @@ export default function App() {
     setUser(null);
     setEmployeeProfile(null);
     addToast('Signed out successfully.', 'info');
-  };
-
-  // Clock in / out logic integrating with backend
-  const handleClockInOut = async () => {
-    if (!employeeProfile) return;
-    const today = new Date().toISOString().split('T')[0];
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    // Find existing attendance for today
-    const existing = attendance.find(a => a.employee_id === employeeProfile.id && a.date === today);
-
-    try {
-      if (!existing) {
-        // Create new attendance (clock-in)
-        const payload = {
-          employee_id: employeeProfile.id,
-          date: today,
-          clock_in: nowTime,
-        };
-        const created = await API.createAttendance(payload);
-        setTodayAttendanceId(created.id);
-        addToast(`Clocked in at ${nowTime}`, 'success');
-      } else if (!existing.clock_out) {
-        // Update with clock-out (do not change UI state)
-        const workedHours = calculateWorkedHours(existing.clock_in, nowTime);
-        await API.updateAttendance(existing.id, {
-          clock_out: nowTime,
-          total_hours: workedHours,
-        });
-        setTodayAttendanceId(existing.id);
-        addToast(`Clocked out at ${nowTime} (${workedHours} hrs worked)`, 'success');
-      } else {
-        addToast('You have already completed attendance for today.', 'info');
-        return;
-      }
-      refreshData();
-    } catch (err) {
-      console.error(err);
-      addToast('Failed to update attendance.', 'error');
-    }
   };
 
   // Submit Leave Request
@@ -454,7 +411,6 @@ export default function App() {
               todayAttendance={todayAttendance}
               leaves={leaves}
               announcements={announcements}
-              onClockInOut={handleClockInOut}
               onOpenLeaveModal={() => setModalLeaveOpen(true)}
               onOpenEmployeeModal={() => setModalEmployeeOpen(true)}
               onOpenAnnouncementModal={() => setModalAnnouncementOpen(true)}
@@ -469,7 +425,6 @@ export default function App() {
               employeeProfile={employeeProfile}
               onProfileUpdated={handleProfileUpdated}
               todayAttendance={todayAttendance}
-              onClockInOut={handleClockInOut}
               onGoToLeaves={() => setActiveTab('leaves')}
               onGoToPayroll={() => setActiveTab('payroll')}
               addToast={addToast}
@@ -499,7 +454,6 @@ export default function App() {
               attendance={attendance}
               employeeProfile={employeeProfile}
               todayAttendance={todayAttendance}
-              onClockInOut={handleClockInOut}
             />
           )}
 

@@ -5,8 +5,7 @@ export default function AttendancePage({
   isHR,
   attendance,
   employeeProfile,
-  todayAttendance,
-  onClockInOut
+  todayAttendance
 }) {
   const today = new Date().toISOString().split('T')[0];
 
@@ -35,14 +34,9 @@ export default function AttendancePage({
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Attendance Records</h2>
           <p className="text-xs text-slate-500">Real-time daily punches, work hours, and validations</p>
         </div>
-        {!isHR && (
-          <button
-            onClick={onClockInOut}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-2"
-          >
-            <i className="fa-solid fa-fingerprint"></i> {!todayAttendance?.clock_in ? 'Clock In' : 'Clock Out'}
-          </button>
-        )}
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl text-xs text-slate-600 font-medium border border-slate-200">
+          <i className="fa-solid fa-fingerprint text-emerald-600"></i> Biometric Device Sync
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">

@@ -8,7 +8,6 @@ export default function DashboardPage({
   todayAttendance,
   leaves,
   announcements,
-  onClockInOut,
   onOpenLeaveModal,
   onOpenEmployeeModal,
   onOpenAnnouncementModal,
@@ -36,7 +35,7 @@ export default function DashboardPage({
           <p className="text-white/80 text-sm mt-1 max-w-xl">
             {isHR
               ? `Here is your live workforce snapshot. You have ${hrStats.pendingLeaves} pending leave requests requiring review.`
-              : `View your schedule, punch desk, time-off balances, and download monthly compensation statements.`}
+              : `View your schedule, attendance history, time-off balances, and download monthly compensation statements.`}
           </p>
         </div>
 
@@ -57,31 +56,12 @@ export default function DashboardPage({
               </button>
             </>
           ) : (
-            <>
-              <button
-                onClick={onClockInOut}
-                className={`px-5 py-2.5 font-bold rounded-xl text-sm shadow-lg transition-all flex items-center gap-2.5 ${
-                  !todayAttendance?.clock_in
-                    ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/30'
-                    : !todayAttendance?.clock_out
-                    ? 'bg-amber-500 hover:bg-amber-400 text-white shadow-amber-500/30'
-                    : 'bg-slate-700 text-slate-300 cursor-not-allowed'
-                }`}
-              >
-                <i className="fa-solid fa-fingerprint text-base"></i>
-                {!todayAttendance?.clock_in
-                  ? 'Clock In Today'
-                  : !todayAttendance?.clock_out
-                  ? 'Clock Out Today'
-                  : 'Completed Today'}
-              </button>
-              <button
-                onClick={onOpenLeaveModal}
-                className="px-4 py-2.5 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl text-xs sm:text-sm border border-white/20 transition-all flex items-center gap-2"
-              >
-                <i className="fa-solid fa-plane-departure"></i> Apply for Leave
-              </button>
-            </>
+            <button
+              onClick={onOpenLeaveModal}
+              className="px-4 py-2.5 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-xl text-xs sm:text-sm border border-white/20 transition-all flex items-center gap-2"
+            >
+              <i className="fa-solid fa-plane-departure"></i> Apply for Leave
+            </button>
           )}
         </div>
       </div>

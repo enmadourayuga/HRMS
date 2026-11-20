@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'leaves',
     'payroll',
     'announcements',
+    'notifications',
 ]
 
 MIDDLEWARE = [

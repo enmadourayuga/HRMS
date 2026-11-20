@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { API, tokenStorage } from './api';
 import { calculateWorkedHours } from './utils/time';
+import useNotifications from './hooks/useNotifications';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -13,7 +14,8 @@ import BulletinsPage from './pages/BulletinsPage';
 import ProfilePage from './pages/ProfilePage';
 
 // Common components
-import ToastContainer from './components/common/ToastContainer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/common/Header';
 import Sidebar from './components/common/Sidebar';
 
@@ -43,6 +45,8 @@ export default function App() {
   // App datasets
   const [employees, setEmployees] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  // Store current day's attendance record ID for checkout
+  const [todayAttendanceId, setTodayAttendanceId] = useState(null);
   const [leaves, setLeaves] = useState([]);
   const [payroll, setPayroll] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -95,16 +99,20 @@ export default function App() {
   const [loginPassword, setLoginPassword] = useState('password123');
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const addToast = (message, type = 'info') => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, 4000);
-  };
+  const addToast = useCallback((message, type = 'info') => {
+    if (type === 'success') {
+      toast.success(message);
+    } else if (type === 'error') {
+      toast.error(message);
+    } else if (type === 'warn' || type === 'warning') {
+      toast.warning(message);
+    } else {
+      toast.info(message);
+    }
+  }, []);
 
   // Load all data from API
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     if (!tokenStorage.getAccess()) return;
     try {
       setLoading(true);
@@ -134,13 +142,16 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [addToast]);
 
   useEffect(() => {
     if (user) {
       refreshData();
     }
-  }, [user]);
+  }, [user, refreshData]);
+
+  // Connect live notifications stream (SSE) with Toastify
+  useNotifications(addToast, refreshData, user);
 
   // Login action
   const handleLogin = async (e, directEmail = null, directPass = null) => {
@@ -167,35 +178,34 @@ export default function App() {
     addToast('Signed out successfully.', 'info');
   };
 
-  // Clock in / out logic
+  // Clock in / out logic integrating with backend
   const handleClockInOut = async () => {
     if (!employeeProfile) return;
     const today = new Date().toISOString().split('T')[0];
     const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    // Find existing attendance for today
     const existing = attendance.find(a => a.employee_id === employeeProfile.id && a.date === today);
 
     try {
       if (!existing) {
-        const newRecord = {
-          id: `ATT-${Date.now().toString().slice(-6)}`,
+        // Create new attendance (clock-in)
+        const payload = {
           employee_id: employeeProfile.id,
-          employee_name: employeeProfile.name,
           date: today,
           clock_in: nowTime,
-          clock_out: null,
-          status: 'Present',
-          total_hours: 0.0,
-          is_validated: false
         };
-        await API.createAttendance(newRecord);
+        const created = await API.createAttendance(payload);
+        setTodayAttendanceId(created.id);
         addToast(`Clocked in at ${nowTime}`, 'success');
       } else if (!existing.clock_out) {
+        // Update with clock-out (do not change UI state)
         const workedHours = calculateWorkedHours(existing.clock_in, nowTime);
         await API.updateAttendance(existing.id, {
           clock_out: nowTime,
-          total_hours: workedHours
+          total_hours: workedHours,
         });
+        setTodayAttendanceId(existing.id);
         addToast(`Clocked out at ${nowTime} (${workedHours} hrs worked)`, 'success');
       } else {
         addToast('You have already completed attendance for today.', 'info');
@@ -203,6 +213,7 @@ export default function App() {
       }
       refreshData();
     } catch (err) {
+      console.error(err);
       addToast('Failed to update attendance.', 'error');
     }
   };
@@ -391,7 +402,7 @@ export default function App() {
   if (!user) {
     return (
       <>
-        <ToastContainer toasts={toasts} />
+        <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
         <LoginPage
           demoUsers={DEMO_USERS}
           loginEmail={loginEmail}
@@ -412,7 +423,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
-      <ToastContainer toasts={toasts} />
+      <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
 
       <Header
         user={user}

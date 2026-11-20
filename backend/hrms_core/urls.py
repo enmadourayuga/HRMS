@@ -27,5 +27,6 @@ urlpatterns = [
     path('api/leaves/', include('leaves.urls')),
     path('api/payroll/', include('payroll.urls')),
     path('api/announcements/', include('announcements.urls')),
+    path('api/notifications/', include('notifications.urls')),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]

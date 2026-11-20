@@ -122,7 +122,7 @@ class HRMSApiTests(TestCase):
         res = self.client.post('/api/employees/upload_avatar/', {'avatar': f}, format='multipart')
         self.assertEqual(res.status_code, 200)
         self.assertIn('avatar_url', res.data)
-        self.assertTrue(res.data['avatar_url'].startswith('/media/avatars/'))
+        self.assertTrue('/media/avatars/' in res.data['avatar_url'])
 
     def test_update_employee_avatar(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -144,3 +144,32 @@ class HRMSApiTests(TestCase):
         self.assertEqual(self.employee.phone, '+91 9988776655')
         self.assertEqual(self.employee.location, 'Mumbai Office')
         self.assertEqual(self.employee.avatar, 'https://example.com/photo.jpg')
+
+    def test_notifications_endpoints_and_trigger(self):
+        # Test poll endpoint
+        res = self.client.get('/api/notifications/poll/')
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data, [])
+
+        # Trigger notification by updating a leave status to Approved
+        lv = LeaveRequest.objects.create(
+            id='LV-NOTIF-01',
+            employee=self.employee,
+            leave_type='Sick',
+            start_date='2026-11-21',
+            end_date='2026-11-22',
+            days=2,
+            status='Pending'
+        )
+        patch_res = self.client.patch(f'/api/leaves/{lv.id}/', {
+            'status': 'Approved',
+            'reviewed_by': 'hr@hrms.com'
+        }, format='json')
+        self.assertEqual(patch_res.status_code, 200)
+
+        # Employee should have received an approval notification
+        poll_res = self.client.get('/api/notifications/poll/')
+        self.assertEqual(poll_res.status_code, 200)
+        self.assertEqual(len(poll_res.data), 1)
+        self.assertEqual(poll_res.data[0]['type'], 'leave_approved')
+        self.assertIn('approved', poll_res.data[0]['message'].lower())

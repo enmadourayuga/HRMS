@@ -402,7 +402,7 @@ export default function App() {
   if (!user) {
     return (
       <>
-        <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
+        <ToastContainer position="top-right" autoClose={3500} hideProgressBar newestOnTop closeOnClick pauseOnHover theme="light" />
         <LoginPage
           demoUsers={DEMO_USERS}
           loginEmail={loginEmail}
@@ -423,7 +423,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
-      <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
+      <ToastContainer position="top-right" autoClose={3500} hideProgressBar newestOnTop closeOnClick pauseOnHover theme="light" />
 
       <Header
         user={user}

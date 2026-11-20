@@ -91,3 +91,140 @@ html, body {
     width: 100%;
   }
 }
+
+/* =============================================================
+   Minimalist & Compact Live Notifications (React-Toastify)
+   ============================================================= */
+:root {
+  --toastify-toast-width: 290px;
+  --toastify-toast-min-height: 40px;
+  --toastify-toast-padding: 8px 12px;
+  --toastify-toast-bd-radius: 10px;
+  --toastify-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --toastify-color-light: #ffffff;
+  --toastify-text-color-light: #1e293b;
+  --toastify-icon-color-info: #6366f1;
+  --toastify-icon-color-success: #10b981;
+  --toastify-icon-color-warning: #f59e0b;
+  --toastify-icon-color-error: #f43f5e;
+  --toastify-toast-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+}
+
+.Toastify__toast-container {
+  padding: 12px !important;
+  width: auto !important;
+  max-width: 310px !important;
+}
+
+.Toastify__toast {
+  min-height: 40px !important;
+  padding: 8px 12px !important;
+  margin-bottom: 8px !important;
+  border-radius: 10px !important;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 4px 14px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid rgba(226, 232, 240, 0.85) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #1e293b !important;
+}
+
+/* Subtle colored accent edge for each notification status */
+.Toastify__toast--success {
+  border-left: 3.5px solid #10b981 !important;
+}
+
+.Toastify__toast--error {
+  border-left: 3.5px solid #f43f5e !important;
+}
+
+.Toastify__toast--info {
+  border-left: 3.5px solid #6366f1 !important;
+}
+
+.Toastify__toast--warning {
+  border-left: 3.5px solid #f59e0b !important;
+}
+
+/* Body & Icon adjustments */
+.Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  color: #334155 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Toastify__toast-icon {
+  width: 16px !important;
+  height: 16px !important;
+  margin-inline-end: 8px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Toastify__toast-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Minimalist close button */
+.Toastify__close-button {
+  align-self: center !important;
+  opacity: 0.35 !important;
+  padding: 0 0 0 8px !important;
+  transition: opacity 0.15s ease, color 0.15s ease !important;
+  color: #64748b !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 0.85 !important;
+  color: #0f172a !important;
+}
+
+.Toastify__close-button > svg {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+/* Hairline subtle progress bar if ever displayed */
+.Toastify__progress-bar {
+  height: 2px !important;
+  opacity: 0.8 !important;
+}
+
+.Toastify__progress-bar--success {
+  background: #10b981 !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #f43f5e !important;
+}
+
+.Toastify__progress-bar--info {
+  background: #6366f1 !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: #f59e0b !important;
+}
+
+@media only screen and (max-width: 480px) {
+  .Toastify__toast-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 8px 12px !important;
+  }
+  .Toastify__toast {
+    border-radius: 10px !important;
+    margin-bottom: 6px !important;
+  }
+}
+
